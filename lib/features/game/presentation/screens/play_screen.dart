@@ -7,6 +7,7 @@ import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../settings/presentation/screens/settings_screen.dart';
 
 /// Écran principal du jeu
 class PlayScreen extends ConsumerStatefulWidget {
@@ -267,7 +268,11 @@ class _CenterDivider extends StatelessWidget {
             icon: const Icon(Icons.more_vert_rounded),
             onPressed: () {
               HapticUtils.light();
-              // TODO: Afficher le menu d'options
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
             },
             iconSize: 32,
             tooltip: 'Options',

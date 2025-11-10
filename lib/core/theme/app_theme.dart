@@ -130,4 +130,136 @@ class AppTheme {
     'Sapphire',
     'Steel',
   ];
+
+  /// Thème clair à contraste élevé (WCAG AAA)
+  static ThemeData get lightHighContrastTheme {
+    // Couleurs optimisées pour contraste maximum
+    const surfaceColor = Color(0xFFFFFFFF); // Blanc pur
+    const onSurfaceColor = Color(0xFF000000); // Noir pur
+    const primaryColor = Color(0xFF0000FF); // Bleu vif
+    const onPrimaryColor = Color(0xFFFFFFFF); // Blanc pur
+
+    final colorScheme = ColorScheme.light(
+      surface: surfaceColor,
+      onSurface: onSurfaceColor,
+      primary: primaryColor,
+      onPrimary: onPrimaryColor,
+      secondary: const Color(0xFFFFD700), // Or vif
+      onSecondary: onSurfaceColor,
+      error: const Color(0xFFFF0000), // Rouge vif
+      onError: onPrimaryColor,
+      surfaceContainerHighest: const Color(0xFFE0E0E0), // Gris très clair
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      textTheme: GoogleFonts.poppinsTextTheme().apply(
+        bodyColor: onSurfaceColor,
+        displayColor: onSurfaceColor,
+      ),
+
+      appBarTheme: AppBarTheme(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: surfaceColor,
+        foregroundColor: onSurfaceColor,
+      ),
+
+      cardTheme: CardThemeData(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: onSurfaceColor, width: 2),
+        ),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: onSurfaceColor, width: 2),
+          ),
+        ),
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+  }
+
+  /// Thème sombre à contraste élevé (WCAG AAA)
+  static ThemeData get darkHighContrastTheme {
+    // Couleurs optimisées pour contraste maximum en mode sombre
+    const surfaceColor = Color(0xFF000000); // Noir pur
+    const onSurfaceColor = Color(0xFFFFFFFF); // Blanc pur
+    const primaryColor = Color(0xFF00FFFF); // Cyan vif
+    const onPrimaryColor = Color(0xFF000000); // Noir pur
+
+    final colorScheme = ColorScheme.dark(
+      surface: surfaceColor,
+      onSurface: onSurfaceColor,
+      primary: primaryColor,
+      onPrimary: onPrimaryColor,
+      secondary: const Color(0xFFFFFF00), // Jaune vif
+      onSecondary: onPrimaryColor,
+      error: const Color(0xFFFF0000), // Rouge vif
+      onError: onSurfaceColor,
+      surfaceContainerHighest: const Color(0xFF1A1A1A), // Gris très sombre
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      textTheme: GoogleFonts.poppinsTextTheme().apply(
+        bodyColor: onSurfaceColor,
+        displayColor: onSurfaceColor,
+      ),
+
+      appBarTheme: AppBarTheme(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: surfaceColor,
+        foregroundColor: onSurfaceColor,
+      ),
+
+      cardTheme: CardThemeData(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: onSurfaceColor, width: 2),
+        ),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: onSurfaceColor, width: 2),
+          ),
+        ),
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+  }
+
+  /// Couleurs Lorcana pour les joueurs (version contraste élevé)
+  static const List<Color> lorcanaHighContrastColors = [
+    Color(0xFFFFCC00), // Amber - jaune vif
+    Color(0xFFCC00FF), // Amethyst - magenta vif
+    Color(0xFF00FF00), // Emerald - vert vif
+    Color(0xFFFF0000), // Ruby - rouge vif
+    Color(0xFF0000FF), // Sapphire - bleu vif
+    Color(0xFFC0C0C0), // Steel - gris clair vif
+  ];
 }
