@@ -94,26 +94,16 @@ class PlayerZone extends StatelessWidget {
                   const SizedBox(width: AppConstants.defaultPadding * 2),
                   // Affichage du score
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: player.color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: player.color.withOpacity(0.3),
-                          width: 3,
-                        ),
-                      ),
-                      child: Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            score.toString(),
-                            style: TextStyle(
-                              fontSize: 120,
-                              fontWeight: FontWeight.w900,
-                              color: player.color,
-                              letterSpacing: -4,
-                            ),
+                    child: Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          score.toString(),
+                          style: TextStyle(
+                            fontSize: 120,
+                            fontWeight: FontWeight.w900,
+                            color: player.color,
+                            letterSpacing: -4,
                           ),
                         ),
                       ),
