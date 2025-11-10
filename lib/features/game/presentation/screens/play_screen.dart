@@ -272,7 +272,7 @@ class _CenterDivider extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: [
                       AppTheme.primaryColor,
-                      AppTheme.primaryColor.withOpacity(0.7),
+                      AppTheme.primaryColor,
                     ],
                   ),
                   shape: BoxShape.circle,
