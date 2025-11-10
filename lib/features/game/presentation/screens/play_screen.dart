@@ -79,58 +79,91 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           padding: const EdgeInsets.all(8.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
-            child: Column(
+            child: Stack(
               children: [
-                // Zone joueur 1 (en haut, tournée à 180°)
-                PlayerZone(
-              player: gameState.player1,
-              score: gameState.player1Score,
-              isRotated: true,
-              onIncrement: (amount) {
-                ref.read(gameProvider.notifier).incrementPlayer1Score(amount);
-                _checkWinner();
-              },
-              onDecrement: (amount) {
-                ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
-              },
-              onNameTap: () => _showPlayerNameDialog(
-                currentName: gameState.player1.name,
-                playerColor: gameState.player1.color,
-                isPlayer1: true,
-              ),
-            ),
+                // Colonne avec les zones de joueurs et le diviseur
+                Column(
+                  children: [
+                    // Zone joueur 1 (en haut, tournée à 180°)
+                    PlayerZone(
+                      player: gameState.player1,
+                      score: gameState.player1Score,
+                      isRotated: true,
+                      onIncrement: (amount) {
+                        ref.read(gameProvider.notifier).incrementPlayer1Score(amount);
+                        _checkWinner();
+                      },
+                      onDecrement: (amount) {
+                        ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
+                      },
+                      onNameTap: () => _showPlayerNameDialog(
+                        currentName: gameState.player1.name,
+                        playerColor: gameState.player1.color,
+                        isPlayer1: true,
+                      ),
+                    ),
 
-            // Ligne centrale avec logo
-            _CenterDivider(
-              onNextRound: () {
-                HapticUtils.medium();
-                ref.read(gameProvider.notifier).nextRound();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Round ${gameState.currentRound + 1}'),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-              currentRound: gameState.currentRound,
-            ),
+                    // Ligne centrale (barre noire de 10 pixels seulement)
+                    _CenterDivider(
+                      currentRound: gameState.currentRound,
+                    ),
 
-                // Zone joueur 2 (en bas)
-                PlayerZone(
-                  player: gameState.player2,
-                  score: gameState.player2Score,
-                  isRotated: false,
-                  onIncrement: (amount) {
-                    ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
-                    _checkWinner();
-                  },
-                  onDecrement: (amount) {
-                    ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
-                  },
-                  onNameTap: () => _showPlayerNameDialog(
-                    currentName: gameState.player2.name,
-                    playerColor: gameState.player2.color,
-                    isPlayer1: false,
+                    // Zone joueur 2 (en bas)
+                    PlayerZone(
+                      player: gameState.player2,
+                      score: gameState.player2Score,
+                      isRotated: false,
+                      onIncrement: (amount) {
+                        ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
+                        _checkWinner();
+                      },
+                      onDecrement: (amount) {
+                        ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
+                      },
+                      onNameTap: () => _showPlayerNameDialog(
+                        currentName: gameState.player2.name,
+                        playerColor: gameState.player2.color,
+                        isPlayer1: false,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Logo Lorcana au centre (au-dessus de tout)
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      HapticUtils.medium();
+                      ref.read(gameProvider.notifier).nextRound();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Round ${gameState.currentRound + 1}'),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 12,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/lorcana_logo.png',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -234,61 +267,19 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
   }
 }
 
-/// Ligne centrale avec logo et contrôles
+/// Ligne centrale (barre noire de séparation)
 class _CenterDivider extends StatelessWidget {
   const _CenterDivider({
-    required this.onNextRound,
     required this.currentRound,
   });
 
-  final VoidCallback onNextRound;
   final int currentRound;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 10,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          // Espace noir de 10 pixels
-          Container(
-            height: 10,
-            color: Colors.black,
-          ),
-
-          // Logo Lorcana au centre (déborde au-dessus et en-dessous)
-          Positioned(
-            top: -35, // (80 - 10) / 2 = 35 pixels au-dessus
-            child: GestureDetector(
-              onTap: onNextRound,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 12,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/lorcana_logo.png',
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      color: Colors.black,
     );
   }
 }
