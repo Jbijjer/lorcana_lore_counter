@@ -267,28 +267,21 @@ class _CenterDivider extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppTheme.primaryColor,
-                      AppTheme.primaryColor,
-                    ],
-                  ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
+                      color: Colors.black.withOpacity(0.3),
                       blurRadius: 12,
                       spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.auto_awesome,
-                    color: Colors.white,
-                    size: 40,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/lorcana_logo.png',
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
