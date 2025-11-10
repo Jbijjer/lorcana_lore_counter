@@ -33,8 +33,8 @@ class PlayerZone extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            player.backgroundColorStart.withOpacity(0.15),
-            player.backgroundColorEnd.withOpacity(0.05),
+            player.backgroundColorStart.withOpacity(0.6),
+            player.backgroundColorEnd.withOpacity(0.4),
           ],
         ),
       ),
