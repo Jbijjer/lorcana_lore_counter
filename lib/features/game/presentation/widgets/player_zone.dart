@@ -99,7 +99,7 @@ class PlayerZone extends StatelessWidget {
                       children: [
                         // Cadre Lore en arrière-plan
                         Transform.rotate(
-                          angle: isRotated ? 3.14159 : 0, // 180 degrés en radians pour joueur 2
+                          angle: isRotated ? 0 : 3.14159, // 180 degrés pour joueur 2 (non rotaté)
                           child: Image.asset(
                             'assets/images/lore_frame.png',
                             fit: BoxFit.contain,
