@@ -80,8 +80,8 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    _selectedColorStart.withOpacity(0.15),
-                    _selectedColorEnd.withOpacity(0.05),
+                    _selectedColorStart.withOpacity(0.6),
+                    _selectedColorEnd.withOpacity(0.4),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
