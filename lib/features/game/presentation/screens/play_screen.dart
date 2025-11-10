@@ -35,12 +35,12 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   void _startTestGame() {
     final player1 = Player.create(
-      name: 'Joueur 1',
+      name: 'Joueur',
       color: AppTheme.amberColor,
     );
-    
+
     final player2 = Player.create(
-      name: 'Joueur 2',
+      name: 'Adversaire',
       color: AppTheme.sapphireColor,
     );
     
