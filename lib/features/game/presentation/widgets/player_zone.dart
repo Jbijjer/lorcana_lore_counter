@@ -83,7 +83,7 @@ class PlayerZone extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Transform.translate(
-                    offset: const Offset(0, 10),
+                    offset: const Offset(0, 25),
                     child: _ScoreActionButton(
                       icon: Icons.remove,
                       playerColor: player.color,
@@ -131,7 +131,7 @@ class PlayerZone extends StatelessWidget {
                   ),
                   const SizedBox(width: AppConstants.defaultPadding * 2),
                   Transform.translate(
-                    offset: const Offset(0, 10),
+                    offset: const Offset(0, 25),
                     child: _ScoreActionButton(
                       icon: Icons.add,
                       playerColor: player.color,
