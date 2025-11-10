@@ -246,49 +246,56 @@ class _CenterDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Espace noir de 10 pixels
-        Container(
-          height: 10,
-          color: Colors.black,
-        ),
+    return SizedBox(
+      height: 10,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          // Espace noir de 10 pixels
+          Container(
+            height: 10,
+            color: Colors.black,
+          ),
 
-        // Logo Lorcana au centre (temporaire avec icône Flutter)
-        GestureDetector(
-          onTap: onNextRound,
-          child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppTheme.primaryColor,
-                  AppTheme.primaryColor.withOpacity(0.7),
-                ],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
-                  blurRadius: 12,
-                  spreadRadius: 2,
+          // Logo Lorcana au centre (déborde au-dessus et en-dessous)
+          Positioned(
+            top: -35, // (80 - 10) / 2 = 35 pixels au-dessus
+            child: GestureDetector(
+              onTap: onNextRound,
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppTheme.primaryColor,
+                      AppTheme.primaryColor.withOpacity(0.7),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withOpacity(0.3),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.auto_awesome,
-                color: Colors.white,
-                size: 40,
+                child: const Center(
+                  child: Icon(
+                    Icons.auto_awesome,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
