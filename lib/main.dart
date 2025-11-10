@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/theme/app_theme.dart';
+import 'core/models/accessibility_preferences.dart';
+import 'core/providers/accessibility_provider.dart';
 import 'features/game/presentation/screens/play_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialiser Hive
   await Hive.initFlutter();
-  
+
+  // Enregistrer les adaptateurs Hive
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(AccessibilityPreferencesAdapter());
+  }
+
   runApp(
     const ProviderScope(
       child: LorcanaScoreKeeperApp(),
@@ -18,18 +25,49 @@ void main() async {
 }
 
 /// Application principale
-class LorcanaScoreKeeperApp extends StatelessWidget {
+class LorcanaScoreKeeperApp extends ConsumerWidget {
   const LorcanaScoreKeeperApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Lorcana Score Keeper',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: const PlayScreen(),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final accessibilityPrefs = ref.watch(accessibilityNotifierProvider);
+
+    // Déterminer le thème à utiliser en fonction du mode système et des préférences
+    final brightness = MediaQuery.platformBrightnessOf(context);
+    final isDark = brightness == Brightness.dark;
+
+    return accessibilityPrefs.when(
+      data: (prefs) {
+        final ThemeData lightTheme = prefs.highContrastMode
+            ? AppTheme.lightHighContrastTheme
+            : AppTheme.lightTheme;
+        final ThemeData darkTheme = prefs.highContrastMode
+            ? AppTheme.darkHighContrastTheme
+            : AppTheme.darkTheme;
+
+        return MaterialApp(
+          title: 'Lorcana Score Keeper',
+          debugShowCheckedModeBanner: false,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: ThemeMode.system,
+          home: const PlayScreen(),
+        );
+      },
+      loading: () => const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ),
+      error: (_, __) => MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Text('Erreur de chargement des préférences'),
+          ),
+        ),
+      ),
     );
   }
 }
