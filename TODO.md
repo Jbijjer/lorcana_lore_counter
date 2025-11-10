@@ -16,6 +16,42 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🔥 Haute Priorité
 
+### 0. Système de statistiques (EN COURS)
+
+**✅ Déjà complété :**
+- [x] Modèle de données `GameHistory` avec Hive (typeId: 2, 3)
+- [x] Service `GameStatisticsService` pour stocker/récupérer les parties
+- [x] Sauvegarde automatique des parties terminées dans `GameProvider`
+- [x] Écran `StatisticsScreen` avec vue d'ensemble et historique
+- [x] Widgets `StatisticsOverviewCard` et `GameHistoryCard`
+- [x] Initialisation du service dans `main.dart`
+
+**⚠️ À FAIRE AVANT D'UTILISER :**
+- [ ] **IMPORTANT** : Exécuter `flutter pub run build_runner build --delete-conflicting-outputs`
+  - Cela génère les fichiers `.freezed.dart` et `.g.dart` nécessaires
+  - Voir le fichier `GENERATION_REQUIRED.md` pour les détails
+
+**🔨 Intégration restante :**
+- [ ] Créer le widget de menu radial pour le bouton central
+  - [ ] Animation d'expansion/contraction
+  - [ ] Bouton "Statistiques" dans le menu
+  - [ ] Bouton "Reset" dans le menu
+  - [ ] Bouton "Timer" dans le menu (si implémenté)
+  - [ ] Bouton "Historique des rounds" dans le menu
+- [ ] Modifier `_CenterDivider` dans `play_screen.dart` pour utiliser le menu radial
+- [ ] Ajouter la navigation vers `StatisticsScreen` depuis le menu radial
+- [ ] Tester la sauvegarde et l'affichage des statistiques
+
+**📊 Fonctionnalités des statistiques :**
+- Compteur de parties jouées/terminées/abandonnées
+- Temps total de jeu et durée moyenne par partie
+- Parties la plus longue/courte
+- Score moyen et score le plus élevé
+- Nombre maximum de rounds dans une partie
+- Victoires par joueur avec pourcentage de winrate
+- Historique détaillé de chaque partie avec rounds
+- Suppression individuelle ou globale des statistiques
+
 ### 1. Auto-save avec Hive
 - [ ] Créer adaptateur Hive pour GameState
 - [ ] Sauvegarder automatiquement après chaque changement de score
