@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../../domain/player.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -106,39 +107,19 @@ class PlayerZone extends StatelessWidget {
           ),
           
           const SizedBox(height: AppConstants.defaultPadding),
-          
-          // Boutons de contrôle
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Bouton -
-              _ActionButton(
-                icon: Icons.remove,
-                color: Colors.red,
-                onPressed: () {
-                  HapticUtils.light();
-                  onDecrement(1);
-                },
-                onLongPress: () {
-                  HapticUtils.medium();
-                  onDecrement(5);
-                },
-              ),
 
-              // Bouton +
-              _ActionButton(
-                icon: Icons.add,
-                color: Colors.green,
-                onPressed: () {
-                  HapticUtils.light();
-                  onIncrement(1);
-                },
-                onLongPress: () {
-                  HapticUtils.medium();
-                  onIncrement(5);
-                },
-              ),
-            ],
+          // Roulette de sélection du score
+          _ScoreWheel(
+            currentScore: score,
+            playerColor: player.color,
+            onScoreChanged: (newScore) {
+              final difference = newScore - score;
+              if (difference > 0) {
+                onIncrement(difference);
+              } else if (difference < 0) {
+                onDecrement(-difference);
+              }
+            },
           ),
         ],
       ),
@@ -159,36 +140,87 @@ class PlayerZone extends StatelessWidget {
   }
 }
 
-/// Bouton d'action (+ ou -)
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.icon,
-    required this.color,
-    required this.onPressed,
-    this.onLongPress,
+/// Roulette pour sélectionner le score de 0 à 20
+class _ScoreWheel extends StatefulWidget {
+  const _ScoreWheel({
+    required this.currentScore,
+    required this.playerColor,
+    required this.onScoreChanged,
   });
 
-  final IconData icon;
-  final Color color;
-  final VoidCallback onPressed;
-  final VoidCallback? onLongPress;
+  final int currentScore;
+  final Color playerColor;
+  final ValueChanged<int> onScoreChanged;
+
+  @override
+  State<_ScoreWheel> createState() => _ScoreWheelState();
+}
+
+class _ScoreWheelState extends State<_ScoreWheel> {
+  late FixedExtentScrollController _controller;
+  int _selectedScore = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedScore = widget.currentScore.clamp(0, AppConstants.winningScore);
+    _controller = FixedExtentScrollController(
+      initialItem: _selectedScore,
+    );
+  }
+
+  @override
+  void didUpdateWidget(_ScoreWheel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Synchroniser si le score a changé depuis l'extérieur
+    if (widget.currentScore != _selectedScore) {
+      _selectedScore = widget.currentScore.clamp(0, AppConstants.winningScore);
+      if (_controller.hasClients) {
+        _controller.jumpToItem(_selectedScore);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: AppConstants.buttonSize,
-      height: AppConstants.buttonSize,
-      child: Material(
-        color: color,
-        borderRadius: BorderRadius.circular(AppConstants.buttonSize / 2),
-        child: InkWell(
-          onTap: onPressed,
-          onLongPress: onLongPress,
-          borderRadius: BorderRadius.circular(AppConstants.buttonSize / 2),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 32,
+    return Container(
+      height: 150,
+      decoration: BoxDecoration(
+        color: widget.playerColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: widget.playerColor.withOpacity(0.3),
+          width: 2,
+        ),
+      ),
+      child: CupertinoPicker(
+        scrollController: _controller,
+        itemExtent: 50,
+        diameterRatio: 1.5,
+        useMagnifier: true,
+        magnification: 1.2,
+        onSelectedItemChanged: (index) {
+          HapticUtils.light();
+          _selectedScore = index;
+          widget.onScoreChanged(index);
+        },
+        children: List.generate(
+          AppConstants.winningScore + 1,
+          (index) => Center(
+            child: Text(
+              index.toString(),
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: widget.playerColor,
+              ),
+            ),
           ),
         ),
       ),
