@@ -12,6 +12,7 @@ class PlayerZone extends StatelessWidget {
     required this.isRotated,
     required this.onIncrement,
     required this.onDecrement,
+    this.onNameTap,
   });
 
   final Player player;
@@ -19,6 +20,7 @@ class PlayerZone extends StatelessWidget {
   final bool isRotated;
   final ValueChanged<int> onIncrement;
   final ValueChanged<int> onDecrement;
+  final VoidCallback? onNameTap;
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +38,50 @@ class PlayerZone extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Nom du joueur
-          Text(
-            player.name,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: player.color,
-                  fontWeight: FontWeight.bold,
-                ),
+          // Nom du joueur (cliquable)
+          GestureDetector(
+            onTap: onNameTap != null
+                ? () {
+                    HapticUtils.light();
+                    onNameTap!();
+                  }
+                : null,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              decoration: onNameTap != null
+                  ? BoxDecoration(
+                      color: player.color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: player.color.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    )
+                  : null,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    player.name,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: player.color,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  if (onNameTap != null) ...[
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.edit,
+                      size: 18,
+                      color: player.color.withOpacity(0.7),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
           
           const SizedBox(height: AppConstants.defaultPadding),
