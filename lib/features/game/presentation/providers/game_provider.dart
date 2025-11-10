@@ -109,4 +109,20 @@ class Game extends _$Game {
   void resetGame() {
     state = null;
   }
+
+  /// Change le nom du joueur 1
+  void changePlayer1Name(String newName) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player1.copyWith(name: newName);
+    state = state!.copyWith(player1: updatedPlayer);
+  }
+
+  /// Change le nom du joueur 2
+  void changePlayer2Name(String newName) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player2.copyWith(name: newName);
+    state = state!.copyWith(player2: updatedPlayer);
+  }
 }
