@@ -5,6 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'core/models/accessibility_preferences.dart';
 import 'core/providers/accessibility_provider.dart';
 import 'features/game/presentation/screens/play_screen.dart';
+import 'features/game/data/player_history_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,8 +19,9 @@ void main() async {
   }
 
   runApp(
-    const ProviderScope(
-      child: LorcanaScoreKeeperApp(),
+    UncontrolledProviderScope(
+      container: container,
+      child: const LorcanaScoreKeeperApp(),
     ),
   );
 }

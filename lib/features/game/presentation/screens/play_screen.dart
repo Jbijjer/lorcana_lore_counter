@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/player_zone.dart';
+import '../widgets/player_name_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -90,6 +91,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
               onDecrement: (amount) {
                 ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
               },
+              onNameTap: () => _showPlayerNameDialog(
+                currentName: gameState.player1.name,
+                playerColor: gameState.player1.color,
+                isPlayer1: true,
+              ),
             ),
 
             // Ligne centrale avec logo
@@ -119,6 +125,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                   onDecrement: (amount) {
                     ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
                   },
+                  onNameTap: () => _showPlayerNameDialog(
+                    currentName: gameState.player2.name,
+                    playerColor: gameState.player2.color,
+                    isPlayer1: false,
+                  ),
                 ),
               ],
             ),
@@ -133,7 +144,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     if (gameState == null || !gameState.isFinished) return;
 
     HapticUtils.success();
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -155,6 +166,28 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _showPlayerNameDialog({
+    required String currentName,
+    required Color playerColor,
+    required bool isPlayer1,
+  }) async {
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) => PlayerNameDialog(
+        currentName: currentName,
+        playerColor: playerColor,
+      ),
+    );
+
+    if (newName != null && newName.isNotEmpty && mounted) {
+      if (isPlayer1) {
+        ref.read(gameProvider.notifier).changePlayer1Name(newName);
+      } else {
+        ref.read(gameProvider.notifier).changePlayer2Name(newName);
+      }
+    }
   }
 }
 
