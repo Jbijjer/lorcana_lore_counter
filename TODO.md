@@ -105,10 +105,16 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Export en CSV/JSON
 
 ### 13. Animations et polish
-- [ ] Animation sur changement de score
-- [ ] Particules de victoire
+- [ ] Animation sur changement de score (scale, bounce)
+- [ ] Particules de victoire (confetti, étoiles)
 - [ ] Transitions de page fluides
 - [ ] Animations de gradient
+- [ ] Effets visuels amusants (Lottie/Rive pour animations vectorielles)
+- [ ] Animation de célébration à 20 points (feux d'artifice, particules)
+- [ ] Feedback visuel sur les interactions (ripple effects, micro-animations)
+- [ ] Animations de transition entre les scores (counter animation)
+- [ ] Shake animation quand le score descend
+- [ ] Glow effect autour du bouton central
 
 ### 14. Mode nuit/jour
 - [ ] Toggle thème clair/sombre manuel
