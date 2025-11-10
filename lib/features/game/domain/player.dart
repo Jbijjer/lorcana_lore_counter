@@ -11,6 +11,8 @@ class Player with _$Player {
     required String id,
     required String name,
     @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color color,
+    @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorStart,
+    @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorEnd,
     @Default(0) int gamesPlayed,
     @Default(0) int gamesWon,
   }) = _Player;
@@ -21,11 +23,15 @@ class Player with _$Player {
   factory Player.create({
     required String name,
     required Color color,
+    Color? backgroundColorStart,
+    Color? backgroundColorEnd,
   }) {
     return Player(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
       color: color,
+      backgroundColorStart: backgroundColorStart ?? color,
+      backgroundColorEnd: backgroundColorEnd ?? color,
     );
   }
 }

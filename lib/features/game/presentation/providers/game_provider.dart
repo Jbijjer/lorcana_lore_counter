@@ -141,4 +141,26 @@ class Game extends _$Game {
     final updatedPlayer = state!.player2.copyWith(name: newName);
     state = state!.copyWith(player2: updatedPlayer);
   }
+
+  /// Change les couleurs de fond du joueur 1
+  void changePlayer1BackgroundColors(Color start, Color end) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player1.copyWith(
+      backgroundColorStart: start,
+      backgroundColorEnd: end,
+    );
+    state = state!.copyWith(player1: updatedPlayer);
+  }
+
+  /// Change les couleurs de fond du joueur 2
+  void changePlayer2BackgroundColors(Color start, Color end) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player2.copyWith(
+      backgroundColorStart: start,
+      backgroundColorEnd: end,
+    );
+    state = state!.copyWith(player2: updatedPlayer);
+  }
 }
