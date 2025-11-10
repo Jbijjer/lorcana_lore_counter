@@ -92,21 +92,39 @@ class PlayerZone extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: AppConstants.defaultPadding * 2),
-                  // Affichage du score
+                  // Affichage du score avec cadre Lore
                   Expanded(
-                    child: Center(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          score.toString(),
-                          style: TextStyle(
-                            fontSize: 120,
-                            fontWeight: FontWeight.w900,
-                            color: player.color,
-                            letterSpacing: -4,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Cadre Lore en arrière-plan
+                        Transform.rotate(
+                          angle: isRotated ? 3.14159 : 0, // 180 degrés en radians pour joueur 2
+                          child: Image.asset(
+                            'assets/images/lore_frame.png',
+                            fit: BoxFit.contain,
+                            color: player.color.withOpacity(0.3),
                           ),
                         ),
-                      ),
+                        // Score au centre
+                        Center(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                              child: Text(
+                                score.toString(),
+                                style: TextStyle(
+                                  fontSize: 120,
+                                  fontWeight: FontWeight.w900,
+                                  color: player.color,
+                                  letterSpacing: -4,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: AppConstants.defaultPadding * 2),
