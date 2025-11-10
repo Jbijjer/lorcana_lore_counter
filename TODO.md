@@ -113,6 +113,15 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Anglais
 - [ ] Utiliser package intl ou easy_localization
 
+## ♿ Accessibilité
+
+### 16. Mode à contraste élevé
+- [ ] Implémenter un mode à contraste élevé pour l'application
+- [ ] Assurer une lisibilité optimale pour les utilisateurs malvoyants
+- [ ] Respecter les normes WCAG pour les ratios de contraste
+- [ ] Ajouter un toggle dans les paramètres
+- [ ] Persister la préférence utilisateur
+
 ## 🚀 Nice to Have
 
 - [ ] Mode tournoi (bracket)
