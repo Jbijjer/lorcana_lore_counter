@@ -54,6 +54,22 @@ class Game extends _$Game {
     incrementPlayer2Score(-amount);
   }
 
+  /// Définit directement le score du joueur 1
+  void setPlayer1Score(int newScore) {
+    if (state == null) return;
+
+    final clampedScore = newScore.clamp(AppConstants.minScore, AppConstants.maxScore);
+    state = state!.copyWith(player1Score: clampedScore);
+  }
+
+  /// Définit directement le score du joueur 2
+  void setPlayer2Score(int newScore) {
+    if (state == null) return;
+
+    final clampedScore = newScore.clamp(AppConstants.minScore, AppConstants.maxScore);
+    state = state!.copyWith(player2Score: clampedScore);
+  }
+
   /// Passe au round suivant
   void nextRound() {
     if (state == null) return;
