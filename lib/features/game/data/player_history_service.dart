@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/player_name.dart';
@@ -54,6 +55,60 @@ class PlayerHistoryService {
       final newPlayerName = PlayerName(
         name: trimmedName,
         lastUsed: DateTime.now(),
+      );
+      await _box!.add(newPlayerName);
+    }
+  }
+
+  /// Récupère les couleurs de fond d'un joueur (retourne null si non définies)
+  (Color?, Color?) getPlayerColors(String name) {
+    if (_box == null) return (null, null);
+
+    final playerName = _box!.values.firstWhere(
+      (p) => p.name.toLowerCase() == name.toLowerCase(),
+      orElse: () => PlayerName(name: '', lastUsed: DateTime.now()),
+    );
+
+    if (playerName.name.isEmpty) return (null, null);
+
+    final startColor = playerName.backgroundColorStartValue != null
+        ? Color(playerName.backgroundColorStartValue!)
+        : null;
+    final endColor = playerName.backgroundColorEndValue != null
+        ? Color(playerName.backgroundColorEndValue!)
+        : null;
+
+    return (startColor, endColor);
+  }
+
+  /// Met à jour les couleurs de fond d'un joueur
+  Future<void> updatePlayerColors(String name, Color startColor, Color endColor) async {
+    if (_box == null || name.trim().isEmpty) return;
+
+    final trimmedName = name.trim();
+
+    // Vérifier si le nom existe déjà
+    final existingIndex = _box!.values.toList().indexWhere(
+      (p) => p.name.toLowerCase() == trimmedName.toLowerCase(),
+    );
+
+    if (existingIndex != -1) {
+      // Mettre à jour les couleurs du joueur existant
+      final existing = _box!.getAt(existingIndex);
+      if (existing != null) {
+        final updated = existing.copyWith(
+          backgroundColorStartValue: startColor.value,
+          backgroundColorEndValue: endColor.value,
+        );
+        await _box!.putAt(existingIndex, updated);
+      }
+    } else {
+      // Créer un nouveau joueur avec les couleurs
+      final newPlayerName = PlayerName(
+        name: trimmedName,
+        lastUsed: DateTime.now(),
+        backgroundColorStartValue: startColor.value,
+        backgroundColorEndValue: endColor.value,
       );
       await _box!.add(newPlayerName);
     }

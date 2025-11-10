@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -20,16 +21,122 @@ class ColorPickerDialog extends StatefulWidget {
 }
 
 class _ColorPickerDialogState extends State<ColorPickerDialog> {
-  late Color _selectedColorStart;
-  late Color _selectedColorEnd;
-  bool _useGradient = false;
+  List<Color> _selectedColors = [];
 
   @override
   void initState() {
     super.initState();
-    _selectedColorStart = widget.currentColorStart;
-    _selectedColorEnd = widget.currentColorEnd;
-    _useGradient = widget.currentColorStart != widget.currentColorEnd;
+    // Initialiser avec les couleurs actuelles
+    if (widget.currentColorStart == widget.currentColorEnd) {
+      // Une seule couleur
+      _selectedColors = [widget.currentColorStart];
+    } else {
+      // Deux couleurs (dégradé)
+      _selectedColors = [widget.currentColorStart, widget.currentColorEnd];
+    }
+  }
+
+  void _toggleColor(Color color) {
+    setState(() {
+      if (_selectedColors.contains(color)) {
+        // Décocher la couleur
+        _selectedColors.remove(color);
+      } else {
+        // Cocher la couleur
+        if (_selectedColors.length >= 2) {
+          // Décocher la première couleur pour respecter la limite de 2
+          _selectedColors.removeAt(0);
+        }
+        _selectedColors.add(color);
+      }
+    });
+  }
+
+  Widget _buildPreview() {
+    if (_selectedColors.isEmpty) {
+      // Aucune couleur sélectionnée - montrer un aperçu aléatoire
+      return Container(
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: widget.playerColor.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.shuffle,
+                size: 32,
+                color: widget.playerColor,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Couleur aléatoire',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: widget.playerColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else if (_selectedColors.length == 1) {
+      // Une seule couleur - fond uni
+      return Container(
+        height: 100,
+        decoration: BoxDecoration(
+          color: _selectedColors[0].withOpacity(0.6),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: widget.playerColor.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            'Fond uni',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: widget.playerColor,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
+      );
+    } else {
+      // Deux couleurs - dégradé
+      return Container(
+        height: 100,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              _selectedColors[0].withOpacity(0.6),
+              _selectedColors[1].withOpacity(0.4),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: widget.playerColor.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            'Dégradé',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: widget.playerColor,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -72,96 +179,94 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
 
             const SizedBox(height: 16),
 
-            // Aperçu du dégradé
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    _selectedColorStart.withOpacity(0.6),
-                    _selectedColorEnd.withOpacity(0.4),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: widget.playerColor.withOpacity(0.3),
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Aperçu',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: widget.playerColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
-            ),
+            // Aperçu
+            _buildPreview(),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // Option dégradé
-            SwitchListTile(
-              title: const Text('Utiliser un dégradé'),
-              value: _useGradient,
-              activeColor: widget.playerColor,
-              onChanged: (value) {
-                HapticUtils.light();
-                setState(() {
-                  _useGradient = value;
-                  if (!value) {
-                    _selectedColorEnd = _selectedColorStart;
-                  }
-                });
-              },
+            // Info sur la sélection
+            Text(
+              'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                    fontStyle: FontStyle.italic,
+                  ),
+              textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 16),
 
-            // Sélection couleur 1
-            Text(
-              _useGradient ? 'Première couleur' : 'Couleur',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            _buildColorGrid(
-              selectedColor: _selectedColorStart,
-              onColorSelected: (color) {
-                HapticUtils.light();
-                setState(() {
-                  _selectedColorStart = color;
-                  if (!_useGradient) {
-                    _selectedColorEnd = color;
-                  }
-                });
-              },
-            ),
+            // Grille de couleurs avec checkboxes
+            Flexible(
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 2.5,
+                ),
+                itemCount: AppTheme.lorcanaColors.length,
+                itemBuilder: (context, index) {
+                  final color = AppTheme.lorcanaColors[index];
+                  final colorName = AppTheme.lorcanaColorNames[index];
+                  final isSelected = _selectedColors.contains(color);
 
-            // Sélection couleur 2 (si dégradé)
-            if (_useGradient) ...[
-              const SizedBox(height: 20),
-              Text(
-                'Deuxième couleur',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  return InkWell(
+                    onTap: () {
+                      HapticUtils.light();
+                      _toggleColor(color);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected ? widget.playerColor : color.withOpacity(0.5),
+                          width: isSelected ? 3 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: isSelected,
+                            onChanged: (_) {
+                              HapticUtils.light();
+                              _toggleColor(color);
+                            },
+                            activeColor: widget.playerColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              colorName,
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-              ),
-              const SizedBox(height: 8),
-              _buildColorGrid(
-                selectedColor: _selectedColorEnd,
-                onColorSelected: (color) {
-                  HapticUtils.light();
-                  setState(() {
-                    _selectedColorEnd = color;
-                  });
+                  );
                 },
               ),
-            ],
+            ),
 
             const SizedBox(height: 20),
 
@@ -180,9 +285,30 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                 FilledButton(
                   onPressed: () {
                     HapticUtils.medium();
+
+                    // Gérer les cas
+                    Color startColor;
+                    Color endColor;
+
+                    if (_selectedColors.isEmpty) {
+                      // Couleur aléatoire
+                      final random = Random();
+                      final randomColor = AppTheme.lorcanaColors[random.nextInt(AppTheme.lorcanaColors.length)];
+                      startColor = randomColor;
+                      endColor = randomColor;
+                    } else if (_selectedColors.length == 1) {
+                      // Fond uni
+                      startColor = _selectedColors[0];
+                      endColor = _selectedColors[0];
+                    } else {
+                      // Dégradé
+                      startColor = _selectedColors[0];
+                      endColor = _selectedColors[1];
+                    }
+
                     Navigator.of(context).pop({
-                      'start': _selectedColorStart,
-                      'end': _selectedColorEnd,
+                      'start': startColor,
+                      'end': endColor,
                     });
                   },
                   style: FilledButton.styleFrom(
@@ -195,71 +321,6 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildColorGrid({
-    required Color selectedColor,
-    required ValueChanged<Color> onColorSelected,
-  }) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.5,
-      ),
-      itemCount: AppTheme.lorcanaColors.length,
-      itemBuilder: (context, index) {
-        final color = AppTheme.lorcanaColors[index];
-        final colorName = AppTheme.lorcanaColorNames[index];
-        final isSelected = color.value == selectedColor.value;
-
-        return InkWell(
-          onTap: () => onColorSelected(color),
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isSelected ? widget.playerColor : color,
-                width: isSelected ? 3 : 1,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isSelected)
-                  Icon(
-                    Icons.check_circle,
-                    color: widget.playerColor,
-                    size: 24,
-                  )
-                else
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                const SizedBox(height: 4),
-                Text(
-                  colorName,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
