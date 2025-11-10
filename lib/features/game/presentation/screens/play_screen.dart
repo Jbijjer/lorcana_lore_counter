@@ -26,9 +26,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    
-    // Démarrer une partie de test
-    _startTestGame();
+
+    // Démarrer une partie de test après le build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startTestGame();
+    });
   }
 
   void _startTestGame() {
