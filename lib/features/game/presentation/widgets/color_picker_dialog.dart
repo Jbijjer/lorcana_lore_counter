@@ -196,21 +196,20 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
 
             const SizedBox(height: 16),
 
-            // Grille de couleurs avec checkboxes
+            // Grille de couleurs avec rectangles
             Flexible(
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 2.5,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.2,
                 ),
                 itemCount: AppTheme.lorcanaColors.length,
                 itemBuilder: (context, index) {
                   final color = AppTheme.lorcanaColors[index];
-                  final colorName = AppTheme.lorcanaColorNames[index];
                   final isSelected = _selectedColors.contains(color);
 
                   return InkWell(
@@ -220,47 +219,22 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.3),
+                        color: color,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? widget.playerColor : color.withOpacity(0.5),
-                          width: isSelected ? 3 : 1,
+                          color: isSelected ? Colors.white : color.withOpacity(0.3),
+                          width: isSelected ? 4 : 2,
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Checkbox(
-                            value: isSelected,
-                            onChanged: (_) {
-                              HapticUtils.light();
-                              _toggleColor(color);
-                            },
-                            activeColor: widget.playerColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              colorName,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                            ),
-                          ),
-                        ],
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.5),
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                )
+                              ]
+                            : null,
                       ),
                     ),
                   );
