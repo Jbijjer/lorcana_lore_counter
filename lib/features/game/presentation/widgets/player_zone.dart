@@ -74,41 +74,7 @@ class PlayerZone extends StatelessWidget {
             ),
           ),
           
-          const SizedBox(height: AppConstants.defaultPadding),
-          
-          // Score
-          GestureDetector(
-            onLongPress: () {
-              HapticUtils.medium();
-              _showScoreDialog(context);
-            },
-            child: Text(
-              score.toString(),
-              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontSize: 120,
-                    fontWeight: FontWeight.w900,
-                    color: player.color,
-                    letterSpacing: -4,
-                  ),
-            ),
-          ),
-          
-          const SizedBox(height: AppConstants.defaultPadding),
-          
-          // Barre de progression vers 20
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.largePadding,
-            ),
-            child: LinearProgressIndicator(
-              value: score / AppConstants.winningScore,
-              backgroundColor: Colors.grey.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(player.color),
-              minHeight: 8,
-            ),
-          ),
-          
-          const SizedBox(height: AppConstants.defaultPadding),
+          const SizedBox(height: AppConstants.defaultPadding * 2),
 
           // Roulette de sélection du score
           _ScoreWheel(
@@ -128,10 +94,6 @@ class PlayerZone extends StatelessWidget {
             )
           : content,
     );
-  }
-
-  void _showScoreDialog(BuildContext context) {
-    // TODO: Implémenter le dialogue de modification manuelle du score
   }
 }
 
@@ -185,21 +147,21 @@ class _ScoreWheelState extends State<_ScoreWheel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150,
+      height: 250,
       decoration: BoxDecoration(
         color: widget.playerColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: widget.playerColor.withOpacity(0.3),
-          width: 2,
+          width: 3,
         ),
       ),
       child: CupertinoPicker(
         scrollController: _controller,
-        itemExtent: 50,
-        diameterRatio: 1.5,
+        itemExtent: 80,
+        diameterRatio: 1.2,
         useMagnifier: true,
-        magnification: 1.2,
+        magnification: 1.3,
         onSelectedItemChanged: (index) {
           HapticUtils.light();
           _selectedScore = index;
@@ -211,9 +173,10 @@ class _ScoreWheelState extends State<_ScoreWheel> {
             child: Text(
               index.toString(),
               style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
+                fontSize: 64,
+                fontWeight: FontWeight.w900,
                 color: widget.playerColor,
+                letterSpacing: -2,
               ),
             ),
           ),
