@@ -94,10 +94,6 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
               onDecrement: (amount) {
                 ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
               },
-              onScoreChanged: (newScore) {
-                ref.read(gameProvider.notifier).setPlayer1Score(newScore);
-                _checkWinner();
-              },
               onNameTap: () => _showPlayerNameDialog(
                 currentName: gameState.player1.name,
                 playerColor: gameState.player1.color,
@@ -131,10 +127,6 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                   },
                   onDecrement: (amount) {
                     ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
-                  },
-                  onScoreChanged: (newScore) {
-                    ref.read(gameProvider.notifier).setPlayer2Score(newScore);
-                    _checkWinner();
                   },
                   onNameTap: () => _showPlayerNameDialog(
                     currentName: gameState.player2.name,
