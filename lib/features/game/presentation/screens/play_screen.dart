@@ -26,19 +26,21 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    
-    // Démarrer une partie de test
-    _startTestGame();
+
+    // Démarrer une partie de test après le build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startTestGame();
+    });
   }
 
   void _startTestGame() {
     final player1 = Player.create(
-      name: 'Joueur 1',
+      name: 'Adversaire',
       color: AppTheme.amberColor,
     );
-    
+
     final player2 = Player.create(
-      name: 'Joueur 2',
+      name: 'Joueur',
       color: AppTheme.sapphireColor,
     );
     
@@ -92,10 +94,6 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
               onDecrement: (amount) {
                 ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
               },
-              onScoreChanged: (newScore) {
-                ref.read(gameProvider.notifier).setPlayer1Score(newScore);
-                _checkWinner();
-              },
               onNameTap: () => _showPlayerNameDialog(
                 currentName: gameState.player1.name,
                 playerColor: gameState.player1.color,
@@ -129,10 +127,6 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                   },
                   onDecrement: (amount) {
                     ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
-                  },
-                  onScoreChanged: (newScore) {
-                    ref.read(gameProvider.notifier).setPlayer2Score(newScore);
-                    _checkWinner();
                   },
                   onNameTap: () => _showPlayerNameDialog(
                     currentName: gameState.player2.name,

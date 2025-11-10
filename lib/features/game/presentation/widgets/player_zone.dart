@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import '../../domain/player.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -13,7 +12,6 @@ class PlayerZone extends StatelessWidget {
     required this.isRotated,
     required this.onIncrement,
     required this.onDecrement,
-    required this.onScoreChanged,
     this.onNameTap,
   });
 
@@ -22,7 +20,6 @@ class PlayerZone extends StatelessWidget {
   final bool isRotated;
   final ValueChanged<int> onIncrement;
   final ValueChanged<int> onDecrement;
-  final ValueChanged<int> onScoreChanged;
   final VoidCallback? onNameTap;
 
   @override
@@ -42,75 +39,103 @@ class PlayerZone extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Nom du joueur (cliquable)
-          GestureDetector(
-            onTap: onNameTap != null
-                ? () {
-                    HapticUtils.light();
-                    onNameTap!();
-                  }
-                : null,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              decoration: onNameTap != null
-                  ? BoxDecoration(
-                      color: player.color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: player.color.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    )
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+            child: GestureDetector(
+              onTap: onNameTap != null
+                  ? () {
+                      HapticUtils.light();
+                      onNameTap!();
+                    }
                   : null,
-              child: Text(
-                player.name,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: player.color,
-                      fontWeight: FontWeight.bold,
-                    ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: onNameTap != null
+                    ? BoxDecoration(
+                        color: player.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: player.color.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      )
+                    : null,
+                child: Text(
+                  player.name,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: player.color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
             ),
           ),
-          
-          const SizedBox(height: AppConstants.defaultPadding * 2),
 
-          // Roulette de sélection du score avec contrôles +/-
-          SizedBox(
-            height: 250,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _ScoreActionButton(
-                  icon: Icons.remove,
-                  playerColor: player.color,
-                  semanticsLabel: 'Diminuer le score',
-                  onTap: () {
-                    HapticUtils.light();
-                    onDecrement(1);
-                  },
-                ),
-                const SizedBox(width: AppConstants.defaultPadding),
-                Expanded(
-                  child: _ScoreWheel(
-                    currentScore: score,
+          // Affichage du score avec contrôles +/-
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _ScoreActionButton(
+                    icon: Icons.remove,
                     playerColor: player.color,
-                    onScoreChanged: onScoreChanged,
+                    semanticsLabel: 'Diminuer le score',
+                    onTap: () {
+                      HapticUtils.light();
+                      onDecrement(1);
+                    },
                   ),
-                ),
-                const SizedBox(width: AppConstants.defaultPadding),
-                _ScoreActionButton(
-                  icon: Icons.add,
-                  playerColor: player.color,
-                  semanticsLabel: 'Augmenter le score',
-                  onTap: () {
-                    HapticUtils.light();
-                    onIncrement(1);
-                  },
-                ),
-              ],
+                  const SizedBox(width: AppConstants.defaultPadding * 2),
+                  // Affichage du score avec cadre Lore
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Cadre Lore en arrière-plan (rotation gérée par RotatedBox parent)
+                        Image.asset(
+                          'assets/images/lore_frame.png',
+                          fit: BoxFit.contain,
+                          color: player.color.withOpacity(0.3),
+                        ),
+                        // Score au centre
+                        Center(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                              child: Text(
+                                score.toString(),
+                                style: TextStyle(
+                                  fontSize: 120,
+                                  fontWeight: FontWeight.w900,
+                                  color: player.color,
+                                  letterSpacing: -4,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: AppConstants.defaultPadding * 2),
+                  _ScoreActionButton(
+                    icon: Icons.add,
+                    playerColor: player.color,
+                    semanticsLabel: 'Augmenter le score',
+                    onTap: () {
+                      HapticUtils.light();
+                      onIncrement(1);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -128,22 +153,7 @@ class PlayerZone extends StatelessWidget {
   }
 }
 
-/// Roulette pour sélectionner le score de 0 à 20
-class _ScoreWheel extends StatefulWidget {
-  const _ScoreWheel({
-    required this.currentScore,
-    required this.playerColor,
-    required this.onScoreChanged,
-  });
-
-  final int currentScore;
-  final Color playerColor;
-  final ValueChanged<int> onScoreChanged;
-
-  @override
-  State<_ScoreWheel> createState() => _ScoreWheelState();
-}
-
+/// Bouton d'action pour augmenter ou diminuer le score
 class _ScoreActionButton extends StatelessWidget {
   const _ScoreActionButton({
     required this.icon,
@@ -179,79 +189,6 @@ class _ScoreActionButton extends StatelessWidget {
             icon,
             color: playerColor,
             size: 32,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScoreWheelState extends State<_ScoreWheel> {
-  late FixedExtentScrollController _controller;
-  int _selectedScore = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedScore = widget.currentScore.clamp(0, AppConstants.winningScore);
-    _controller = FixedExtentScrollController(
-      initialItem: _selectedScore,
-    );
-  }
-
-  @override
-  void didUpdateWidget(_ScoreWheel oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Synchroniser si le score a changé depuis l'extérieur
-    if (widget.currentScore != _selectedScore) {
-      _selectedScore = widget.currentScore.clamp(0, AppConstants.winningScore);
-      if (_controller.hasClients) {
-        _controller.jumpToItem(_selectedScore);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 250,
-      decoration: BoxDecoration(
-        color: widget.playerColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: widget.playerColor.withOpacity(0.3),
-          width: 3,
-        ),
-      ),
-      child: CupertinoPicker(
-        scrollController: _controller,
-        itemExtent: 80,
-        diameterRatio: 1.2,
-        useMagnifier: true,
-        magnification: 1.3,
-        onSelectedItemChanged: (index) {
-          HapticUtils.light();
-          _selectedScore = index;
-          widget.onScoreChanged(index);
-        },
-        children: List.generate(
-          AppConstants.winningScore + 1,
-          (index) => Center(
-            child: Text(
-              index.toString(),
-              style: TextStyle(
-                fontSize: 64,
-                fontWeight: FontWeight.w900,
-                color: widget.playerColor,
-                letterSpacing: -2,
-              ),
-            ),
           ),
         ),
       ),
