@@ -97,14 +97,11 @@ class PlayerZone extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // Cadre Lore en arrière-plan
-                        Transform.rotate(
-                          angle: isRotated ? 0 : 3.14159, // 180 degrés pour joueur 2 (non rotaté)
-                          child: Image.asset(
-                            'assets/images/lore_frame.png',
-                            fit: BoxFit.contain,
-                            color: player.color.withOpacity(0.3),
-                          ),
+                        // Cadre Lore en arrière-plan (rotation gérée par RotatedBox parent)
+                        Image.asset(
+                          'assets/images/lore_frame.png',
+                          fit: BoxFit.contain,
+                          color: player.color.withOpacity(0.3),
                         ),
                         // Score au centre
                         Center(
