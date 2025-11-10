@@ -84,9 +84,22 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Informations: Round X, +Y points, timestamp
 - [ ] Bouton fermer
 
-### 10. Menu radial du bouton central
-- [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
-- [ ] Animation d'expansion/contraction du menu radial
+### 10. Bouton central dynamique et interactif
+- [ ] Animation flip (pièce de monnaie) lors d'événements clés
+- [ ] Transformation du bouton selon l'état de la partie :
+  - [ ] État normal : logo Lorcana (menu radial)
+  - [ ] État victoire : "Win!" (quand un joueur atteint 20 points)
+  - [ ] État égalité : "Time!" (quand le compteur Time atteint 0)
+- [ ] Bouton "Win!" pour confirmer la victoire
+  - [ ] S'affiche avec animation flip quand un joueur atteint 20
+  - [ ] Retour à l'état normal si le score descend sous 20
+  - [ ] Clic confirme la victoire et affiche le dialog
+- [ ] Bouton "Time!" pour confirmer l'égalité
+  - [ ] S'affiche avec animation flip quand le compteur atteint 0
+  - [ ] Clic confirme l'égalité et termine la partie
+- [ ] Menu radial du bouton central (état normal)
+  - [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
+  - [ ] Animation d'expansion/contraction du menu radial
 - [ ] Bouton "Time" : compteur manuel de tours
   - [ ] Affichage d'un compteur à droite du bouton central
   - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
