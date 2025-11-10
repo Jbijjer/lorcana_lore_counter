@@ -39,92 +39,98 @@ class PlayerZone extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Nom du joueur (cliquable)
-          GestureDetector(
-            onTap: onNameTap != null
-                ? () {
-                    HapticUtils.light();
-                    onNameTap!();
-                  }
-                : null,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              decoration: onNameTap != null
-                  ? BoxDecoration(
-                      color: player.color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: player.color.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    )
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+            child: GestureDetector(
+              onTap: onNameTap != null
+                  ? () {
+                      HapticUtils.light();
+                      onNameTap!();
+                    }
                   : null,
-              child: Text(
-                player.name,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: player.color,
-                      fontWeight: FontWeight.bold,
-                    ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: onNameTap != null
+                    ? BoxDecoration(
+                        color: player.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: player.color.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      )
+                    : null,
+                child: Text(
+                  player.name,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: player.color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
             ),
           ),
-          
-          const SizedBox(height: AppConstants.defaultPadding * 2),
 
           // Affichage du score avec contrôles +/-
-          SizedBox(
-            height: 250,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _ScoreActionButton(
-                  icon: Icons.remove,
-                  playerColor: player.color,
-                  semanticsLabel: 'Diminuer le score',
-                  onTap: () {
-                    HapticUtils.light();
-                    onDecrement(1);
-                  },
-                ),
-                const SizedBox(width: AppConstants.defaultPadding * 2),
-                // Affichage du score
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: player.color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: player.color.withOpacity(0.3),
-                        width: 3,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _ScoreActionButton(
+                    icon: Icons.remove,
+                    playerColor: player.color,
+                    semanticsLabel: 'Diminuer le score',
+                    onTap: () {
+                      HapticUtils.light();
+                      onDecrement(1);
+                    },
+                  ),
+                  const SizedBox(width: AppConstants.defaultPadding * 2),
+                  // Affichage du score
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: player.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: player.color.withOpacity(0.3),
+                          width: 3,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        score.toString(),
-                        style: TextStyle(
-                          fontSize: 120,
-                          fontWeight: FontWeight.w900,
-                          color: player.color,
-                          letterSpacing: -4,
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            score.toString(),
+                            style: TextStyle(
+                              fontSize: 120,
+                              fontWeight: FontWeight.w900,
+                              color: player.color,
+                              letterSpacing: -4,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: AppConstants.defaultPadding * 2),
-                _ScoreActionButton(
-                  icon: Icons.add,
-                  playerColor: player.color,
-                  semanticsLabel: 'Augmenter le score',
-                  onTap: () {
-                    HapticUtils.light();
-                    onIncrement(1);
-                  },
-                ),
-              ],
+                  const SizedBox(width: AppConstants.defaultPadding * 2),
+                  _ScoreActionButton(
+                    icon: Icons.add,
+                    playerColor: player.color,
+                    semanticsLabel: 'Augmenter le score',
+                    onTap: () {
+                      HapticUtils.light();
+                      onIncrement(1);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
