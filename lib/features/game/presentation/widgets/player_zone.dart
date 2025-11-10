@@ -61,25 +61,12 @@ class PlayerZone extends StatelessWidget {
                       ),
                     )
                   : null,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    player.name,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: player.color,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  if (onNameTap != null) ...[
-                    const SizedBox(width: 8),
-                    Icon(
-                      Icons.edit,
-                      size: 18,
-                      color: player.color.withOpacity(0.7),
+              child: Text(
+                player.name,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: player.color,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ],
               ),
             ),
           ),
