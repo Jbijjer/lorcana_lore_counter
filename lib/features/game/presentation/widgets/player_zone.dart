@@ -88,19 +88,7 @@ class PlayerZone extends StatelessWidget {
                   onDecrement(5);
                 },
               ),
-              
-              // Boutons d'incrémentation rapide
-              ...AppConstants.quickIncrements.map(
-                (value) => _QuickButton(
-                  value: value,
-                  color: player.color,
-                  onPressed: () {
-                    HapticUtils.light();
-                    onIncrement(value);
-                  },
-                ),
-              ),
-              
+
               // Bouton +
               _ActionButton(
                 icon: Icons.add,
@@ -172,41 +160,3 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-/// Bouton d'incrémentation rapide
-class _QuickButton extends StatelessWidget {
-  const _QuickButton({
-    required this.value,
-    required this.color,
-    required this.onPressed,
-  });
-
-  final int value;
-  final Color color;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: AppConstants.buttonSize,
-      height: AppConstants.buttonSize,
-      child: Material(
-        color: color,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
-          child: Center(
-            child: Text(
-              '+$value',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
