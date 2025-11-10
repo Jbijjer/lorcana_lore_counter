@@ -101,7 +101,10 @@ class PlayerZone extends StatelessWidget {
                       alignment: Alignment.center,
                       children: [
                         // Cadre Lore en arrière-plan (rotation gérée par RotatedBox parent)
-                        const _LoreFrame(strokeWidth: 6.0),
+                        Image.asset(
+                          'assets/images/lore_frame.png',
+                          fit: BoxFit.contain,
+                        ),
                         // Score au centre, légèrement descendu
                         Transform.translate(
                           offset: const Offset(0, 10),
@@ -155,62 +158,6 @@ class PlayerZone extends StatelessWidget {
             )
           : content,
     );
-  }
-}
-
-/// Widget qui dessine le cadre Lore en forme de losange
-class _LoreFrame extends StatelessWidget {
-  const _LoreFrame({this.strokeWidth = 8.0});
-
-  final double strokeWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _LoreFramePainter(strokeWidth: strokeWidth),
-      child: Container(),
-    );
-  }
-}
-
-/// Painter pour dessiner le cadre losange
-class _LoreFramePainter extends CustomPainter {
-  _LoreFramePainter({required this.strokeWidth});
-
-  final double strokeWidth;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.miter;
-
-    final path = Path();
-
-    // Dessiner le losange (diamant)
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-
-    // Pointe du haut
-    path.moveTo(centerX, 0);
-    // Pointe droite
-    path.lineTo(size.width, centerY);
-    // Pointe du bas
-    path.lineTo(centerX, size.height);
-    // Pointe gauche
-    path.lineTo(0, centerY);
-    // Fermer le chemin
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_LoreFramePainter oldDelegate) {
-    return oldDelegate.strokeWidth != strokeWidth;
   }
 }
 
