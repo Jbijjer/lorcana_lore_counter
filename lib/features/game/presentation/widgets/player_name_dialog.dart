@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import 'color_picker_dialog.dart';
 
 /// Dialogue pour sélectionner ou créer un nom de joueur
 class PlayerNameDialog extends ConsumerStatefulWidget {
@@ -9,10 +10,16 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
     super.key,
     required this.currentName,
     required this.playerColor,
+    required this.backgroundColorStart,
+    required this.backgroundColorEnd,
+    required this.onBackgroundColorsChanged,
   });
 
   final String currentName;
   final Color playerColor;
+  final Color backgroundColorStart;
+  final Color backgroundColorEnd;
+  final Function(Color start, Color end) onBackgroundColorsChanged;
 
   @override
   ConsumerState<PlayerNameDialog> createState() => _PlayerNameDialogState();
@@ -60,6 +67,15 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
+                ),
+                // Bouton pour le sélecteur de couleurs
+                IconButton(
+                  icon: Icon(
+                    Icons.brush,
+                    color: widget.playerColor,
+                  ),
+                  onPressed: () => _showColorPicker(context),
+                  tooltip: 'Couleur de fond',
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -236,5 +252,21 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name.trim());
     // Retourner le nom
     Navigator.of(context).pop(name.trim());
+  }
+
+  Future<void> _showColorPicker(BuildContext context) async {
+    HapticUtils.light();
+    final result = await showDialog<Map<String, Color>>(
+      context: context,
+      builder: (context) => ColorPickerDialog(
+        currentColorStart: widget.backgroundColorStart,
+        currentColorEnd: widget.backgroundColorEnd,
+        playerColor: widget.playerColor,
+      ),
+    );
+
+    if (result != null) {
+      widget.onBackgroundColorsChanged(result['start']!, result['end']!);
+    }
   }
 }
