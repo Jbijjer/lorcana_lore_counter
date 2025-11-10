@@ -18,6 +18,12 @@ void main() async {
     Hive.registerAdapter(AccessibilityPreferencesAdapter());
   }
 
+  // Créer le container de providers
+  final container = ProviderContainer();
+
+  // Initialiser le service d'historique des joueurs
+  await container.read(playerHistoryServiceProvider).init();
+
   runApp(
     UncontrolledProviderScope(
       container: container,
