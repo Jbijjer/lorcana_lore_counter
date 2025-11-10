@@ -84,7 +84,25 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Informations: Round X, +Y points, timestamp
 - [ ] Bouton fermer
 
-### 10. Écran de configuration pré-partie
+### 10. Menu radial du bouton central
+- [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
+- [ ] Animation d'expansion/contraction du menu radial
+- [ ] Bouton "Time" : compteur de partie
+  - [ ] Affichage d'un timer à droite du bouton central
+  - [ ] Compteur de 5 minutes à 0
+  - [ ] Alerte visuelle/sonore aux dernières secondes
+  - [ ] Fin de partie automatique à 0 (partie nulle)
+  - [ ] Option de pause/reprendre le timer
+- [ ] Bouton "Reset" : remise à zéro rapide
+  - [ ] Remet les scores à 0 pour les deux joueurs
+  - [ ] Dialog de confirmation optionnel
+  - [ ] Animation de transition
+- [ ] Autres boutons potentiels :
+  - [ ] Bouton historique des rounds
+  - [ ] Bouton paramètres rapides
+  - [ ] Bouton changement de couleurs
+
+### 11. Écran de configuration pré-partie
 - [ ] Sélection des noms de joueurs
 - [ ] Sélection des couleurs
 - [ ] Choix du mode (Best of X)
@@ -92,19 +110,19 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🎨 Basse Priorité
 
-### 11. Logo Lorcana SVG
+### 12. Logo Lorcana SVG
 - [ ] Remplacer Icons.auto_awesome par vrai logo
 - [ ] Trouver/créer SVG du logo Lorcana
 - [ ] Intégrer avec flutter_svg
 
-### 12. Statistiques avancées
+### 13. Statistiques avancées
 - [ ] Graphiques de progression
 - [ ] Winrate global par joueur
 - [ ] Temps moyen de partie
 - [ ] Scores moyens
 - [ ] Export en CSV/JSON
 
-### 13. Animations et polish
+### 14. Animations et polish
 - [ ] Animation sur changement de score (scale, bounce)
 - [ ] Particules de victoire (confetti, étoiles)
 - [ ] Transitions de page fluides
@@ -116,19 +134,19 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Shake animation quand le score descend
 - [ ] Glow effect autour du bouton central
 
-### 14. Mode nuit/jour
+### 15. Mode nuit/jour
 - [ ] Toggle thème clair/sombre manuel
 - [ ] Couleurs adaptées pour chaque mode
 - [ ] Persistance de la préférence
 
-### 15. Support multi-langues
+### 16. Support multi-langues
 - [ ] Français
 - [ ] Anglais
 - [ ] Utiliser package intl ou easy_localization
 
 ## ♿ Accessibilité
 
-### 16. Mode à contraste élevé
+### 17. Mode à contraste élevé
 - [ ] Implémenter un mode à contraste élevé pour l'application
 - [ ] Assurer une lisibilité optimale pour les utilisateurs malvoyants
 - [ ] Respecter les normes WCAG pour les ratios de contraste
