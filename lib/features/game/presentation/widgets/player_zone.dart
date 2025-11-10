@@ -76,11 +76,42 @@ class PlayerZone extends StatelessWidget {
           
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
-          // Roulette de sélection du score
-          _ScoreWheel(
-            currentScore: score,
-            playerColor: player.color,
-            onScoreChanged: onScoreChanged,
+          // Roulette de sélection du score avec contrôles +/-
+          SizedBox(
+            height: 250,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _ScoreActionButton(
+                  icon: Icons.remove,
+                  playerColor: player.color,
+                  semanticsLabel: 'Diminuer le score',
+                  onTap: () {
+                    HapticUtils.light();
+                    onDecrement(1);
+                  },
+                ),
+                const SizedBox(width: AppConstants.defaultPadding),
+                Expanded(
+                  child: _ScoreWheel(
+                    currentScore: score,
+                    playerColor: player.color,
+                    onScoreChanged: onScoreChanged,
+                  ),
+                ),
+                const SizedBox(width: AppConstants.defaultPadding),
+                _ScoreActionButton(
+                  icon: Icons.add,
+                  playerColor: player.color,
+                  semanticsLabel: 'Augmenter le score',
+                  onTap: () {
+                    HapticUtils.light();
+                    onIncrement(1);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -111,6 +142,48 @@ class _ScoreWheel extends StatefulWidget {
 
   @override
   State<_ScoreWheel> createState() => _ScoreWheelState();
+}
+
+class _ScoreActionButton extends StatelessWidget {
+  const _ScoreActionButton({
+    required this.icon,
+    required this.playerColor,
+    required this.semanticsLabel,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color playerColor;
+  final String semanticsLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: semanticsLabel,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: playerColor.withOpacity(0.15),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: playerColor.withOpacity(0.4),
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            icon,
+            color: playerColor,
+            size: 32,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ScoreWheelState extends State<_ScoreWheel> {
