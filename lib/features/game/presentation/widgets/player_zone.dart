@@ -107,7 +107,7 @@ class PlayerZone extends StatelessWidget {
                         ),
                         // Score au centre, légèrement descendu
                         Transform.translate(
-                          offset: const Offset(0, 10),
+                          offset: const Offset(0, 25),
                           child: Center(
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
