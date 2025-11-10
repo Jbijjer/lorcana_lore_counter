@@ -84,7 +84,39 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Informations: Round X, +Y points, timestamp
 - [ ] Bouton fermer
 
-### 10. Écran de configuration pré-partie
+### 10. Bouton central dynamique et interactif
+- [ ] Animation flip (pièce de monnaie) lors d'événements clés
+- [ ] Transformation du bouton selon l'état de la partie :
+  - [ ] État normal : logo Lorcana (menu radial)
+  - [ ] État victoire : "Win!" (quand un joueur atteint 20 points)
+  - [ ] État égalité : "Time!" (quand le compteur Time atteint 0)
+- [ ] Bouton "Win!" pour confirmer la victoire
+  - [ ] S'affiche avec animation flip quand un joueur atteint 20
+  - [ ] Retour à l'état normal si le score descend sous 20
+  - [ ] Clic confirme la victoire et affiche le dialog
+- [ ] Bouton "Time!" pour confirmer l'égalité
+  - [ ] S'affiche avec animation flip quand le compteur atteint 0
+  - [ ] Clic confirme l'égalité et termine la partie
+- [ ] Menu radial du bouton central (état normal)
+  - [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
+  - [ ] Animation d'expansion/contraction du menu radial
+- [ ] Bouton "Time" : compteur manuel de tours
+  - [ ] Affichage d'un compteur à droite du bouton central
+  - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
+  - [ ] Boutons +/- pour modifier le compteur
+  - [ ] Alerte visuelle quand le compteur atteint 0
+  - [ ] Fin de partie automatique à 0 (partie nulle)
+  - [ ] Possibilité de réinitialiser le compteur
+- [ ] Bouton "Reset" : remise à zéro rapide
+  - [ ] Remet les scores à 0 pour les deux joueurs
+  - [ ] Dialog de confirmation optionnel
+  - [ ] Animation de transition
+- [ ] Autres boutons potentiels :
+  - [ ] Bouton historique des rounds
+  - [ ] Bouton paramètres rapides
+  - [ ] Bouton changement de couleurs
+
+### 11. Écran de configuration pré-partie
 - [ ] Sélection des noms de joueurs
 - [ ] Sélection des couleurs
 - [ ] Choix du mode (Best of X)
@@ -92,37 +124,43 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🎨 Basse Priorité
 
-### 11. Logo Lorcana SVG
+### 12. Logo Lorcana SVG
 - [ ] Remplacer Icons.auto_awesome par vrai logo
 - [ ] Trouver/créer SVG du logo Lorcana
 - [ ] Intégrer avec flutter_svg
 
-### 12. Statistiques avancées
+### 13. Statistiques avancées
 - [ ] Graphiques de progression
 - [ ] Winrate global par joueur
 - [ ] Temps moyen de partie
 - [ ] Scores moyens
 - [ ] Export en CSV/JSON
 
-### 13. Animations et polish
-- [ ] Animation sur changement de score
-- [ ] Particules de victoire
+### 14. Animations et polish
+- [ ] Animation sur changement de score (scale, bounce)
+- [ ] Particules de victoire (confetti, étoiles)
 - [ ] Transitions de page fluides
 - [ ] Animations de gradient
+- [ ] Effets visuels amusants (Lottie/Rive pour animations vectorielles)
+- [ ] Animation de célébration à 20 points (feux d'artifice, particules)
+- [ ] Feedback visuel sur les interactions (ripple effects, micro-animations)
+- [ ] Animations de transition entre les scores (counter animation)
+- [ ] Shake animation quand le score descend
+- [ ] Glow effect autour du bouton central
 
-### 14. Mode nuit/jour
+### 15. Mode nuit/jour
 - [ ] Toggle thème clair/sombre manuel
 - [ ] Couleurs adaptées pour chaque mode
 - [ ] Persistance de la préférence
 
-### 15. Support multi-langues
+### 16. Support multi-langues
 - [ ] Français
 - [ ] Anglais
 - [ ] Utiliser package intl ou easy_localization
 
 ## ♿ Accessibilité
 
-### 16. Mode à contraste élevé
+### 17. Mode à contraste élevé
 - [ ] Implémenter un mode à contraste élevé pour l'application
 - [ ] Assurer une lisibilité optimale pour les utilisateurs malvoyants
 - [ ] Respecter les normes WCAG pour les ratios de contraste
