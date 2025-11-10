@@ -5,6 +5,7 @@ import '../widgets/player_zone.dart';
 import '../widgets/player_name_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
+import '../../data/player_history_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
@@ -199,15 +200,42 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           } else {
             ref.read(gameProvider.notifier).changePlayer2BackgroundColors(start, end);
           }
+
+          // Sauvegarder les préférences de couleurs
+          ref.read(playerHistoryServiceProvider).updatePlayerColors(
+            player.name,
+            start,
+            end,
+          );
         },
       ),
     );
 
     if (newName != null && newName.isNotEmpty && mounted) {
+      // Charger les couleurs sauvegardées pour ce joueur
+      final (savedStartColor, savedEndColor) =
+          ref.read(playerHistoryServiceProvider).getPlayerColors(newName);
+
       if (isPlayer1) {
         ref.read(gameProvider.notifier).changePlayer1Name(newName);
+
+        // Appliquer les couleurs sauvegardées si elles existent
+        if (savedStartColor != null && savedEndColor != null) {
+          ref.read(gameProvider.notifier).changePlayer1BackgroundColors(
+            savedStartColor,
+            savedEndColor,
+          );
+        }
       } else {
         ref.read(gameProvider.notifier).changePlayer2Name(newName);
+
+        // Appliquer les couleurs sauvegardées si elles existent
+        if (savedStartColor != null && savedEndColor != null) {
+          ref.read(gameProvider.notifier).changePlayer2BackgroundColors(
+            savedStartColor,
+            savedEndColor,
+          );
+        }
       }
     }
   }
