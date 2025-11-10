@@ -71,10 +71,14 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            // Zone joueur 1 (en haut, tournée à 180°)
-            PlayerZone(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Column(
+              children: [
+                // Zone joueur 1 (en haut, tournée à 180°)
+                PlayerZone(
               player: gameState.player1,
               score: gameState.player1Score,
               isRotated: true,
@@ -102,20 +106,22 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
               currentRound: gameState.currentRound,
             ),
 
-            // Zone joueur 2 (en bas)
-            PlayerZone(
-              player: gameState.player2,
-              score: gameState.player2Score,
-              isRotated: false,
-              onIncrement: (amount) {
-                ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
-                _checkWinner();
-              },
-              onDecrement: (amount) {
-                ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
-              },
+                // Zone joueur 2 (en bas)
+                PlayerZone(
+                  player: gameState.player2,
+                  score: gameState.player2Score,
+                  isRotated: false,
+                  onIncrement: (amount) {
+                    ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
+                    _checkWinner();
+                  },
+                  onDecrement: (amount) {
+                    ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -178,53 +184,60 @@ class _CenterDivider extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Bouton historique
+          // Bouton Undo (en bas à gauche)
           IconButton(
-            icon: const Icon(Icons.history),
+            icon: const Icon(Icons.undo_rounded),
             onPressed: () {
-              // TODO: Afficher l'historique des rounds
+              HapticUtils.light();
+              // TODO: Implémenter le undo
             },
             iconSize: 32,
+            tooltip: 'Annuler',
           ),
 
           // Logo Lorcana (temporaire avec icône Flutter)
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
-                  blurRadius: 12,
-                  spreadRadius: 2,
+          GestureDetector(
+            onTap: onNextRound,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.7),
+                  ],
                 ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.auto_awesome,
-                color: Colors.white,
-                size: 40,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withOpacity(0.3),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.auto_awesome,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ),
           ),
 
-          // Bouton round suivant
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.skip_next),
-                onPressed: onNextRound,
-                iconSize: 32,
-              ),
-              Text(
-                'Round $currentRound',
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-            ],
+          // Bouton Menu/Options (en bas à droite)
+          IconButton(
+            icon: const Icon(Icons.more_vert_rounded),
+            onPressed: () {
+              HapticUtils.light();
+              // TODO: Afficher le menu d'options
+            },
+            iconSize: 32,
+            tooltip: 'Options',
           ),
         ],
       ),

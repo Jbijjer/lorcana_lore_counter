@@ -23,7 +23,16 @@ class PlayerZone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = Container(
-      color: player.color.withOpacity(0.1),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            player.color.withOpacity(0.15),
+            player.color.withOpacity(0.05),
+          ],
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -47,9 +56,10 @@ class PlayerZone extends StatelessWidget {
             child: Text(
               score.toString(),
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontSize: 96,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 120,
+                    fontWeight: FontWeight.w900,
                     color: player.color,
+                    letterSpacing: -4,
                   ),
             ),
           ),
