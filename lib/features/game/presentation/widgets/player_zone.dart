@@ -189,13 +189,13 @@ class _ScoreActionButton extends StatelessWidget {
             color: playerColor.withOpacity(0.15),
             shape: BoxShape.circle,
             border: Border.all(
-              color: playerColor.withOpacity(0.4),
+              color: Colors.black,
               width: 2,
             ),
           ),
           child: Icon(
             icon,
-            color: playerColor,
+            color: Colors.black,
             size: 32,
           ),
         ),
