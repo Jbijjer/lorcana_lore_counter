@@ -13,6 +13,7 @@ class PlayerZone extends StatelessWidget {
     required this.isRotated,
     required this.onIncrement,
     required this.onDecrement,
+    required this.onScoreChanged,
     this.onNameTap,
   });
 
@@ -21,6 +22,7 @@ class PlayerZone extends StatelessWidget {
   final bool isRotated;
   final ValueChanged<int> onIncrement;
   final ValueChanged<int> onDecrement;
+  final ValueChanged<int> onScoreChanged;
   final VoidCallback? onNameTap;
 
   @override
@@ -112,8 +114,7 @@ class PlayerZone extends StatelessWidget {
           _ScoreWheel(
             currentScore: score,
             playerColor: player.color,
-            onIncrement: onIncrement,
-            onDecrement: onDecrement,
+            onScoreChanged: onScoreChanged,
           ),
         ],
       ),
@@ -139,14 +140,12 @@ class _ScoreWheel extends StatefulWidget {
   const _ScoreWheel({
     required this.currentScore,
     required this.playerColor,
-    required this.onIncrement,
-    required this.onDecrement,
+    required this.onScoreChanged,
   });
 
   final int currentScore;
   final Color playerColor;
-  final ValueChanged<int> onIncrement;
-  final ValueChanged<int> onDecrement;
+  final ValueChanged<int> onScoreChanged;
 
   @override
   State<_ScoreWheel> createState() => _ScoreWheelState();
@@ -203,15 +202,8 @@ class _ScoreWheelState extends State<_ScoreWheel> {
         magnification: 1.2,
         onSelectedItemChanged: (index) {
           HapticUtils.light();
-
-          final difference = index - _selectedScore;
           _selectedScore = index;
-
-          if (difference > 0) {
-            widget.onIncrement(difference);
-          } else if (difference < 0) {
-            widget.onDecrement(-difference);
-          }
+          widget.onScoreChanged(index);
         },
         children: List.generate(
           AppConstants.winningScore + 1,
