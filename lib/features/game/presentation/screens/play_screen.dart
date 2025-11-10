@@ -8,7 +8,6 @@ import '../../domain/player.dart';
 import '../../data/player_history_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../settings/presentation/screens/settings_screen.dart';
 
 /// Écran principal du jeu
 class PlayScreen extends ConsumerStatefulWidget {
@@ -247,82 +246,49 @@ class _CenterDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // Bouton Undo (en bas à gauche)
-          IconButton(
-            icon: const Icon(Icons.undo_rounded),
-            onPressed: () {
-              HapticUtils.light();
-              // TODO: Implémenter le undo
-            },
-            iconSize: 32,
-            tooltip: 'Annuler',
-          ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Espace noir de 10 pixels
+        Container(
+          height: 10,
+          color: Colors.black,
+        ),
 
-          // Logo Lorcana (temporaire avec icône Flutter)
-          GestureDetector(
-            onTap: onNextRound,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColor.withOpacity(0.7),
-                  ],
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primaryColor.withOpacity(0.3),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
+        // Logo Lorcana au centre (temporaire avec icône Flutter)
+        GestureDetector(
+          onTap: onNextRound,
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.primaryColor,
+                  AppTheme.primaryColor.withOpacity(0.7),
                 ],
               ),
-              child: const Center(
-                child: Icon(
-                  Icons.auto_awesome,
-                  color: Colors.white,
-                  size: 40,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  blurRadius: 12,
+                  spreadRadius: 2,
                 ),
+              ],
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+                size: 40,
               ),
             ),
           ),
-
-          // Bouton Menu/Options (en bas à droite)
-          IconButton(
-            icon: const Icon(Icons.more_vert_rounded),
-            onPressed: () {
-              HapticUtils.light();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
-            },
-            iconSize: 32,
-            tooltip: 'Options',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
