@@ -58,12 +58,12 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Charger la dernière partie au démarrage
 - [ ] Persister l'état même après fermeture de l'app
 
-### 2. Fonctionnalité Undo
-- [ ] Ajouter historique des actions dans GameState
-- [ ] Implémenter méthode undo dans GameProvider
-- [ ] Connecter le bouton Undo à la logique
-- [ ] Limiter à 10-15 actions annulables
-- [ ] Feedback visuel quand undo n'est pas disponible
+### ~~2. Fonctionnalité Undo~~ ❌ ÉLIMINÉ
+- ~~[ ] Ajouter historique des actions dans GameState~~
+- ~~[ ] Implémenter méthode undo dans GameProvider~~
+- ~~[ ] Connecter le bouton Undo à la logique~~
+- ~~[ ] Limiter à 10-15 actions annulables~~
+- ~~[ ] Feedback visuel quand undo n'est pas disponible~~
 
 ### 3. Restart rapide (One-tap)
 - [ ] Ajouter dialog de confirmation
