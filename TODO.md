@@ -47,6 +47,13 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Validation (0-99)
 - [ ] Animation de transition
 
+## 🎨 Problèmes Design / Contraste
+
+- [ ] Encore plus de contraste dans les thèmes
+- [ ] Des contours noirs
+- [ ] Des couleurs flagrantes
+- [ ] Les dégradés ne fonctionnent pas
+
 ## 📊 Moyenne Priorité
 
 ### 6. Match Tracking (Best of X)
