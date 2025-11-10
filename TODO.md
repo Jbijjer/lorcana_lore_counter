@@ -87,12 +87,13 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 ### 10. Menu radial du bouton central
 - [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
 - [ ] Animation d'expansion/contraction du menu radial
-- [ ] Bouton "Time" : compteur de partie
-  - [ ] Affichage d'un timer à droite du bouton central
-  - [ ] Compteur de 5 minutes à 0
-  - [ ] Alerte visuelle/sonore aux dernières secondes
+- [ ] Bouton "Time" : compteur manuel de tours
+  - [ ] Affichage d'un compteur à droite du bouton central
+  - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
+  - [ ] Boutons +/- pour modifier le compteur
+  - [ ] Alerte visuelle quand le compteur atteint 0
   - [ ] Fin de partie automatique à 0 (partie nulle)
-  - [ ] Option de pause/reprendre le timer
+  - [ ] Possibilité de réinitialiser le compteur
 - [ ] Bouton "Reset" : remise à zéro rapide
   - [ ] Remet les scores à 0 pour les deux joueurs
   - [ ] Dialog de confirmation optionnel
