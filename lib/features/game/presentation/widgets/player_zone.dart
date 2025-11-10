@@ -38,37 +38,40 @@ class PlayerZone extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Nom du joueur (cliquable)
-          Padding(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            child: GestureDetector(
-              onTap: onNameTap != null
-                  ? () {
-                      HapticUtils.light();
-                      onNameTap!();
-                    }
-                  : null,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: onNameTap != null
-                    ? BoxDecoration(
-                        color: player.color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: player.color.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      )
+          // Nom du joueur (cliquable), descendu de 30 pixels
+          Transform.translate(
+            offset: const Offset(0, 30),
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
+              child: GestureDetector(
+                onTap: onNameTap != null
+                    ? () {
+                        HapticUtils.light();
+                        onNameTap!();
+                      }
                     : null,
-                child: Text(
-                  player.name,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: player.color,
-                        fontWeight: FontWeight.bold,
-                      ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: onNameTap != null
+                      ? BoxDecoration(
+                          color: player.color.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: player.color.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        )
+                      : null,
+                  child: Text(
+                    player.name,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: player.color,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
                 ),
               ),
             ),

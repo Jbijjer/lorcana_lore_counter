@@ -8,7 +8,6 @@ import '../../domain/player.dart';
 import '../../data/player_history_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../settings/presentation/screens/settings_screen.dart';
 
 /// Écran principal du jeu
 class PlayScreen extends ConsumerStatefulWidget {
@@ -80,58 +79,91 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           padding: const EdgeInsets.all(8.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
-            child: Column(
+            child: Stack(
               children: [
-                // Zone joueur 1 (en haut, tournée à 180°)
-                PlayerZone(
-              player: gameState.player1,
-              score: gameState.player1Score,
-              isRotated: true,
-              onIncrement: (amount) {
-                ref.read(gameProvider.notifier).incrementPlayer1Score(amount);
-                _checkWinner();
-              },
-              onDecrement: (amount) {
-                ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
-              },
-              onNameTap: () => _showPlayerNameDialog(
-                currentName: gameState.player1.name,
-                playerColor: gameState.player1.color,
-                isPlayer1: true,
-              ),
-            ),
+                // Colonne avec les zones de joueurs et le diviseur
+                Column(
+                  children: [
+                    // Zone joueur 1 (en haut, tournée à 180°)
+                    PlayerZone(
+                      player: gameState.player1,
+                      score: gameState.player1Score,
+                      isRotated: true,
+                      onIncrement: (amount) {
+                        ref.read(gameProvider.notifier).incrementPlayer1Score(amount);
+                        _checkWinner();
+                      },
+                      onDecrement: (amount) {
+                        ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
+                      },
+                      onNameTap: () => _showPlayerNameDialog(
+                        currentName: gameState.player1.name,
+                        playerColor: gameState.player1.color,
+                        isPlayer1: true,
+                      ),
+                    ),
 
-            // Ligne centrale avec logo
-            _CenterDivider(
-              onNextRound: () {
-                HapticUtils.medium();
-                ref.read(gameProvider.notifier).nextRound();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Round ${gameState.currentRound + 1}'),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-              currentRound: gameState.currentRound,
-            ),
+                    // Ligne centrale (barre noire de 10 pixels seulement)
+                    _CenterDivider(
+                      currentRound: gameState.currentRound,
+                    ),
 
-                // Zone joueur 2 (en bas)
-                PlayerZone(
-                  player: gameState.player2,
-                  score: gameState.player2Score,
-                  isRotated: false,
-                  onIncrement: (amount) {
-                    ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
-                    _checkWinner();
-                  },
-                  onDecrement: (amount) {
-                    ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
-                  },
-                  onNameTap: () => _showPlayerNameDialog(
-                    currentName: gameState.player2.name,
-                    playerColor: gameState.player2.color,
-                    isPlayer1: false,
+                    // Zone joueur 2 (en bas)
+                    PlayerZone(
+                      player: gameState.player2,
+                      score: gameState.player2Score,
+                      isRotated: false,
+                      onIncrement: (amount) {
+                        ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
+                        _checkWinner();
+                      },
+                      onDecrement: (amount) {
+                        ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
+                      },
+                      onNameTap: () => _showPlayerNameDialog(
+                        currentName: gameState.player2.name,
+                        playerColor: gameState.player2.color,
+                        isPlayer1: false,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Logo Lorcana au centre (au-dessus de tout)
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      HapticUtils.medium();
+                      ref.read(gameProvider.notifier).nextRound();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Round ${gameState.currentRound + 1}'),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 12,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/lorcana_logo.png',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -235,94 +267,19 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
   }
 }
 
-/// Ligne centrale avec logo et contrôles
+/// Ligne centrale (barre noire de séparation)
 class _CenterDivider extends StatelessWidget {
   const _CenterDivider({
-    required this.onNextRound,
     required this.currentRound,
   });
 
-  final VoidCallback onNextRound;
   final int currentRound;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // Bouton Undo (en bas à gauche)
-          IconButton(
-            icon: const Icon(Icons.undo_rounded),
-            onPressed: () {
-              HapticUtils.light();
-              // TODO: Implémenter le undo
-            },
-            iconSize: 32,
-            tooltip: 'Annuler',
-          ),
-
-          // Logo Lorcana (temporaire avec icône Flutter)
-          GestureDetector(
-            onTap: onNextRound,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColor.withOpacity(0.7),
-                  ],
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primaryColor.withOpacity(0.3),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.auto_awesome,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-          ),
-
-          // Bouton Menu/Options (en bas à droite)
-          IconButton(
-            icon: const Icon(Icons.more_vert_rounded),
-            onPressed: () {
-              HapticUtils.light();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
-            },
-            iconSize: 32,
-            tooltip: 'Options',
-          ),
-        ],
-      ),
+      height: 10,
+      color: Colors.black,
     );
   }
 }
