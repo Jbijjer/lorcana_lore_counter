@@ -59,16 +59,16 @@ class PlayerZone extends StatelessWidget {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: Colors.black,
-                          width: 3,
+                          width: 4,
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: 28,
+                        radius: 35,
                         backgroundColor: player.color.withValues(alpha: 0.3),
                         child: Icon(
                           Icons.person,
                           color: player.color,
-                          size: 32,
+                          size: 40,
                         ),
                       ),
                     ),
