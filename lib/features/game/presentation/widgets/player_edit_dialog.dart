@@ -9,6 +9,7 @@ import 'color_picker_dialog.dart';
 class PlayerEditDialog extends ConsumerStatefulWidget {
   const PlayerEditDialog({
     super.key,
+    required this.playerId,
     required this.playerName,
     required this.playerColor,
     required this.backgroundColorStart,
@@ -17,6 +18,7 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
     required this.onPlayerUpdated,
   });
 
+  final String playerId;
   final String playerName;
   final Color playerColor;
   final Color backgroundColorStart;
@@ -336,11 +338,15 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
     HapticUtils.medium();
 
-    // Sauvegarder dans l'historique
+    // Mettre à jour le joueur par ID (permet le renommage)
     final service = ref.read(playerHistoryServiceProvider);
-    await service.addOrUpdatePlayerName(name);
-    await service.updatePlayerColors(name, _backgroundColorStart, _backgroundColorEnd);
-    await service.updatePlayerIcon(name, _selectedIconCodePoint);
+    await service.updatePlayerById(
+      id: widget.playerId,
+      newName: name,
+      backgroundColorStart: _backgroundColorStart,
+      backgroundColorEnd: _backgroundColorEnd,
+      iconCodePoint: _selectedIconCodePoint,
+    );
 
     // Callback avec les nouvelles données
     widget.onPlayerUpdated(

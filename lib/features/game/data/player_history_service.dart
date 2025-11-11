@@ -17,6 +17,33 @@ class PlayerHistoryService {
       Hive.registerAdapter(PlayerNameAdapter());
     }
     _box = await Hive.openBox<PlayerName>(_boxName);
+
+    // Migrer les joueurs existants sans ID
+    await _migratePlayersWithoutId();
+  }
+
+  /// Migre les joueurs existants qui n'ont pas d'ID
+  Future<void> _migratePlayersWithoutId() async {
+    if (_box == null) return;
+
+    bool needsMigration = false;
+    final updatedPlayers = <int, PlayerName>{};
+
+    for (int i = 0; i < _box!.length; i++) {
+      final player = _box!.getAt(i);
+      if (player != null && player.id == null) {
+        needsMigration = true;
+        // Générer un ID unique pour ce joueur
+        final newId = '${DateTime.now().millisecondsSinceEpoch}_$i';
+        updatedPlayers[i] = player.copyWith(id: newId);
+      }
+    }
+
+    if (needsMigration) {
+      for (final entry in updatedPlayers.entries) {
+        await _box!.putAt(entry.key, entry.value);
+      }
+    }
   }
 
   /// Récupère tous les noms de joueurs triés par dernière utilisation
@@ -115,8 +142,8 @@ class PlayerHistoryService {
     }
   }
 
-  /// Récupère l'icône d'un joueur (retourne null si non définie)
-  int? getPlayerIcon(String name) {
+  /// Récupère un joueur complet par son nom
+  PlayerName? getPlayerByName(String name) {
     if (_box == null) return null;
 
     final playerName = _box!.values.firstWhere(
@@ -125,8 +152,13 @@ class PlayerHistoryService {
     );
 
     if (playerName.name.isEmpty) return null;
+    return playerName;
+  }
 
-    return playerName.iconCodePoint;
+  /// Récupère l'icône d'un joueur (retourne null si non définie)
+  int? getPlayerIcon(String name) {
+    final player = getPlayerByName(name);
+    return player?.iconCodePoint;
   }
 
   /// Met à jour l'icône d'un joueur
@@ -157,6 +189,37 @@ class PlayerHistoryService {
         iconCodePoint: iconCodePoint,
       );
       await _box!.add(newPlayerName);
+    }
+  }
+
+  /// Met à jour un joueur par son ID
+  Future<void> updatePlayerById({
+    required String id,
+    String? newName,
+    Color? backgroundColorStart,
+    Color? backgroundColorEnd,
+    int? iconCodePoint,
+  }) async {
+    if (_box == null) return;
+
+    // Chercher le joueur par ID
+    final index = _box!.values.toList().indexWhere(
+      (p) => p.id == id,
+    );
+
+    if (index != -1) {
+      final existing = _box!.getAt(index);
+      if (existing != null) {
+        final updated = existing.copyWith(
+          name: newName,
+          lastUsed: DateTime.now(),
+          usageCount: existing.usageCount + 1,
+          backgroundColorStartValue: backgroundColorStart?.toARGB32(),
+          backgroundColorEndValue: backgroundColorEnd?.toARGB32(),
+          iconCodePoint: iconCodePoint,
+        );
+        await _box!.putAt(index, updated);
+      }
     }
   }
 

@@ -266,12 +266,17 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
 
   Future<void> _showEditDialog(String oldName) async {
     final service = ref.read(playerHistoryServiceProvider);
+    final player = service.getPlayerByName(oldName);
+
+    if (player == null) return;
+
     final (startColor, endColor) = service.getPlayerColors(oldName);
     final iconCodePoint = service.getPlayerIcon(oldName);
 
     await showDialog(
       context: context,
       builder: (context) => PlayerEditDialog(
+        playerId: player.id!,
         playerName: oldName,
         playerColor: widget.playerColor,
         backgroundColorStart: startColor ?? widget.backgroundColorStart,
