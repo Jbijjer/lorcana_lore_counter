@@ -68,19 +68,22 @@ class PlayerZone extends StatelessWidget {
                             'assets/images/lore_frame.png',
                             fit: BoxFit.contain,
                           ),
-                          // Score au centre
-                          Center(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Padding(
-                                padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
-                                child: Text(
-                                  score.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 86,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.black,
-                                    letterSpacing: -4,
+                          // Score au centre, descendu de 20 pixels
+                          Transform.translate(
+                            offset: const Offset(0, 20),
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                                  child: Text(
+                                    score.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 86,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.black,
+                                      letterSpacing: -4,
+                                    ),
                                   ),
                                 ),
                               ),
