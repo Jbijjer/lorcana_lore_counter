@@ -50,47 +50,31 @@ class PlayerZone extends StatelessWidget {
                         onNameTap!();
                       }
                     : null,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: onNameTap != null
-                      ? BoxDecoration(
-                          color: player.color.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: player.color.withValues(alpha: 0.3),
-                            width: 1,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Avatar circulaire avec icône de portrait
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: player.color.withValues(alpha: 0.3),
+                      child: Icon(
+                        Icons.person,
+                        color: player.color,
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Nom du joueur avec une police plus grande
+                    Text(
+                      player.name,
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            color: player.color,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 30,
+                            letterSpacing: 0.5,
                           ),
-                        )
-                      : null,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Avatar circulaire avec icône de portrait
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundColor: player.color.withValues(alpha: 0.3),
-                        child: Icon(
-                          Icons.person,
-                          color: player.color,
-                          size: 32,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Nom du joueur avec une police plus grande
-                      Text(
-                        player.name,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              color: player.color,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 30,
-                              letterSpacing: 0.5,
-                            ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
