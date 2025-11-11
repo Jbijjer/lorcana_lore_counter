@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/player_name.dart';
@@ -97,8 +98,8 @@ class PlayerHistoryService {
       final existing = _box!.getAt(existingIndex);
       if (existing != null) {
         final updated = existing.copyWith(
-          backgroundColorStartValue: startColor.value,
-          backgroundColorEndValue: endColor.value,
+          backgroundColorStartValue: startColor.toARGB32(),
+          backgroundColorEndValue: endColor.toARGB32(),
         );
         await _box!.putAt(existingIndex, updated);
       }
@@ -107,8 +108,8 @@ class PlayerHistoryService {
       final newPlayerName = PlayerName(
         name: trimmedName,
         lastUsed: DateTime.now(),
-        backgroundColorStartValue: startColor.value,
-        backgroundColorEndValue: endColor.value,
+        backgroundColorStartValue: startColor.toARGB32(),
+        backgroundColorEndValue: endColor.toARGB32(),
       );
       await _box!.add(newPlayerName);
     }
@@ -135,7 +136,7 @@ class PlayerHistoryService {
 
 /// Provider pour le service d'historique des joueurs
 @Riverpod(keepAlive: true)
-PlayerHistoryService playerHistoryService(PlayerHistoryServiceRef ref) {
+PlayerHistoryService playerHistoryService(Ref ref) {
   final service = PlayerHistoryService();
   ref.onDispose(() => service.dispose());
   return service;
@@ -143,7 +144,7 @@ PlayerHistoryService playerHistoryService(PlayerHistoryServiceRef ref) {
 
 /// Provider pour la liste des noms de joueurs
 @riverpod
-List<String> playerNames(PlayerNamesRef ref) {
+List<String> playerNames(Ref ref) {
   final service = ref.watch(playerHistoryServiceProvider);
   return service.getAllPlayerNames();
 }

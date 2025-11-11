@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// Thème de l'application basé sur Material 3
 class AppTheme {
-  AppTheme._();
+  const AppTheme._();
 
   // Couleurs inspirées de Lorcana
   static const Color primaryColor = Color(0xFF6B4EFF); // Violet Lorcana

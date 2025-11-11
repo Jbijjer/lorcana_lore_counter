@@ -11,12 +11,12 @@ class GameState with _$GameState {
     required String id,
     required Player player1,
     required Player player2,
+    required DateTime startTime,
+    DateTime? endTime,
     @Default(0) int player1Score,
     @Default(0) int player2Score,
     @Default(1) int currentRound,
     @Default([]) List<RoundScore> rounds,
-    required DateTime startTime,
-    DateTime? endTime,
     @Default(GameStatus.inProgress) GameStatus status,
   }) = _GameState;
 
