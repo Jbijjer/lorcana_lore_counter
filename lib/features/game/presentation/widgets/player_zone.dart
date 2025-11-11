@@ -38,10 +38,10 @@ class PlayerZone extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Affichage du score avec contrôles +/-, descendu de 25 pixels
+          // Affichage du score avec contrôles +/-, descendu de 50 pixels
           Expanded(
             child: Transform.translate(
-              offset: const Offset(0, 25),
+              offset: const Offset(0, 50),
               child: Padding(
                 padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 child: Row(
@@ -68,9 +68,9 @@ class PlayerZone extends StatelessWidget {
                             'assets/images/lore_frame.png',
                             fit: BoxFit.contain,
                           ),
-                          // Score au centre, descendu de 20 pixels
+                          // Score au centre, descendu de 25 pixels
                           Transform.translate(
-                            offset: const Offset(0, 20),
+                            offset: const Offset(0, 25),
                             child: Center(
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
