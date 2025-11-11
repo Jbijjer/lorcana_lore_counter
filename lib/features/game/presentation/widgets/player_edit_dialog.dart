@@ -167,9 +167,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
             ),
           ],
         ),
-          ),
-        ),
       ),
+    ),
     );
   }
 
