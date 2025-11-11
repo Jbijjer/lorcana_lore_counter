@@ -65,12 +65,31 @@ class PlayerZone extends StatelessWidget {
                           ),
                         )
                       : null,
-                  child: Text(
-                    player.name,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Avatar circulaire avec icône de portrait
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: player.color.withValues(alpha: 0.3),
+                        child: Icon(
+                          Icons.person,
                           color: player.color,
-                          fontWeight: FontWeight.bold,
+                          size: 32,
                         ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Nom du joueur avec une police plus grande
+                      Text(
+                        player.name,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: player.color,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 30,
+                              letterSpacing: 0.5,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
               ),
