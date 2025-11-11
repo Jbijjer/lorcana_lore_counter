@@ -63,10 +63,11 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       child: Container(
         constraints: const BoxConstraints(maxHeight: 600, maxWidth: 500),
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
             // En-tête
             Row(
               children: [
@@ -166,6 +167,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
             ),
           ],
         ),
+          ),
+        ),
       ),
     );
   }
@@ -246,7 +249,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
   Widget _buildIconSelector() {
     return Container(
-      height: 180,
+      height: 160,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(12),
