@@ -14,6 +14,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
     required this.backgroundColorEnd,
     required this.onBackgroundColorsChanged,
     this.onIconChanged,
+    this.onNameChanged,
   });
 
   final String currentName;
@@ -22,6 +23,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
   final Color backgroundColorEnd;
   final Function(Color start, Color end) onBackgroundColorsChanged;
   final Function(int iconCodePoint)? onIconChanged;
+  final Function(String newName)? onNameChanged;
 
   @override
   ConsumerState<PlayerNameDialog> createState() => _PlayerNameDialogState();
@@ -288,13 +290,17 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
           required Color backgroundColorEnd,
           required int iconCodePoint,
         }) {
-          // Mettre à jour les couleurs et l'icône du joueur actuel si c'est le même
-          if (name == widget.currentName || oldName == widget.currentName) {
+          // Mettre à jour les couleurs, l'icône et le nom du joueur actuel si c'est le même
+          if (oldName == widget.currentName) {
             widget.onBackgroundColorsChanged(
               backgroundColorStart,
               backgroundColorEnd,
             );
             widget.onIconChanged?.call(iconCodePoint);
+            // Si le nom a changé, le signaler
+            if (name != oldName) {
+              widget.onNameChanged?.call(name);
+            }
           }
           // Rafraîchir l'interface
           setState(() {});

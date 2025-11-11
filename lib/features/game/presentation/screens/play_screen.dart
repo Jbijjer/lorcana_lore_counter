@@ -247,6 +247,14 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
             iconCodePoint,
           );
         },
+        onNameChanged: (newPlayerName) {
+          // Mettre à jour le nom du joueur actuel dans la partie
+          if (isPlayer1) {
+            ref.read(gameProvider.notifier).changePlayer1Name(newPlayerName);
+          } else {
+            ref.read(gameProvider.notifier).changePlayer2Name(newPlayerName);
+          }
+        },
       ),
     );
 
