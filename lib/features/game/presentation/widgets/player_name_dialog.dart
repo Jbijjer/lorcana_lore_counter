@@ -302,6 +302,8 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
               widget.onNameChanged?.call(name);
             }
           }
+          // Invalider le provider pour rafraîchir la liste des joueurs
+          ref.invalidate(playerNamesProvider);
           // Rafraîchir l'interface
           setState(() {});
         },
