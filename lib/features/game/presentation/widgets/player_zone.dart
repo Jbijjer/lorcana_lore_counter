@@ -53,26 +53,53 @@ class PlayerZone extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Avatar circulaire avec icône de portrait
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: player.color.withValues(alpha: 0.3),
-                      child: Icon(
-                        Icons.person,
-                        color: player.color,
-                        size: 32,
+                    // Avatar circulaire avec icône de portrait et contour noir
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 3,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: player.color.withValues(alpha: 0.3),
+                        child: Icon(
+                          Icons.person,
+                          color: player.color,
+                          size: 32,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Nom du joueur avec une police plus grande
-                    Text(
-                      player.name,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: player.color,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 30,
-                            letterSpacing: 0.5,
-                          ),
+                    // Nom du joueur en blanc avec outline noir
+                    Stack(
+                      children: [
+                        // Outline noir (dessous)
+                        Text(
+                          player.name,
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 30,
+                                letterSpacing: 0.5,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 4
+                                  ..color = Colors.black,
+                              ),
+                        ),
+                        // Texte blanc (dessus)
+                        Text(
+                          player.name,
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 30,
+                                letterSpacing: 0.5,
+                              ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
