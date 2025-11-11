@@ -66,7 +66,10 @@ class PlayerZone extends StatelessWidget {
                         radius: 35,
                         backgroundColor: player.color.withValues(alpha: 0.3),
                         child: Icon(
-                          Icons.person,
+                          IconData(
+                            player.iconCodePoint,
+                            fontFamily: 'MaterialIcons',
+                          ),
                           color: player.color,
                           size: 40,
                         ),

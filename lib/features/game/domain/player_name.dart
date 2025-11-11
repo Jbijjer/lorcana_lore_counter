@@ -22,12 +22,17 @@ class PlayerName {
   @HiveField(4)
   final int? backgroundColorEndValue;
 
+  /// Code point de l'icône (nullable pour compatibilité)
+  @HiveField(5)
+  final int? iconCodePoint;
+
   PlayerName({
     required this.name,
     required this.lastUsed,
     this.usageCount = 1,
     this.backgroundColorStartValue,
     this.backgroundColorEndValue,
+    this.iconCodePoint,
   });
 
   /// Crée une copie avec les modifications spécifiées
@@ -37,6 +42,7 @@ class PlayerName {
     int? usageCount,
     int? backgroundColorStartValue,
     int? backgroundColorEndValue,
+    int? iconCodePoint,
   }) {
     return PlayerName(
       name: name ?? this.name,
@@ -44,6 +50,7 @@ class PlayerName {
       usageCount: usageCount ?? this.usageCount,
       backgroundColorStartValue: backgroundColorStartValue ?? this.backgroundColorStartValue,
       backgroundColorEndValue: backgroundColorEndValue ?? this.backgroundColorEndValue,
+      iconCodePoint: iconCodePoint ?? this.iconCodePoint,
     );
   }
 }

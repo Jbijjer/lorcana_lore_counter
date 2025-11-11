@@ -164,4 +164,24 @@ class Game extends _$Game {
     );
     state = state!.copyWith(player2: updatedPlayer);
   }
+
+  /// Change l'icône du joueur 1
+  void changePlayer1Icon(int iconCodePoint) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player1.copyWith(
+      iconCodePoint: iconCodePoint,
+    );
+    state = state!.copyWith(player1: updatedPlayer);
+  }
+
+  /// Change l'icône du joueur 2
+  void changePlayer2Icon(int iconCodePoint) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player2.copyWith(
+      iconCodePoint: iconCodePoint,
+    );
+    state = state!.copyWith(player2: updatedPlayer);
+  }
 }

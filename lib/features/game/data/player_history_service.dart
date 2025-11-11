@@ -115,6 +115,51 @@ class PlayerHistoryService {
     }
   }
 
+  /// Récupère l'icône d'un joueur (retourne null si non définie)
+  int? getPlayerIcon(String name) {
+    if (_box == null) return null;
+
+    final playerName = _box!.values.firstWhere(
+      (p) => p.name.toLowerCase() == name.toLowerCase(),
+      orElse: () => PlayerName(name: '', lastUsed: DateTime.now()),
+    );
+
+    if (playerName.name.isEmpty) return null;
+
+    return playerName.iconCodePoint;
+  }
+
+  /// Met à jour l'icône d'un joueur
+  Future<void> updatePlayerIcon(String name, int iconCodePoint) async {
+    if (_box == null || name.trim().isEmpty) return;
+
+    final trimmedName = name.trim();
+
+    // Vérifier si le nom existe déjà
+    final existingIndex = _box!.values.toList().indexWhere(
+      (p) => p.name.toLowerCase() == trimmedName.toLowerCase(),
+    );
+
+    if (existingIndex != -1) {
+      // Mettre à jour l'icône du joueur existant
+      final existing = _box!.getAt(existingIndex);
+      if (existing != null) {
+        final updated = existing.copyWith(
+          iconCodePoint: iconCodePoint,
+        );
+        await _box!.putAt(existingIndex, updated);
+      }
+    } else {
+      // Créer un nouveau joueur avec l'icône
+      final newPlayerName = PlayerName(
+        name: trimmedName,
+        lastUsed: DateTime.now(),
+        iconCodePoint: iconCodePoint,
+      );
+      await _box!.add(newPlayerName);
+    }
+  }
+
   /// Supprime un nom de joueur
   Future<void> deletePlayerName(String name) async {
     if (_box == null) return;
