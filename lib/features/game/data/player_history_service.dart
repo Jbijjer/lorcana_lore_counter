@@ -146,12 +146,23 @@ class PlayerHistoryService {
   PlayerName? getPlayerByName(String name) {
     if (_box == null) return null;
 
-    final playerName = _box!.values.firstWhere(
+    final index = _box!.values.toList().indexWhere(
       (p) => p.name.toLowerCase() == name.toLowerCase(),
-      orElse: () => PlayerName(name: '', lastUsed: DateTime.now()),
     );
 
-    if (playerName.name.isEmpty) return null;
+    if (index == -1) return null;
+
+    final playerName = _box!.getAt(index);
+    if (playerName == null) return null;
+
+    // Si le joueur n'a pas d'ID, en générer un et le sauvegarder immédiatement
+    if (playerName.id == null || playerName.id!.isEmpty) {
+      final newId = '${DateTime.now().millisecondsSinceEpoch}_$index';
+      final updatedPlayer = playerName.copyWith(id: newId);
+      _box!.putAt(index, updatedPlayer);
+      return updatedPlayer;
+    }
+
     return playerName;
   }
 
