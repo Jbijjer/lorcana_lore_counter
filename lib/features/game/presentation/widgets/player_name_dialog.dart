@@ -204,9 +204,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
               ),
             ),
             if (isCurrentPlayer)
-              Icon(Icons.check_circle, color: widget.playerColor)
-            else
-              Icon(Icons.edit, color: Colors.grey.shade400, size: 20),
+              Icon(Icons.check_circle, color: widget.playerColor),
           ],
         ),
       ),
