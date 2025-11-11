@@ -62,7 +62,6 @@ class PlayerHistoryService {
     if (_box == null || name.trim().isEmpty) return;
 
     final trimmedName = name.trim();
-    print('➕ addOrUpdatePlayerName: name="$trimmedName"');
 
     // Vérifier si le nom existe déjà
     final existingIndex = _box!.values.toList().indexWhere(
@@ -73,13 +72,11 @@ class PlayerHistoryService {
       // Mettre à jour le nom existant
       final existing = _box!.getAt(existingIndex);
       if (existing != null) {
-        print('  ✏️ Found existing at index $existingIndex: id=${existing.id}');
         final updated = existing.copyWith(
           lastUsed: DateTime.now(),
           usageCount: existing.usageCount + 1,
         );
         await _box!.putAt(existingIndex, updated);
-        print('  ✅ Updated player at index $existingIndex');
       }
     } else {
       // Ajouter un nouveau nom
@@ -88,7 +85,6 @@ class PlayerHistoryService {
         lastUsed: DateTime.now(),
       );
       await _box!.add(newPlayerName);
-      print('  ✅ Added new player with id=${newPlayerName.id}');
     }
   }
 
@@ -150,31 +146,20 @@ class PlayerHistoryService {
   PlayerName? getPlayerByName(String name) {
     if (_box == null) return null;
 
-    print('🔍 getPlayerByName: searching for "$name"');
     final index = _box!.values.toList().indexWhere(
       (p) => p.name.toLowerCase() == name.toLowerCase(),
     );
 
-    if (index == -1) {
-      print('  ❌ Player not found');
-      return null;
-    }
+    if (index == -1) return null;
 
     final playerName = _box!.getAt(index);
-    if (playerName == null) {
-      print('  ❌ Player at index $index is null');
-      return null;
-    }
-
-    print('  ✅ Found player at index $index: id=${playerName.id}');
+    if (playerName == null) return null;
 
     // Si le joueur n'a pas d'ID, en générer un et le sauvegarder immédiatement
     if (playerName.id == null || playerName.id!.isEmpty) {
-      print('  ⚠️ Player has no ID, generating one...');
       final newId = '${DateTime.now().millisecondsSinceEpoch}_$index';
       final updatedPlayer = playerName.copyWith(id: newId);
       _box!.putAt(index, updatedPlayer);
-      print('  ✅ Saved player with new ID: $newId');
       return updatedPlayer;
     }
 
@@ -229,37 +214,23 @@ class PlayerHistoryService {
   }) async {
     if (_box == null) return;
 
-    print('🔧 updatePlayerById: id="$id", oldName="$oldName", newName="$newName"');
-    print('  📦 Current box size: ${_box!.length}');
-    print('  📋 All players in box:');
-    for (int i = 0; i < _box!.length; i++) {
-      final p = _box!.getAt(i);
-      print('    [$i] name="${p?.name}", id="${p?.id}"');
-    }
-
     // Chercher le joueur par ID
     int index = _box!.values.toList().indexWhere(
       (p) => p.id == id,
     );
 
-    print('  🔎 Search by ID "$id": index=$index');
-
     // Si non trouvé par ID et qu'on a l'ancien nom, chercher par nom en fallback
     if (index == -1 && oldName != null && oldName.isNotEmpty) {
-      print('  ⚠️ Not found by ID, searching by name "$oldName"...');
       index = _box!.values.toList().indexWhere(
         (p) => p.name.toLowerCase() == oldName.toLowerCase(),
       );
-      print('  🔎 Search by name: index=$index');
     }
 
     if (index != -1) {
       final existing = _box!.getAt(index);
       if (existing != null) {
-        print('  ✅ Found player at index $index: name="${existing.name}", id="${existing.id}"');
         // S'assurer que l'ID est présent
         final finalId = existing.id ?? id;
-        print('  🆔 Using ID: $finalId');
 
         final updated = existing.copyWith(
           id: finalId,
@@ -271,10 +242,7 @@ class PlayerHistoryService {
           iconCodePoint: iconCodePoint,
         );
         await _box!.putAt(index, updated);
-        print('  ✅ Updated player at index $index');
       }
-    } else {
-      print('  ❌ ERROR: Player not found by ID or name!');
     }
   }
 

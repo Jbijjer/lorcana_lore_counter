@@ -338,11 +338,6 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
     HapticUtils.medium();
 
-    print('💾 PlayerEditDialog._handleSave:');
-    print('  playerId: ${widget.playerId}');
-    print('  oldName: ${widget.playerName}');
-    print('  newName: $name');
-
     // Mettre à jour le joueur par ID (permet le renommage)
     final service = ref.read(playerHistoryServiceProvider);
     await service.updatePlayerById(
@@ -353,8 +348,6 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       backgroundColorEnd: _backgroundColorEnd,
       iconCodePoint: _selectedIconCodePoint,
     );
-
-    print('  ✅ updatePlayerById completed');
 
     // Callback avec les nouvelles données
     widget.onPlayerUpdated(
