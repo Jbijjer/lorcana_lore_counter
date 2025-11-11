@@ -38,7 +38,9 @@ class PlayerName {
     this.backgroundColorEndValue,
     this.iconCodePoint,
     String? id,
-  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
+  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString() {
+    print('🆕 PlayerName created: name="$name", id="${this.id}"');
+  }
 
   /// Crée une copie avec les modifications spécifiées
   PlayerName copyWith({
@@ -50,7 +52,7 @@ class PlayerName {
     int? iconCodePoint,
     String? id,
   }) {
-    return PlayerName(
+    final newPlayer = PlayerName(
       name: name ?? this.name,
       lastUsed: lastUsed ?? this.lastUsed,
       usageCount: usageCount ?? this.usageCount,
@@ -59,5 +61,7 @@ class PlayerName {
       iconCodePoint: iconCodePoint ?? this.iconCodePoint,
       id: id ?? this.id,
     );
+    print('📝 PlayerName.copyWith: old="${this.name}" (id=${this.id}) → new="${newPlayer.name}" (id=${newPlayer.id})');
+    return newPlayer;
   }
 }

@@ -267,10 +267,16 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
   }
 
   Future<void> _showEditDialog(String oldName) async {
+    print('🖊️ _showEditDialog: oldName="$oldName"');
     final service = ref.read(playerHistoryServiceProvider);
     final player = service.getPlayerByName(oldName);
 
-    if (player == null) return;
+    if (player == null) {
+      print('  ❌ Player not found!');
+      return;
+    }
+
+    print('  ✅ Opening edit dialog for player: id="${player.id}", name="${player.name}"');
 
     final (startColor, endColor) = service.getPlayerColors(oldName);
     final iconCodePoint = service.getPlayerIcon(oldName);
@@ -290,6 +296,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
           required Color backgroundColorEnd,
           required int iconCodePoint,
         }) {
+          print('  🔄 onPlayerUpdated callback: oldName="$oldName", newName="$name"');
           // Mettre à jour les couleurs, l'icône et le nom du joueur actuel si c'est le même
           if (oldName == widget.currentName) {
             widget.onBackgroundColorsChanged(
