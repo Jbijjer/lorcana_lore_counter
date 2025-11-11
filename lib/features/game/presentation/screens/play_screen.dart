@@ -226,13 +226,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           } else {
             ref.read(gameProvider.notifier).changePlayer2BackgroundColors(start, end);
           }
-
-          // Sauvegarder les préférences de couleurs
-          ref.read(playerHistoryServiceProvider).updatePlayerColors(
-            player.name,
-            start,
-            end,
-          );
+          // Note: Ne PAS appeler updatePlayerColors ici car updatePlayerById
+          // dans PlayerEditDialog a déjà sauvegardé les couleurs
         },
         onIconChanged: (iconCodePoint) {
           if (isPlayer1) {
@@ -240,12 +235,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           } else {
             ref.read(gameProvider.notifier).changePlayer2Icon(iconCodePoint);
           }
-
-          // Sauvegarder l'icône dans l'historique
-          ref.read(playerHistoryServiceProvider).updatePlayerIcon(
-            player.name,
-            iconCodePoint,
-          );
+          // Note: Ne PAS appeler updatePlayerIcon ici car updatePlayerById
+          // dans PlayerEditDialog a déjà sauvegardé l'icône
         },
         onNameChanged: (newPlayerName) {
           // Mettre à jour le nom du joueur actuel dans la partie
