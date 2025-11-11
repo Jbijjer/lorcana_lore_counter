@@ -342,6 +342,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
     final service = ref.read(playerHistoryServiceProvider);
     await service.updatePlayerById(
       id: widget.playerId,
+      oldName: widget.playerName,
       newName: name,
       backgroundColorStart: _backgroundColorStart,
       backgroundColorEnd: _backgroundColorEnd,

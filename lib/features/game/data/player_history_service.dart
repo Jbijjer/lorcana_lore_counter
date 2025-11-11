@@ -207,6 +207,7 @@ class PlayerHistoryService {
   Future<void> updatePlayerById({
     required String id,
     String? newName,
+    String? oldName,
     Color? backgroundColorStart,
     Color? backgroundColorEnd,
     int? iconCodePoint,
@@ -214,14 +215,25 @@ class PlayerHistoryService {
     if (_box == null) return;
 
     // Chercher le joueur par ID
-    final index = _box!.values.toList().indexWhere(
+    int index = _box!.values.toList().indexWhere(
       (p) => p.id == id,
     );
+
+    // Si non trouvé par ID et qu'on a l'ancien nom, chercher par nom en fallback
+    if (index == -1 && oldName != null && oldName.isNotEmpty) {
+      index = _box!.values.toList().indexWhere(
+        (p) => p.name.toLowerCase() == oldName.toLowerCase(),
+      );
+    }
 
     if (index != -1) {
       final existing = _box!.getAt(index);
       if (existing != null) {
+        // S'assurer que l'ID est présent
+        final finalId = existing.id ?? id;
+
         final updated = existing.copyWith(
+          id: finalId,
           name: newName,
           lastUsed: DateTime.now(),
           usageCount: existing.usageCount + 1,
