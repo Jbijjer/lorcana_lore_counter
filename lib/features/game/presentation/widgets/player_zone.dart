@@ -30,8 +30,8 @@ class PlayerZone extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            player.backgroundColorStart.withOpacity(0.6),
-            player.backgroundColorEnd.withOpacity(0.4),
+            player.backgroundColorStart.withValues(alpha: 0.6),
+            player.backgroundColorEnd.withValues(alpha: 0.4),
           ],
         ),
       ),
@@ -57,10 +57,10 @@ class PlayerZone extends StatelessWidget {
                   ),
                   decoration: onNameTap != null
                       ? BoxDecoration(
-                          color: player.color.withOpacity(0.1),
+                          color: player.color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: player.color.withOpacity(0.3),
+                            color: player.color.withValues(alpha: 0.3),
                             width: 1,
                           ),
                         )
@@ -189,7 +189,7 @@ class _ScoreActionButton extends StatelessWidget {
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: playerColor.withOpacity(0.15),
+            color: playerColor.withValues(alpha: 0.15),
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.black,

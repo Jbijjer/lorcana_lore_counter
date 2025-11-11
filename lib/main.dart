@@ -40,10 +40,6 @@ class LorcanaScoreKeeperApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accessibilityPrefs = ref.watch(accessibilityNotifierProvider);
 
-    // Déterminer le thème à utiliser en fonction du mode système et des préférences
-    final brightness = MediaQuery.platformBrightnessOf(context);
-    final isDark = brightness == Brightness.dark;
-
     return accessibilityPrefs.when(
       data: (prefs) {
         final ThemeData lightTheme = prefs.highContrastMode

@@ -174,8 +174,8 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: isCurrentPlayer
-            ? widget.playerColor.withOpacity(0.2)
-            : Colors.grey.withOpacity(0.1),
+            ? widget.playerColor.withValues(alpha: 0.2)
+            : Colors.grey.withValues(alpha: 0.1),
         child: Icon(
           Icons.person,
           color: isCurrentPlayer ? widget.playerColor : Colors.grey,
@@ -204,7 +204,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
   Widget _buildNewPlayerTile() {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: widget.playerColor.withOpacity(0.2),
+        backgroundColor: widget.playerColor.withValues(alpha: 0.2),
         child: Icon(
           Icons.add,
           color: widget.playerColor,

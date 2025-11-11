@@ -60,7 +60,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: widget.playerColor.withOpacity(0.3),
+            color: widget.playerColor.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -90,10 +90,10 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
       return Container(
         height: 100,
         decoration: BoxDecoration(
-          color: _selectedColors[0].withOpacity(0.6),
+          color: _selectedColors[0].withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: widget.playerColor.withOpacity(0.3),
+            color: widget.playerColor.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -116,13 +116,13 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _selectedColors[0].withOpacity(0.6),
-              _selectedColors[1].withOpacity(0.4),
+              _selectedColors[0].withValues(alpha: 0.6),
+              _selectedColors[1].withValues(alpha: 0.4),
             ],
           ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: widget.playerColor.withOpacity(0.3),
+            color: widget.playerColor.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -223,13 +223,13 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                         color: color,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? Colors.white : color.withOpacity(0.3),
+                          color: isSelected ? Colors.white : color.withValues(alpha: 0.3),
                           width: isSelected ? 4 : 2,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: Colors.white.withOpacity(0.5),
+                                  color: Colors.white.withValues(alpha: 0.5),
                                   blurRadius: 8,
                                   spreadRadius: 2,
                                 )

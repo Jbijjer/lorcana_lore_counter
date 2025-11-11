@@ -40,4 +40,4 @@ class Player with _$Player {
 Color _colorFromJson(int value) => Color(value);
 
 /// Convertir une couleur vers JSON
-int _colorToJson(Color color) => color.value;
+int _colorToJson(Color color) => color.toARGB32();
