@@ -61,8 +61,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 600, maxWidth: 500),
-        padding: const EdgeInsets.all(24),
+        constraints: const BoxConstraints(maxHeight: 700, maxWidth: 550),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -248,7 +248,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
   Widget _buildIconSelector() {
     return Container(
-      height: 160,
+      height: 200,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(12),
