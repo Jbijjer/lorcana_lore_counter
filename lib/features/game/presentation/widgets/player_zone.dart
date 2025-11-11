@@ -38,89 +38,17 @@ class PlayerZone extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Nom du joueur (cliquable), descendu de 30 pixels
-          Transform.translate(
-            offset: const Offset(0, 30),
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              child: GestureDetector(
-                onTap: onNameTap != null
-                    ? () {
-                        HapticUtils.light();
-                        onNameTap!();
-                      }
-                    : null,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Avatar circulaire avec icône de portrait et contour noir
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 4,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: 35,
-                        backgroundColor: player.color.withValues(alpha: 0.3),
-                        child: Icon(
-                          IconData(
-                            player.iconCodePoint,
-                            fontFamily: 'MaterialIcons',
-                          ),
-                          color: player.color,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Nom du joueur en blanc avec outline noir
-                    Stack(
-                      children: [
-                        // Outline noir (dessous)
-                        Text(
-                          player.name,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 30,
-                                letterSpacing: 0.5,
-                                foreground: Paint()
-                                  ..style = PaintingStyle.stroke
-                                  ..strokeWidth = 4
-                                  ..color = Colors.black,
-                              ),
-                        ),
-                        // Texte blanc (dessus)
-                        Text(
-                          player.name,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 30,
-                                letterSpacing: 0.5,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Affichage du score avec contrôles +/-
+          // Affichage du score avec contrôles +/-, monté de 30 pixels
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Transform.translate(
-                    offset: const Offset(0, 25),
-                    child: _ScoreActionButton(
+            child: Transform.translate(
+              offset: const Offset(0, -30),
+              child: Padding(
+                padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _ScoreActionButton(
                       icon: Icons.remove,
                       playerColor: player.color,
                       semanticsLabel: 'Diminuer le score',
@@ -129,22 +57,19 @@ class PlayerZone extends StatelessWidget {
                         onDecrement(1);
                       },
                     ),
-                  ),
-                  const SizedBox(width: AppConstants.defaultPadding * 2),
-                  // Affichage du score avec cadre Lore
-                  Expanded(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Cadre Lore en arrière-plan (rotation gérée par RotatedBox parent)
-                        Image.asset(
-                          'assets/images/lore_frame.png',
-                          fit: BoxFit.contain,
-                        ),
-                        // Score au centre, légèrement descendu
-                        Transform.translate(
-                          offset: const Offset(0, 25),
-                          child: Center(
+                    const SizedBox(width: AppConstants.defaultPadding * 2),
+                    // Affichage du score avec cadre Lore
+                    Expanded(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Cadre Lore en arrière-plan (rotation gérée par RotatedBox parent)
+                          Image.asset(
+                            'assets/images/lore_frame.png',
+                            fit: BoxFit.contain,
+                          ),
+                          // Score au centre
+                          Center(
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Padding(
@@ -161,14 +86,11 @@ class PlayerZone extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppConstants.defaultPadding * 2),
-                  Transform.translate(
-                    offset: const Offset(0, 25),
-                    child: _ScoreActionButton(
+                    const SizedBox(width: AppConstants.defaultPadding * 2),
+                    _ScoreActionButton(
                       icon: Icons.add,
                       playerColor: player.color,
                       semanticsLabel: 'Augmenter le score',
@@ -177,6 +99,75 @@ class PlayerZone extends StatelessWidget {
                         onIncrement(1);
                       },
                     ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Nom du joueur (cliquable) en-dessous du compteur
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+            child: GestureDetector(
+              onTap: onNameTap != null
+                  ? () {
+                      HapticUtils.light();
+                      onNameTap!();
+                    }
+                  : null,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Avatar circulaire avec icône de portrait et contour noir
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 4,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 35,
+                      backgroundColor: player.color.withValues(alpha: 0.3),
+                      child: Icon(
+                        IconData(
+                          player.iconCodePoint,
+                          fontFamily: 'MaterialIcons',
+                        ),
+                        color: player.color,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Nom du joueur en blanc avec outline noir
+                  Stack(
+                    children: [
+                      // Outline noir (dessous)
+                      Text(
+                        player.name,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 30,
+                              letterSpacing: 0.5,
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 4
+                                ..color = Colors.black,
+                            ),
+                      ),
+                      // Texte blanc (dessus)
+                      Text(
+                        player.name,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 30,
+                              letterSpacing: 0.5,
+                            ),
+                      ),
+                    ],
                   ),
                 ],
               ),
