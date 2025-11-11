@@ -38,10 +38,10 @@ class PlayerZone extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Affichage du score avec contrôles +/-, monté de 15 pixels
+          // Affichage du score avec contrôles +/-, descendu de 25 pixels
           Expanded(
             child: Transform.translate(
-              offset: const Offset(0, -15),
+              offset: const Offset(0, 25),
               child: Padding(
                 padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 child: Row(
