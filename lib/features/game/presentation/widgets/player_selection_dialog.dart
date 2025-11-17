@@ -11,10 +11,12 @@ class PlayerSelectionDialog extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.defaultColor,
+    this.excludedPlayerName,
   });
 
   final String title;
   final Color defaultColor;
+  final String? excludedPlayerName;
 
   @override
   ConsumerState<PlayerSelectionDialog> createState() => _PlayerSelectionDialogState();
@@ -157,43 +159,62 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
   Widget _buildPlayerNameTile(String name) {
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
+    final isExcluded = widget.excludedPlayerName != null && name == widget.excludedPlayerName;
 
-    return InkWell(
-      onTap: () {
-        HapticUtils.light();
-        _handleSelectPlayer(name);
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: widget.defaultColor.withOpacity(0.2),
-              child: iconAssetPath != null
-                  ? ClipOval(
-                      child: Image.asset(
-                        iconAssetPath,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
+    return Opacity(
+      opacity: isExcluded ? 0.4 : 1.0,
+      child: InkWell(
+        onTap: isExcluded ? null : () {
+          HapticUtils.light();
+          _handleSelectPlayer(name);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: widget.defaultColor.withOpacity(0.2),
+                child: iconAssetPath != null
+                    ? ClipOval(
+                        child: Image.asset(
+                          iconAssetPath,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        color: widget.defaultColor,
                       ),
-                    )
-                  : Icon(
-                      Icons.person,
-                      color: widget.defaultColor,
-                    ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.normal,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ),
-            ),
-          ],
+              if (isExcluded) ...[
+                const Icon(
+                  Icons.block,
+                  color: Colors.red,
+                  size: 20,
+                ),
+                const SizedBox(width: 4),
+                const Text(
+                  'Déjà sélectionné',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

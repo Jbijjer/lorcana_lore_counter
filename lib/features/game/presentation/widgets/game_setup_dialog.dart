@@ -19,11 +19,15 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog> {
 
   /// Affiche le dialog de sélection pour un joueur
   Future<void> _selectPlayer(int playerNumber) async {
+    // Exclure l'autre joueur de la liste
+    final excludedPlayerName = playerNumber == 1 ? _player2?.name : _player1?.name;
+
     final player = await showDialog<Player>(
       context: context,
       builder: (context) => PlayerSelectionDialog(
         title: playerNumber == 1 ? 'Sélectionner le Joueur 1' : 'Sélectionner le Joueur 2',
         defaultColor: playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor,
+        excludedPlayerName: excludedPlayerName,
       ),
     );
 
@@ -40,7 +44,9 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final canStart = _player1 != null && _player2 != null;
+    final canStart = _player1 != null &&
+                     _player2 != null &&
+                     _player1!.name != _player2!.name;
 
     return Dialog(
       backgroundColor: Colors.transparent,
