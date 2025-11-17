@@ -82,7 +82,7 @@ class PlayerZone extends StatelessWidget {
                                       child: Text(
                                         score.toString(),
                                         style: const TextStyle(
-                                          fontSize: 86,
+                                          fontSize: 73.1,
                                           fontWeight: FontWeight.w900,
                                           color: Colors.black,
                                           letterSpacing: -4,
