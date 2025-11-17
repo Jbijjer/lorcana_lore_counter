@@ -22,7 +22,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
   final Color backgroundColorStart;
   final Color backgroundColorEnd;
   final Function(Color start, Color end) onBackgroundColorsChanged;
-  final Function(int iconCodePoint)? onIconChanged;
+  final Function(String iconAssetPath)? onIconChanged;
   final Function(String newName)? onNameChanged;
 
   @override
@@ -166,7 +166,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
   Widget _buildPlayerNameTile(String name) {
     final isCurrentPlayer = name == widget.currentName;
     final service = ref.read(playerHistoryServiceProvider);
-    final iconCodePoint = service.getPlayerIcon(name);
+    final iconAssetPath = service.getPlayerIcon(name);
 
     return InkWell(
       onTap: () {
@@ -186,12 +186,19 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
               backgroundColor: isCurrentPlayer
                   ? widget.playerColor.withValues(alpha: 0.2)
                   : Colors.grey.withValues(alpha: 0.1),
-              child: Icon(
-                iconCodePoint != null
-                    ? IconData(iconCodePoint, fontFamily: 'MaterialIcons')
-                    : Icons.person,
-                color: isCurrentPlayer ? widget.playerColor : Colors.grey,
-              ),
+              child: iconAssetPath != null
+                  ? ClipOval(
+                      child: Image.asset(
+                        iconAssetPath,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Icon(
+                      Icons.person,
+                      color: isCurrentPlayer ? widget.playerColor : Colors.grey,
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -271,7 +278,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     if (player == null) return;
 
     final (startColor, endColor) = service.getPlayerColors(oldName);
-    final iconCodePoint = service.getPlayerIcon(oldName);
+    final iconAssetPath = service.getPlayerIcon(oldName);
 
     await showDialog(
       context: context,
@@ -281,12 +288,12 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
         playerColor: widget.playerColor,
         backgroundColorStart: startColor ?? widget.backgroundColorStart,
         backgroundColorEnd: endColor ?? widget.backgroundColorEnd,
-        iconCodePoint: iconCodePoint ?? 0xe491, // Icons.person par défaut
+        iconAssetPath: iconAssetPath ?? 'assets/images/player_icons/mickey_icon.png',
         onPlayerUpdated: ({
           required String name,
           required Color backgroundColorStart,
           required Color backgroundColorEnd,
-          required int iconCodePoint,
+          required String iconAssetPath,
         }) {
           // Mettre à jour les couleurs, l'icône et le nom du joueur actuel si c'est le même
           if (oldName == widget.currentName) {
@@ -294,7 +301,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
               backgroundColorStart,
               backgroundColorEnd,
             );
-            widget.onIconChanged?.call(iconCodePoint);
+            widget.onIconChanged?.call(iconAssetPath);
             // Si le nom a changé, le signaler
             if (name != oldName) {
               widget.onNameChanged?.call(name);

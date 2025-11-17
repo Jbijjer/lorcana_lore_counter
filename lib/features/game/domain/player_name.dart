@@ -22,13 +22,17 @@ class PlayerName {
   @HiveField(4)
   final int? backgroundColorEndValue;
 
-  /// Code point de l'icône (nullable pour compatibilité)
+  /// Code point de l'icône (DÉPRÉCIÉ - maintenu pour compatibilité avec anciennes données)
   @HiveField(5)
   final int? iconCodePoint;
 
   /// ID unique du joueur (nullable pour compatibilité avec les anciennes données)
   @HiveField(6)
   final String? id;
+
+  /// Chemin de l'asset de l'icône (remplace iconCodePoint)
+  @HiveField(7)
+  final String? iconAssetPath;
 
   PlayerName({
     required this.name,
@@ -38,6 +42,7 @@ class PlayerName {
     this.backgroundColorEndValue,
     this.iconCodePoint,
     String? id,
+    this.iconAssetPath,
   }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   /// Crée une copie avec les modifications spécifiées
@@ -49,6 +54,7 @@ class PlayerName {
     int? backgroundColorEndValue,
     int? iconCodePoint,
     String? id,
+    String? iconAssetPath,
   }) {
     return PlayerName(
       name: name ?? this.name,
@@ -58,6 +64,7 @@ class PlayerName {
       backgroundColorEndValue: backgroundColorEndValue ?? this.backgroundColorEndValue,
       iconCodePoint: iconCodePoint ?? this.iconCodePoint,
       id: id ?? this.id,
+      iconAssetPath: iconAssetPath ?? this.iconAssetPath,
     );
   }
 }

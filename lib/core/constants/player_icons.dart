@@ -1,12 +1,10 @@
-import 'package:flutter/material.dart';
-
 /// Classe représentant une icône de joueur disponible
 class PlayerIcon {
-  final IconData iconData;
+  final String assetPath;
   final String label;
 
   const PlayerIcon({
-    required this.iconData,
+    required this.assetPath,
     required this.label,
   });
 }
@@ -14,42 +12,34 @@ class PlayerIcon {
 /// Liste des icônes disponibles pour les joueurs
 class PlayerIcons {
   static const List<PlayerIcon> availableIcons = [
-    PlayerIcon(iconData: Icons.person, label: 'Personne'),
-    PlayerIcon(iconData: Icons.star, label: 'Étoile'),
-    PlayerIcon(iconData: Icons.favorite, label: 'Cœur'),
-    PlayerIcon(iconData: Icons.emoji_events, label: 'Trophée'),
-    PlayerIcon(iconData: Icons.bolt, label: 'Éclair'),
-    PlayerIcon(iconData: Icons.auto_awesome, label: 'Magie'),
-    PlayerIcon(iconData: Icons.rocket_launch, label: 'Fusée'),
-    PlayerIcon(iconData: Icons.shield, label: 'Bouclier'),
-    PlayerIcon(iconData: Icons.workspace_premium, label: 'Couronne'),
-    PlayerIcon(iconData: Icons.local_fire_department, label: 'Feu'),
-    PlayerIcon(iconData: Icons.diamond, label: 'Diamant'),
-    PlayerIcon(iconData: Icons.pets, label: 'Patte'),
-    PlayerIcon(iconData: Icons.sports_esports, label: 'Jeu'),
-    PlayerIcon(iconData: Icons.palette, label: 'Palette'),
-    PlayerIcon(iconData: Icons.music_note, label: 'Musique'),
-    PlayerIcon(iconData: Icons.casino, label: 'Dé'),
-    PlayerIcon(iconData: Icons.cake, label: 'Gâteau'),
-    PlayerIcon(iconData: Icons.local_florist, label: 'Fleur'),
-    PlayerIcon(iconData: Icons.bug_report, label: 'Insecte'),
-    PlayerIcon(iconData: Icons.nightlight, label: 'Lune'),
-    PlayerIcon(iconData: Icons.wb_sunny, label: 'Soleil'),
-    PlayerIcon(iconData: Icons.ac_unit, label: 'Flocon'),
-    PlayerIcon(iconData: Icons.psychology, label: 'Cerveau'),
-    PlayerIcon(iconData: Icons.thumb_up, label: 'Pouce levé'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/mickey_icon.png', label: 'Mickey'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/donald_icon.png', label: 'Donald'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/daisy_icon.png', label: 'Daisy'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/ariel_icon.png', label: 'Ariel'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/aurore_icon.png', label: 'Aurore'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/belle_icon.png', label: 'Belle'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/beast_icon.png', label: 'Beast'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/gaston_icon.png', label: 'Gaston'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/lilo_icon.png', label: 'Lilo'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/stitch_icon.png', label: 'Stitch'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/mufasa_icon.png', label: 'Mufasa'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/simba_icon.png', label: 'Simba'),
+    PlayerIcon(assetPath: 'assets/images/player_icons/mulan_icon.png', label: 'Mulan'),
   ];
 
-  /// Récupère une icône par son codePoint
-  static IconData getIconByCodePoint(int codePoint) {
+  /// Récupère une icône par son chemin
+  static String? getIconByPath(String path) {
     try {
-      return IconData(codePoint, fontFamily: 'MaterialIcons');
+      final icon = availableIcons.firstWhere(
+        (icon) => icon.assetPath == path,
+        orElse: () => availableIcons[0],
+      );
+      return icon.assetPath;
     } catch (e) {
-      // Retourne l'icône par défaut en cas d'erreur
-      return Icons.person;
+      return null;
     }
   }
 
   /// Icône par défaut
-  static const IconData defaultIcon = Icons.person;
+  static const String defaultIcon = 'assets/images/player_icons/mickey_icon.png';
 }
