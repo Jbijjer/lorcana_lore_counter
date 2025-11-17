@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import 'color_picker_dialog.dart';
+import 'player_edit_dialog.dart';
 
 /// Dialogue pour sélectionner ou créer un nom de joueur
 class PlayerNameDialog extends ConsumerStatefulWidget {
@@ -13,6 +13,8 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
     required this.backgroundColorStart,
     required this.backgroundColorEnd,
     required this.onBackgroundColorsChanged,
+    this.onIconChanged,
+    this.onNameChanged,
   });
 
   final String currentName;
@@ -20,6 +22,8 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
   final Color backgroundColorStart;
   final Color backgroundColorEnd;
   final Function(Color start, Color end) onBackgroundColorsChanged;
+  final Function(int iconCodePoint)? onIconChanged;
+  final Function(String newName)? onNameChanged;
 
   @override
   ConsumerState<PlayerNameDialog> createState() => _PlayerNameDialogState();
@@ -67,15 +71,6 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                ),
-                // Bouton pour le sélecteur de couleurs
-                IconButton(
-                  icon: Icon(
-                    Icons.brush,
-                    color: widget.playerColor,
-                  ),
-                  onPressed: () => _showColorPicker(context),
-                  tooltip: 'Couleur de fond',
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -170,34 +165,49 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
 
   Widget _buildPlayerNameTile(String name) {
     final isCurrentPlayer = name == widget.currentName;
+    final service = ref.read(playerHistoryServiceProvider);
+    final iconCodePoint = service.getPlayerIcon(name);
 
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: isCurrentPlayer
-            ? widget.playerColor.withValues(alpha: 0.2)
-            : Colors.grey.withValues(alpha: 0.1),
-        child: Icon(
-          Icons.person,
-          color: isCurrentPlayer ? widget.playerColor : Colors.grey,
-        ),
-      ),
-      title: Text(
-        name,
-        style: TextStyle(
-          fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
-          color: isCurrentPlayer ? widget.playerColor : null,
-        ),
-      ),
-      trailing: isCurrentPlayer
-          ? Icon(Icons.check_circle, color: widget.playerColor)
-          : null,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return InkWell(
       onTap: () {
         HapticUtils.light();
         _handleSelectPlayer(name);
       },
+      onLongPress: () {
+        HapticUtils.medium();
+        _showEditDialog(name);
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: isCurrentPlayer
+                  ? widget.playerColor.withValues(alpha: 0.2)
+                  : Colors.grey.withValues(alpha: 0.1),
+              child: Icon(
+                iconCodePoint != null
+                    ? IconData(iconCodePoint, fontFamily: 'MaterialIcons')
+                    : Icons.person,
+                color: isCurrentPlayer ? widget.playerColor : Colors.grey,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                name,
+                style: TextStyle(
+                  fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
+                  color: isCurrentPlayer ? widget.playerColor : null,
+                ),
+              ),
+            ),
+            if (isCurrentPlayer)
+              Icon(Icons.check_circle, color: widget.playerColor),
+          ],
+        ),
+      ),
     );
   }
 
@@ -254,19 +264,48 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     Navigator.of(context).pop(name.trim());
   }
 
-  Future<void> _showColorPicker(BuildContext context) async {
-    HapticUtils.light();
-    final result = await showDialog<Map<String, Color>>(
+  Future<void> _showEditDialog(String oldName) async {
+    final service = ref.read(playerHistoryServiceProvider);
+    final player = service.getPlayerByName(oldName);
+
+    if (player == null) return;
+
+    final (startColor, endColor) = service.getPlayerColors(oldName);
+    final iconCodePoint = service.getPlayerIcon(oldName);
+
+    await showDialog(
       context: context,
-      builder: (context) => ColorPickerDialog(
-        currentColorStart: widget.backgroundColorStart,
-        currentColorEnd: widget.backgroundColorEnd,
+      builder: (context) => PlayerEditDialog(
+        playerId: player.id!,
+        playerName: oldName,
         playerColor: widget.playerColor,
+        backgroundColorStart: startColor ?? widget.backgroundColorStart,
+        backgroundColorEnd: endColor ?? widget.backgroundColorEnd,
+        iconCodePoint: iconCodePoint ?? 0xe491, // Icons.person par défaut
+        onPlayerUpdated: ({
+          required String name,
+          required Color backgroundColorStart,
+          required Color backgroundColorEnd,
+          required int iconCodePoint,
+        }) {
+          // Mettre à jour les couleurs, l'icône et le nom du joueur actuel si c'est le même
+          if (oldName == widget.currentName) {
+            widget.onBackgroundColorsChanged(
+              backgroundColorStart,
+              backgroundColorEnd,
+            );
+            widget.onIconChanged?.call(iconCodePoint);
+            // Si le nom a changé, le signaler
+            if (name != oldName) {
+              widget.onNameChanged?.call(name);
+            }
+          }
+          // Invalider le provider pour rafraîchir la liste des joueurs
+          ref.invalidate(playerNamesProvider);
+          // Rafraîchir l'interface
+          setState(() {});
+        },
       ),
     );
-
-    if (result != null) {
-      widget.onBackgroundColorsChanged(result['start']!, result['end']!);
-    }
   }
 }

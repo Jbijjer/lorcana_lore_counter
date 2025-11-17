@@ -15,6 +15,7 @@ class Player with _$Player {
     @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorEnd,
     @Default(0) int gamesPlayed,
     @Default(0) int gamesWon,
+    @Default(0xe491) int iconCodePoint, // Icons.person par défaut
   }) = _Player;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
@@ -25,6 +26,7 @@ class Player with _$Player {
     required Color color,
     Color? backgroundColorStart,
     Color? backgroundColorEnd,
+    int? iconCodePoint,
   }) {
     return Player(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -32,6 +34,7 @@ class Player with _$Player {
       color: color,
       backgroundColorStart: backgroundColorStart ?? color,
       backgroundColorEnd: backgroundColorEnd ?? color,
+      iconCodePoint: iconCodePoint ?? 0xe491, // Icons.person par défaut
     );
   }
 }

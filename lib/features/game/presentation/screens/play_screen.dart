@@ -226,21 +226,38 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           } else {
             ref.read(gameProvider.notifier).changePlayer2BackgroundColors(start, end);
           }
-
-          // Sauvegarder les préférences de couleurs
-          ref.read(playerHistoryServiceProvider).updatePlayerColors(
-            player.name,
-            start,
-            end,
-          );
+          // Note: Ne PAS appeler updatePlayerColors ici car updatePlayerById
+          // dans PlayerEditDialog a déjà sauvegardé les couleurs
+        },
+        onIconChanged: (iconCodePoint) {
+          if (isPlayer1) {
+            ref.read(gameProvider.notifier).changePlayer1Icon(iconCodePoint);
+          } else {
+            ref.read(gameProvider.notifier).changePlayer2Icon(iconCodePoint);
+          }
+          // Note: Ne PAS appeler updatePlayerIcon ici car updatePlayerById
+          // dans PlayerEditDialog a déjà sauvegardé l'icône
+        },
+        onNameChanged: (newPlayerName) {
+          // Mettre à jour le nom du joueur actuel dans la partie
+          if (isPlayer1) {
+            ref.read(gameProvider.notifier).changePlayer1Name(newPlayerName);
+          } else {
+            ref.read(gameProvider.notifier).changePlayer2Name(newPlayerName);
+          }
         },
       ),
     );
 
     if (newName != null && newName.isNotEmpty && mounted) {
+      final historyService = ref.read(playerHistoryServiceProvider);
+
       // Charger les couleurs sauvegardées pour ce joueur
       final (savedStartColor, savedEndColor) =
-          ref.read(playerHistoryServiceProvider).getPlayerColors(newName);
+          historyService.getPlayerColors(newName);
+
+      // Charger l'icône sauvegardée pour ce joueur
+      final savedIcon = historyService.getPlayerIcon(newName);
 
       if (isPlayer1) {
         ref.read(gameProvider.notifier).changePlayer1Name(newName);
@@ -252,6 +269,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
             savedEndColor,
           );
         }
+
+        // Appliquer l'icône sauvegardée si elle existe
+        if (savedIcon != null) {
+          ref.read(gameProvider.notifier).changePlayer1Icon(savedIcon);
+        }
       } else {
         ref.read(gameProvider.notifier).changePlayer2Name(newName);
 
@@ -261,6 +283,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
             savedStartColor,
             savedEndColor,
           );
+        }
+
+        // Appliquer l'icône sauvegardée si elle existe
+        if (savedIcon != null) {
+          ref.read(gameProvider.notifier).changePlayer2Icon(savedIcon);
         }
       }
     }
