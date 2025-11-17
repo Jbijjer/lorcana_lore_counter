@@ -133,34 +133,50 @@ class PlayerZone extends StatelessWidget {
           Positioned(
             top: AppConstants.defaultPadding,
             left: AppConstants.defaultPadding,
-            child: GestureDetector(
-              onTap: onNameTap != null
-                  ? () {
-                      HapticUtils.light();
-                      onNameTap!();
-                    }
-                  : null,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Nom du joueur au-dessus du portrait
+                Text(
+                  player.name,
+                  style: const TextStyle(
+                    fontSize: 8,
                     color: Colors.black,
-                    width: 3.6,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: CircleAvatar(
-                  radius: 31.5,
-                  backgroundColor: player.color.withValues(alpha: 0.08),
-                  child: ClipOval(
-                    child: Image.asset(
-                      player.iconAssetPath,
-                      width: 63,
-                      height: 63,
-                      fit: BoxFit.cover,
+                const SizedBox(height: 2),
+                // Avatar
+                GestureDetector(
+                  onTap: onNameTap != null
+                      ? () {
+                          HapticUtils.light();
+                          onNameTap!();
+                        }
+                      : null,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 3.6,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 31.5,
+                      backgroundColor: player.color.withValues(alpha: 0.08),
+                      child: ClipOval(
+                        child: Image.asset(
+                          player.iconAssetPath,
+                          width: 63,
+                          height: 63,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
