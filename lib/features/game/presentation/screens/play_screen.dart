@@ -250,6 +250,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     if (gameState == null) return;
 
     final player = isPlayer1 ? gameState.player1 : gameState.player2;
+    final otherPlayerName = isPlayer1 ? gameState.player2.name : gameState.player1.name;
 
     final newName = await showDialog<String>(
       context: context,
@@ -258,6 +259,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         playerColor: playerColor,
         backgroundColorStart: player.backgroundColorStart,
         backgroundColorEnd: player.backgroundColorEnd,
+        excludedPlayerName: otherPlayerName,
         onBackgroundColorsChanged: (start, end) {
           if (isPlayer1) {
             ref.read(gameProvider.notifier).changePlayer1BackgroundColors(start, end);

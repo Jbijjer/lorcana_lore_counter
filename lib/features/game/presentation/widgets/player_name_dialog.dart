@@ -15,6 +15,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
     required this.onBackgroundColorsChanged,
     this.onIconChanged,
     this.onNameChanged,
+    this.excludedPlayerName,
   });
 
   final String currentName;
@@ -24,6 +25,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
   final Function(Color start, Color end) onBackgroundColorsChanged;
   final Function(String iconAssetPath)? onIconChanged;
   final Function(String newName)? onNameChanged;
+  final String? excludedPlayerName;
 
   @override
   ConsumerState<PlayerNameDialog> createState() => _PlayerNameDialogState();
@@ -157,54 +159,64 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
 
   Widget _buildPlayerNameTile(String name) {
     final isCurrentPlayer = name == widget.currentName;
+    final isExcluded = widget.excludedPlayerName != null && name == widget.excludedPlayerName;
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
 
-    return InkWell(
-      onTap: () {
-        HapticUtils.light();
-        _handleSelectPlayer(name);
-      },
-      onLongPress: () {
-        HapticUtils.medium();
-        _showEditDialog(name);
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: isCurrentPlayer
-                  ? widget.playerColor.withValues(alpha: 0.2)
-                  : Colors.grey.withValues(alpha: 0.1),
-              child: iconAssetPath != null
-                  ? ClipOval(
-                      child: Image.asset(
-                        iconAssetPath,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
+    return Opacity(
+      opacity: isExcluded ? 0.4 : 1.0,
+      child: InkWell(
+        onTap: isExcluded ? null : () {
+          HapticUtils.light();
+          _handleSelectPlayer(name);
+        },
+        onLongPress: isExcluded ? null : () {
+          HapticUtils.medium();
+          _showEditDialog(name);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: isCurrentPlayer
+                    ? widget.playerColor.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.1),
+                child: iconAssetPath != null
+                    ? ClipOval(
+                        child: Image.asset(
+                          iconAssetPath,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        color: isCurrentPlayer ? widget.playerColor : Colors.grey,
                       ),
-                    )
-                  : Icon(
-                      Icons.person,
-                      color: isCurrentPlayer ? widget.playerColor : Colors.grey,
-                    ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                name,
-                style: TextStyle(
-                  fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
-                  color: isCurrentPlayer ? widget.playerColor : null,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
+                    color: isCurrentPlayer ? widget.playerColor : null,
+                  ),
                 ),
               ),
-            ),
-            if (isCurrentPlayer)
-              Icon(Icons.check_circle, color: widget.playerColor),
-          ],
+              if (isExcluded)
+                const Icon(
+                  Icons.block,
+                  color: Colors.red,
+                  size: 20,
+                )
+              else if (isCurrentPlayer)
+                Icon(Icons.check_circle, color: widget.playerColor),
+            ],
+          ),
         ),
       ),
     );
