@@ -221,9 +221,9 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     if (!mounted) return;
 
     // Ouvrir le dialog de personnalisation avec les valeurs aléatoires
-    Color? selectedStartColor = randomStartColor ?? widget.defaultColor;
-    Color? selectedEndColor = randomEndColor ?? widget.defaultColor;
-    String? selectedIcon = randomIcon ?? PlayerIcons.defaultIcon;
+    Color selectedStartColor = randomStartColor ?? widget.defaultColor;
+    Color selectedEndColor = randomEndColor ?? widget.defaultColor;
+    String selectedIcon = randomIcon ?? PlayerIcons.defaultIcon;
 
     await showDialog(
       context: context,
@@ -251,16 +251,16 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     if (!mounted) return;
 
     // Mettre à jour avec les valeurs personnalisées (si l'utilisateur a modifié)
-    await service.updatePlayerColors(randomName, selectedStartColor!, selectedEndColor!);
-    await service.updatePlayerIcon(randomName, selectedIcon!);
+    await service.updatePlayerColors(randomName, selectedStartColor, selectedEndColor);
+    await service.updatePlayerIcon(randomName, selectedIcon);
 
     // Créer l'objet Player avec les valeurs finales
     final player = Player.create(
       name: randomName,
       color: widget.defaultColor,
-      backgroundColorStart: selectedStartColor!,
-      backgroundColorEnd: selectedEndColor!,
-      iconAssetPath: selectedIcon!,
+      backgroundColorStart: selectedStartColor,
+      backgroundColorEnd: selectedEndColor,
+      iconAssetPath: selectedIcon,
     );
 
     if (!mounted) return;
