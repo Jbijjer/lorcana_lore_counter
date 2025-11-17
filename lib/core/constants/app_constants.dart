@@ -4,7 +4,7 @@ class AppConstants {
 
   // Scores
   static const int minScore = 0;
-  static const int maxScore = 99;
+  static const int maxScore = 25;
 
   // UI
   static const double defaultPadding = 16.0;

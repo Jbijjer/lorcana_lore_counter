@@ -13,6 +13,7 @@ class PlayerZone extends StatelessWidget {
     required this.onIncrement,
     required this.onDecrement,
     this.onNameTap,
+    this.onScoreLongPress,
   });
 
   final Player player;
@@ -21,6 +22,7 @@ class PlayerZone extends StatelessWidget {
   final ValueChanged<int> onIncrement;
   final ValueChanged<int> onDecrement;
   final VoidCallback? onNameTap;
+  final VoidCallback? onScoreLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class PlayerZone extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Transform.translate(
-                          offset: const Offset(0, 25),
+                          offset: const Offset(0, 22),
                           child: _ScoreActionButton(
                             icon: Icons.remove,
                             playerColor: player.color,
@@ -74,21 +76,29 @@ class PlayerZone extends StatelessWidget {
                                 'assets/images/lore_frame.png',
                                 fit: BoxFit.contain,
                               ),
-                              // Score au centre, descendu de 25 pixels
+                              // Score au centre, descendu de 22 pixels
                               Transform.translate(
-                                offset: const Offset(0, 25),
+                                offset: const Offset(-1, 22),
                                 child: Center(
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
-                                      child: Text(
-                                        score.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 73.1,
-                                          fontWeight: FontWeight.w900,
-                                          color: Colors.black,
-                                          letterSpacing: -4,
+                                  child: GestureDetector(
+                                    onLongPress: onScoreLongPress != null
+                                        ? () {
+                                            HapticUtils.medium();
+                                            onScoreLongPress!();
+                                          }
+                                        : null,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                                        child: Text(
+                                          score.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 70.7,
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.black,
+                                            letterSpacing: -4,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -100,7 +110,7 @@ class PlayerZone extends StatelessWidget {
                         ),
                         const SizedBox(width: AppConstants.defaultPadding * 2),
                         Transform.translate(
-                          offset: const Offset(0, 25),
+                          offset: const Offset(0, 22),
                           child: _ScoreActionButton(
                             icon: Icons.add,
                             playerColor: player.color,
