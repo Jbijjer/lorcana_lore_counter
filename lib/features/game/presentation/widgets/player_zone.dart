@@ -13,6 +13,7 @@ class PlayerZone extends StatelessWidget {
     required this.onIncrement,
     required this.onDecrement,
     this.onNameTap,
+    this.onScoreLongPress,
   });
 
   final Player player;
@@ -21,6 +22,7 @@ class PlayerZone extends StatelessWidget {
   final ValueChanged<int> onIncrement;
   final ValueChanged<int> onDecrement;
   final VoidCallback? onNameTap;
+  final VoidCallback? onScoreLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -78,17 +80,25 @@ class PlayerZone extends StatelessWidget {
                               Transform.translate(
                                 offset: const Offset(0, 25),
                                 child: Center(
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
-                                      child: Text(
-                                        score.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 73.1,
-                                          fontWeight: FontWeight.w900,
-                                          color: Colors.black,
-                                          letterSpacing: -4,
+                                  child: GestureDetector(
+                                    onLongPress: onScoreLongPress != null
+                                        ? () {
+                                            HapticUtils.medium();
+                                            onScoreLongPress!();
+                                          }
+                                        : null,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                                        child: Text(
+                                          score.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 73.1,
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.black,
+                                            letterSpacing: -4,
+                                          ),
                                         ),
                                       ),
                                     ),

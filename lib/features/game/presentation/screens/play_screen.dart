@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/player_zone.dart';
 import '../widgets/player_name_dialog.dart';
+import '../widgets/score_edit_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../data/player_history_service.dart';
@@ -101,6 +102,12 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                         playerColor: gameState.player1.color,
                         isPlayer1: true,
                       ),
+                      onScoreLongPress: () => _showScoreEditDialog(
+                        currentScore: gameState.player1Score,
+                        playerName: gameState.player1.name,
+                        playerColor: gameState.player1.color,
+                        isPlayer1: true,
+                      ),
                     ),
 
                     // Ligne centrale (barre noire de 10 pixels seulement)
@@ -122,6 +129,12 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       },
                       onNameTap: () => _showPlayerNameDialog(
                         currentName: gameState.player2.name,
+                        playerColor: gameState.player2.color,
+                        isPlayer1: false,
+                      ),
+                      onScoreLongPress: () => _showScoreEditDialog(
+                        currentScore: gameState.player2Score,
+                        playerName: gameState.player2.name,
                         playerColor: gameState.player2.color,
                         isPlayer1: false,
                       ),
@@ -290,6 +303,31 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           ref.read(gameProvider.notifier).changePlayer2Icon(savedIcon);
         }
       }
+    }
+  }
+
+  Future<void> _showScoreEditDialog({
+    required int currentScore,
+    required String playerName,
+    required Color playerColor,
+    required bool isPlayer1,
+  }) async {
+    final newScore = await showDialog<int>(
+      context: context,
+      builder: (context) => ScoreEditDialog(
+        currentScore: currentScore,
+        playerName: playerName,
+        playerColor: playerColor,
+      ),
+    );
+
+    if (newScore != null && mounted) {
+      if (isPlayer1) {
+        ref.read(gameProvider.notifier).setPlayer1Score(newScore);
+      } else {
+        ref.read(gameProvider.notifier).setPlayer2Score(newScore);
+      }
+      _checkWinner();
     }
   }
 }

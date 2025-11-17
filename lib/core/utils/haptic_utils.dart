@@ -27,4 +27,11 @@ class HapticUtils {
       await HapticFeedback.lightImpact();
     }
   }
+
+  /// Feedback pour les erreurs
+  static Future<void> error() async {
+    if (AppConstants.enableHapticFeedback) {
+      await HapticFeedback.heavyImpact();
+    }
+  }
 }
