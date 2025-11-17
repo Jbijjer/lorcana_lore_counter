@@ -7,15 +7,13 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Interface épurée avec dégradés colorés
 - [x] Typographie grasse pour les scores (FontWeight.w900)
 - [x] Coins arrondis (forme téléphone moderne)
-- [x] Boutons +/- simplifiés (tap: ±1, long press: ±5)
-- [x] Barre de progression vers 20 points
+- [x] Boutons +/- 
 - [x] Détection automatique de victoire
 - [x] Feedback haptique
-- [x] Bouton Undo (UI seulement)
 - [x] Bouton Menu/Options (UI seulement)
 - [x] Couleurs personnalisables avec palette Lorcana
 - [x] Modification manuelle du score (long press)
-- [x] Logo Lorcana SVG intégré
+- [x] Logo Lorcana intégré
 
 ## 🔥 Haute Priorité
 
