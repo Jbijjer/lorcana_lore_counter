@@ -199,21 +199,12 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
                   ),
                 ),
               ),
-              if (isExcluded) ...[
+              if (isExcluded)
                 const Icon(
                   Icons.block,
                   color: Colors.red,
                   size: 20,
                 ),
-                const SizedBox(width: 4),
-                const Text(
-                  'Déjà sélectionné',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
             ],
           ),
         ),
