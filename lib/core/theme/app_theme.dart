@@ -256,8 +256,8 @@ class AppTheme {
   /// Couleurs Lorcana pour les joueurs (version contraste élevé)
   static const List<Color> lorcanaHighContrastColors = [
     Color(0xFFFFCC00), // Amber - jaune vif
-    Color(0xFFCC00FF), // Amethyst - magenta vif
-    Color(0xFF00FF00), // Emerald - vert vif
+    Color(0xFFD34EC5), // Amethyst - mauve vif
+    Color(0xFF3BDB4D), // Emerald - vert vif
     Color(0xFFFF0000), // Ruby - rouge vif
     Color(0xFF0000FF), // Sapphire - bleu vif
     Color(0xFFC0C0C0), // Steel - gris clair vif
