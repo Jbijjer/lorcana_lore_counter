@@ -4,6 +4,7 @@ import '../../data/player_history_service.dart';
 import '../../domain/player.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/constants/player_icons.dart';
+import 'player_edit_dialog.dart';
 
 /// Dialog simplifié pour sélectionner un joueur et retourner un objet Player complet
 class PlayerSelectionDialog extends ConsumerStatefulWidget {
@@ -271,7 +272,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     Navigator.of(context).pop(player);
   }
 
-  void _handleCreatePlayer(String name) {
+  Future<void> _handleCreatePlayer(String name) async {
     if (name.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -284,19 +285,55 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
 
     HapticUtils.medium();
 
-    final service = ref.read(playerHistoryServiceProvider);
+    final trimmedName = name.trim();
 
-    // Créer l'objet Player avec des valeurs par défaut
-    final player = Player.create(
-      name: name.trim(),
-      color: widget.defaultColor,
-      backgroundColorStart: widget.defaultColor,
-      backgroundColorEnd: widget.defaultColor,
-      iconAssetPath: PlayerIcons.defaultIcon,
+    // Ouvrir le dialog de personnalisation
+    Color? selectedStartColor = widget.defaultColor;
+    Color? selectedEndColor = widget.defaultColor;
+    String? selectedIcon = PlayerIcons.defaultIcon;
+
+    await showDialog(
+      context: context,
+      builder: (context) => PlayerEditDialog(
+        playerId: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        playerName: trimmedName,
+        playerColor: widget.defaultColor,
+        backgroundColorStart: widget.defaultColor,
+        backgroundColorEnd: widget.defaultColor,
+        iconAssetPath: PlayerIcons.defaultIcon,
+        onPlayerUpdated: ({
+          required String name,
+          required Color backgroundColorStart,
+          required Color backgroundColorEnd,
+          required String iconAssetPath,
+        }) {
+          selectedStartColor = backgroundColorStart;
+          selectedEndColor = backgroundColorEnd;
+          selectedIcon = iconAssetPath;
+        },
+      ),
     );
 
-    // Ajouter à l'historique
-    service.addOrUpdatePlayerName(name.trim());
+    // Si l'utilisateur a fermé le dialog sans valider, on ne crée pas le joueur
+    if (!mounted) return;
+
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Créer l'objet Player avec les valeurs personnalisées
+    final player = Player.create(
+      name: trimmedName,
+      color: widget.defaultColor,
+      backgroundColorStart: selectedStartColor!,
+      backgroundColorEnd: selectedEndColor!,
+      iconAssetPath: selectedIcon!,
+    );
+
+    // Ajouter à l'historique avec les personnalisations
+    await service.addOrUpdatePlayerName(trimmedName);
+    await service.updatePlayerColors(trimmedName, selectedStartColor!, selectedEndColor!);
+    await service.updatePlayerIcon(trimmedName, selectedIcon!);
+
+    if (!mounted) return;
 
     // Retourner le joueur
     Navigator.of(context).pop(player);
