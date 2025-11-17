@@ -266,19 +266,6 @@ class PlayerHistoryService {
     }
   }
 
-  /// Supprime un nom de joueur
-  Future<void> deletePlayerName(String name) async {
-    if (_box == null) return;
-
-    final index = _box!.values.toList().indexWhere(
-      (p) => p.name.toLowerCase() == name.toLowerCase(),
-    );
-
-    if (index != -1) {
-      await _box!.deleteAt(index);
-    }
-  }
-
   /// Ferme la box Hive
   Future<void> dispose() async {
     await _box?.close();
