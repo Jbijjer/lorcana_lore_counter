@@ -136,14 +136,31 @@ class PlayerZone extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Nom du joueur au-dessus du portrait
-                Text(
-                  player.name,
-                  style: const TextStyle(
-                    fontSize: 8,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Nom du joueur au-dessus du portrait avec outline
+                Stack(
+                  children: [
+                    // Outline noir
+                    Text(
+                      player.name,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 2
+                          ..color = Colors.black,
+                      ),
+                    ),
+                    // Texte blanc
+                    Text(
+                      player.name,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 2),
                 // Avatar
