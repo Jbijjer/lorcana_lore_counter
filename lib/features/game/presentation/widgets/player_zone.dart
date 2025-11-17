@@ -140,7 +140,7 @@ class PlayerZone extends StatelessWidget {
                 ),
                 child: CircleAvatar(
                   radius: 31.5,
-                  backgroundColor: player.color.withValues(alpha: 0.15),
+                  backgroundColor: player.color.withValues(alpha: 0.08),
                   child: Icon(
                     IconData(
                       player.iconCodePoint,
@@ -193,7 +193,7 @@ class _ScoreActionButton extends StatelessWidget {
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: playerColor.withValues(alpha: 0.04),
+            color: playerColor.withValues(alpha: 0.02),
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.black,
