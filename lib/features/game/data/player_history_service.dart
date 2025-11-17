@@ -100,13 +100,33 @@ class PlayerHistoryService {
     if (playerName.name.isEmpty) return (null, null);
 
     final startColor = playerName.backgroundColorStartValue != null
-        ? Color(playerName.backgroundColorStartValue!)
+        ? _migrateToVibrantColor(Color(playerName.backgroundColorStartValue!))
         : null;
     final endColor = playerName.backgroundColorEndValue != null
-        ? Color(playerName.backgroundColorEndValue!)
+        ? _migrateToVibrantColor(Color(playerName.backgroundColorEndValue!))
         : null;
 
     return (startColor, endColor);
+  }
+
+  /// Migre les anciennes couleurs Lorcana vers les nouvelles couleurs vives
+  Color _migrateToVibrantColor(Color oldColor) {
+    // Map des anciennes couleurs vers les nouvelles
+    const colorMigrationMap = {
+      0xFFF5B202: 0xFFFFC107, // Amber
+      0xFF81377B: 0xFFAB47BC, // Amethyst
+      0xFF2A8934: 0xFF00E676, // Emerald
+      0xFFD3082F: 0xFFFF1744, // Ruby
+      0xFF0189C4: 0xFF2196F3, // Sapphire
+      0xFF9FA8B4: 0xFFB0BEC5, // Steel
+    };
+
+    final oldValue = oldColor.value;
+    if (colorMigrationMap.containsKey(oldValue)) {
+      return Color(colorMigrationMap[oldValue]!);
+    }
+
+    return oldColor;
   }
 
   /// Met à jour les couleurs de fond d'un joueur
