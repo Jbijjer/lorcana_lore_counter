@@ -32,7 +32,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 **⚠️ À FAIRE AVANT D'UTILISER :**
 - [ ] **IMPORTANT** : Exécuter `flutter pub run build_runner build --delete-conflicting-outputs`
   - Cela génère les fichiers `.freezed.dart` et `.g.dart` nécessaires
-  - Voir le fichier `GENERATION_REQUIRED.md` pour les détails
 
 **🔨 Intégration restante :**
 - [ ] Créer le widget de menu radial pour le bouton central
@@ -46,13 +45,8 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Tester la sauvegarde et l'affichage des statistiques
 
 **📊 Fonctionnalités des statistiques :**
-- Compteur de parties jouées/terminées/abandonnées
-- Temps total de jeu et durée moyenne par partie
-- Parties la plus longue/courte
-- Score moyen et score le plus élevé
-- Nombre maximum de rounds dans une partie
+- Compteur de parties jouées
 - Victoires par joueur avec pourcentage de winrate
-- Historique détaillé de chaque partie avec rounds
 - Suppression individuelle ou globale des statistiques
 
 ### 1. Auto-save avec Hive
@@ -60,13 +54,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Sauvegarder automatiquement après chaque changement de score
 - [ ] Charger la dernière partie au démarrage
 - [ ] Persister l'état même après fermeture de l'app
-
-### ~~2. Fonctionnalité Undo~~ ❌ ÉLIMINÉ
-- ~~[ ] Ajouter historique des actions dans GameState~~
-- ~~[ ] Implémenter méthode undo dans GameProvider~~
-- ~~[ ] Connecter le bouton Undo à la logique~~
-- ~~[ ] Limiter à 10-15 actions annulables~~
-- ~~[ ] Feedback visuel quand undo n'est pas disponible~~
 
 ### 3. Restart rapide (One-tap)
 - [ ] Ajouter dialog de confirmation
@@ -76,8 +63,8 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🎨 Problèmes Design / Contraste
 
-- [ ] Encore plus de contraste dans les thèmes
-- [ ] Des contours noirs
+- [x] Encore plus de contraste dans les thèmes
+- [x] Des contours noirs
 - [ ] Des couleurs flagrantes
 - [ ] Les dégradés ne fonctionnent pas
 
@@ -105,25 +92,15 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] About/Credits
 - [ ] Bouton "Effacer toutes les données"
 
-### 9. Historique des rounds (bouton central)
-- [ ] Dialog affichant les deltas par round
-- [ ] Timeline visuelle des changements de score
-- [ ] Informations: Round X, +Y points, timestamp
-- [ ] Bouton fermer
-
 ### 10. Bouton central dynamique et interactif
 - [ ] Animation flip (pièce de monnaie) lors d'événements clés
 - [ ] Transformation du bouton selon l'état de la partie :
   - [ ] État normal : logo Lorcana (menu radial)
   - [ ] État victoire : "Win!" (quand un joueur atteint 20 points)
-  - [ ] État égalité : "Time!" (quand le compteur Time atteint 0)
 - [ ] Bouton "Win!" pour confirmer la victoire
   - [ ] S'affiche avec animation flip quand un joueur atteint 20
   - [ ] Retour à l'état normal si le score descend sous 20
   - [ ] Clic confirme la victoire et affiche le dialog
-- [ ] Bouton "Time!" pour confirmer l'égalité
-  - [ ] S'affiche avec animation flip quand le compteur atteint 0
-  - [ ] Clic confirme l'égalité et termine la partie
 - [ ] Menu radial du bouton central (état normal)
   - [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
   - [ ] Animation d'expansion/contraction du menu radial
@@ -136,18 +113,17 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [ ] Possibilité de réinitialiser le compteur
 - [ ] Bouton "Reset" : remise à zéro rapide
   - [ ] Remet les scores à 0 pour les deux joueurs
-  - [ ] Dialog de confirmation optionnel
+  - [ ] Dialog de confirmation
   - [ ] Animation de transition
 - [ ] Autres boutons potentiels :
   - [ ] Bouton historique des rounds
   - [ ] Bouton paramètres rapides
-  - [ ] Bouton changement de couleurs
 
 ### 11. Écran de configuration pré-partie
-- [ ] Sélection des noms de joueurs
-- [ ] Sélection des couleurs
+- [x] Sélection des noms de joueurs
+- [x] Sélection des couleurs
 - [ ] Choix du mode (Best of X)
-- [ ] Bouton "Démarrer la partie"
+- [x] Bouton "Démarrer la partie"
 
 ### 12. Système de Tournoi et Rounds
 **Informations à capturer par partie :**
@@ -168,7 +144,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Ajouter option "Nouveau round" dans le menu radial
   - [ ] Désactivé si aucun tournoi n'est en cours
   - [ ] Au clic, vider le nom de l'adversaire actuel
-  - [ ] Demander d'entrer le nouveau nom d'adversaire
+  - [ ] Demander de choisir le nouvel adversaire
   - [ ] Incrémenter le compteur de round (ex: 2/5)
   - [ ] Réinitialiser les scores à 0
   - [ ] Garder les informations du tournoi en cours
@@ -196,7 +172,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 ### 13. Statistiques avancées
 - [ ] Graphiques de progression
 - [ ] Winrate global par joueur
-- [ ] Temps moyen de partie
 - [ ] Scores moyens
 - [ ] Export en CSV/JSON
 
@@ -212,34 +187,16 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Shake animation quand le score descend
 - [ ] Glow effect autour du bouton central
 
-### 15. Mode nuit/jour
-- [ ] Toggle thème clair/sombre manuel
-- [ ] Couleurs adaptées pour chaque mode
-- [ ] Persistance de la préférence
-
 ### 16. Support multi-langues
 - [ ] Français
 - [ ] Anglais
 - [ ] Utiliser package intl ou easy_localization
 
-## ♿ Accessibilité
-
-### 17. Mode à contraste élevé
-- [ ] Implémenter un mode à contraste élevé pour l'application
-- [ ] Assurer une lisibilité optimale pour les utilisateurs malvoyants
-- [ ] Respecter les normes WCAG pour les ratios de contraste
-- [ ] Ajouter un toggle dans les paramètres
-- [ ] Persister la préférence utilisateur
-
 ## 🚀 Nice to Have
-
-- [ ] Mode tournoi (bracket)
-- [ ] Minuteur de partie
 - [ ] Sons de victoire/défaite
 - [ ] Partage de résultats (screenshot)
 - [ ] Synchronisation cloud (Firebase)
 - [ ] Support tablette (layout adaptatif)
-- [ ] Widget iOS/Android (quick access)
 
 ## 📝 Notes techniques
 
