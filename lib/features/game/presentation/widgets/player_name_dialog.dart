@@ -32,12 +32,8 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
 }
 
 class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
-  final TextEditingController _controller = TextEditingController();
-  bool _showTextField = false;
-
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -83,74 +79,26 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
 
             const SizedBox(height: 16),
 
-            // Afficher soit la liste, soit le champ de texte
-            if (_showTextField) ...[
-              // Champ de saisie pour nouveau joueur
-              TextField(
-                controller: _controller,
-                autofocus: true,
-                decoration: InputDecoration(
-                  labelText: 'Nom du joueur',
-                  hintText: 'Appuyez sur Entrée pour valider',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: widget.playerColor,
-                      width: 2,
+            // Liste des joueurs existants
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  // Joueurs existants
+                  ...playerNames.map((name) => _buildPlayerNameTile(name)),
+
+                  // Divider
+                  if (playerNames.isNotEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Divider(),
                     ),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _controller.clear();
-                    },
-                  ),
-                ),
-                onSubmitted: (value) => _handleSave(value),
+
+                  // Option "Nouveau joueur"
+                  _buildNewPlayerTile(),
+                ],
               ),
-
-              const SizedBox(height: 12),
-
-              // Bouton retour
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: () {
-                    HapticUtils.light();
-                    setState(() {
-                      _showTextField = false;
-                      _controller.clear();
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Retour'),
-                ),
-              ),
-            ] else ...[
-              // Liste des joueurs existants
-              Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    // Joueurs existants
-                    ...playerNames.map((name) => _buildPlayerNameTile(name)),
-
-                    // Divider
-                    if (playerNames.isNotEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Divider(),
-                      ),
-
-                    // Option "Nouveau joueur"
-                    _buildNewPlayerTile(),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ],
         ),
       ),
@@ -243,9 +191,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
       ),
       onTap: () {
         HapticUtils.light();
-        setState(() {
-          _showTextField = true;
-        });
+        _handleCreatePlayer();
       },
     );
   }
@@ -259,24 +205,61 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     }
   }
 
-  Future<void> _handleSave(String name) async {
-    if (name.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Le nom ne peut pas être vide'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
+  Future<void> _handleCreatePlayer() async {
     HapticUtils.medium();
-    // Ajouter à l'historique et attendre que la sauvegarde soit terminée
-    await ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name.trim());
-    // Retourner le nom
-    if (mounted) {
-      Navigator.of(context).pop(name.trim());
-    }
+
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Générer un nom aléatoire Disney
+    final randomName = service.generateRandomDisneyName();
+
+    // Créer d'abord le joueur avec des valeurs aléatoires
+    await service.addOrUpdatePlayerName(randomName);
+
+    // Récupérer les valeurs aléatoires qui viennent d'être assignées
+    final (randomStartColor, randomEndColor) = service.getPlayerColors(randomName);
+    final randomIcon = service.getPlayerIcon(randomName);
+
+    if (!mounted) return;
+
+    // Ouvrir le dialog d'édition avec les valeurs aléatoires
+    await showDialog(
+      context: context,
+      builder: (context) => PlayerEditDialog(
+        playerId: service.getPlayerByName(randomName)?.id ?? '',
+        playerName: randomName,
+        playerColor: widget.playerColor,
+        backgroundColorStart: randomStartColor ?? widget.backgroundColorStart,
+        backgroundColorEnd: randomEndColor ?? widget.backgroundColorEnd,
+        iconAssetPath: randomIcon ?? 'assets/images/player_icons/mickey_icon.png',
+        onPlayerUpdated: ({
+          required String name,
+          required Color backgroundColorStart,
+          required Color backgroundColorEnd,
+          required String iconAssetPath,
+        }) {
+          // Mettre à jour les couleurs et l'icône du joueur actuel si c'est le même
+          if (randomName == widget.currentName) {
+            widget.onBackgroundColorsChanged(
+              backgroundColorStart,
+              backgroundColorEnd,
+            );
+            widget.onIconChanged?.call(iconAssetPath);
+            // Si le nom a changé, le signaler
+            if (name != randomName) {
+              widget.onNameChanged?.call(name);
+            }
+          }
+          // Invalider le provider pour rafraîchir la liste des joueurs
+          ref.invalidate(playerNamesProvider);
+
+          // Retourner le nom final
+          if (mounted) {
+            Navigator.of(context).pop(name);
+          }
+        },
+      ),
+    );
   }
 
   Future<void> _showEditDialog(String oldName) async {

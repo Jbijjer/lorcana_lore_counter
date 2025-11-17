@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/player_name.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/player_icons.dart';
+import '../../../core/constants/disney_names.dart';
 
 part 'player_history_service.g.dart';
 
@@ -283,6 +284,31 @@ class PlayerHistoryService {
   /// Ferme la box Hive
   Future<void> dispose() async {
     await _box?.close();
+  }
+
+  /// Génère un nom aléatoire Disney unique
+  String generateRandomDisneyName() {
+    final random = Random();
+    final existingNames = getAllPlayerNames().map((n) => n.toLowerCase()).toList();
+
+    // Choisir un nom aléatoire de la liste
+    String baseName = DisneyNames.availableNames[random.nextInt(DisneyNames.availableNames.length)];
+
+    // Si le nom n'est pas pris, le retourner
+    if (!existingNames.contains(baseName.toLowerCase())) {
+      return baseName;
+    }
+
+    // Sinon, ajouter un numéro
+    int suffix = 2;
+    String candidateName = '$baseName $suffix';
+
+    while (existingNames.contains(candidateName.toLowerCase())) {
+      suffix++;
+      candidateName = '$baseName $suffix';
+    }
+
+    return candidateName;
   }
 }
 
