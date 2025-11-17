@@ -279,11 +279,19 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     HapticUtils.medium();
 
     final trimmedName = name.trim();
+    final service = ref.read(playerHistoryServiceProvider);
 
-    // Ouvrir le dialog de personnalisation
-    Color? selectedStartColor = widget.defaultColor;
-    Color? selectedEndColor = widget.defaultColor;
-    String? selectedIcon = PlayerIcons.defaultIcon;
+    // Créer d'abord le joueur avec des valeurs aléatoires
+    await service.addOrUpdatePlayerName(trimmedName);
+
+    // Récupérer les valeurs aléatoires qui viennent d'être assignées
+    final (randomStartColor, randomEndColor) = service.getPlayerColors(trimmedName);
+    final randomIcon = service.getPlayerIcon(trimmedName);
+
+    // Ouvrir le dialog de personnalisation avec les valeurs aléatoires
+    Color? selectedStartColor = randomStartColor ?? widget.defaultColor;
+    Color? selectedEndColor = randomEndColor ?? widget.defaultColor;
+    String? selectedIcon = randomIcon ?? PlayerIcons.defaultIcon;
 
     await showDialog(
       context: context,
@@ -291,9 +299,9 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
         playerId: 'temp_${DateTime.now().millisecondsSinceEpoch}',
         playerName: trimmedName,
         playerColor: widget.defaultColor,
-        backgroundColorStart: widget.defaultColor,
-        backgroundColorEnd: widget.defaultColor,
-        iconAssetPath: PlayerIcons.defaultIcon,
+        backgroundColorStart: selectedStartColor,
+        backgroundColorEnd: selectedEndColor,
+        iconAssetPath: selectedIcon,
         onPlayerUpdated: ({
           required String name,
           required Color backgroundColorStart,
@@ -310,9 +318,11 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     // Si l'utilisateur a fermé le dialog sans valider, on ne crée pas le joueur
     if (!mounted) return;
 
-    final service = ref.read(playerHistoryServiceProvider);
+    // Mettre à jour avec les valeurs personnalisées (si l'utilisateur a modifié)
+    await service.updatePlayerColors(trimmedName, selectedStartColor!, selectedEndColor!);
+    await service.updatePlayerIcon(trimmedName, selectedIcon!);
 
-    // Créer l'objet Player avec les valeurs personnalisées
+    // Créer l'objet Player avec les valeurs finales
     final player = Player.create(
       name: trimmedName,
       color: widget.defaultColor,
@@ -320,11 +330,6 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
       backgroundColorEnd: selectedEndColor!,
       iconAssetPath: selectedIcon!,
     );
-
-    // Ajouter à l'historique avec les personnalisations
-    await service.addOrUpdatePlayerName(trimmedName);
-    await service.updatePlayerColors(trimmedName, selectedStartColor!, selectedEndColor!);
-    await service.updatePlayerIcon(trimmedName, selectedIcon!);
 
     if (!mounted) return;
 
