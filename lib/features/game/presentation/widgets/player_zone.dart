@@ -193,7 +193,7 @@ class _ScoreActionButton extends StatelessWidget {
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: playerColor.withValues(alpha: 0.08),
+            color: playerColor.withValues(alpha: 0.04),
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.black,
