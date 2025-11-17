@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
 import '../../domain/player.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/player_icons.dart';
 
 /// Dialog simplifié pour sélectionner un joueur et retourner un objet Player complet

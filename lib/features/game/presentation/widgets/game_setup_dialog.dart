@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/player.dart';
 import 'player_selection_dialog.dart';
 
@@ -23,7 +23,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog> {
       context: context,
       builder: (context) => PlayerSelectionDialog(
         title: playerNumber == 1 ? 'Sélectionner le Joueur 1' : 'Sélectionner le Joueur 2',
-        defaultColor: playerNumber == 1 ? AppColors.amber : AppColors.sapphire,
+        defaultColor: playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor,
       ),
     );
 
@@ -51,8 +51,8 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.amber.withOpacity(0.2),
-              AppColors.sapphire.withOpacity(0.2),
+              AppTheme.amberColor.withOpacity(0.2),
+              AppTheme.sapphireColor.withOpacity(0.2),
             ],
           ),
           borderRadius: BorderRadius.circular(20),
@@ -118,7 +118,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog> {
                           ? () => Navigator.of(context).pop((_player1!, _player2!))
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.amber,
+                        backgroundColor: AppTheme.amberColor,
                         foregroundColor: Colors.black,
                         disabledBackgroundColor: Colors.grey.shade800,
                         disabledForegroundColor: Colors.grey.shade600,
