@@ -250,14 +250,16 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     );
   }
 
-  void _handleSelectPlayer(String name) {
-    // Mettre à jour l'historique
-    ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name);
+  Future<void> _handleSelectPlayer(String name) async {
+    // Mettre à jour l'historique et attendre que la sauvegarde soit terminée
+    await ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name);
     // Retourner le nom sélectionné
-    Navigator.of(context).pop(name);
+    if (mounted) {
+      Navigator.of(context).pop(name);
+    }
   }
 
-  void _handleSave(String name) {
+  Future<void> _handleSave(String name) async {
     if (name.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -269,10 +271,12 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     }
 
     HapticUtils.medium();
-    // Ajouter à l'historique
-    ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name.trim());
+    // Ajouter à l'historique et attendre que la sauvegarde soit terminée
+    await ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name.trim());
     // Retourner le nom
-    Navigator.of(context).pop(name.trim());
+    if (mounted) {
+      Navigator.of(context).pop(name.trim());
+    }
   }
 
   Future<void> _showEditDialog(String oldName) async {

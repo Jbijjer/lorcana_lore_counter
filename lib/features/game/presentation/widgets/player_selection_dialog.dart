@@ -240,8 +240,11 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     );
   }
 
-  void _handleSelectPlayer(String name) {
+  Future<void> _handleSelectPlayer(String name) async {
     final service = ref.read(playerHistoryServiceProvider);
+
+    // Mettre à jour l'historique et attendre que la sauvegarde soit terminée
+    await service.addOrUpdatePlayerName(name);
 
     // Récupérer les couleurs sauvegardées
     final (savedStartColor, savedEndColor) = service.getPlayerColors(name);
@@ -256,11 +259,10 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
       iconAssetPath: iconAssetPath ?? PlayerIcons.defaultIcon,
     );
 
-    // Mettre à jour l'historique
-    service.addOrUpdatePlayerName(name);
-
     // Retourner le joueur
-    Navigator.of(context).pop(player);
+    if (mounted) {
+      Navigator.of(context).pop(player);
+    }
   }
 
   Future<void> _handleCreatePlayer(String name) async {
