@@ -5,15 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   const AppTheme._();
 
-  // Couleurs inspirées de Lorcana
+  // Couleurs officielles de Lorcana
   static const Color primaryColor = Color(0xFF6B4EFF); // Violet Lorcana
-  static const Color secondaryColor = Color(0xFFFFB800); // Doré
-  static const Color amberColor = Color(0xFFFFB800);
-  static const Color amethystColor = Color(0xFF9B59B6);
-  static const Color emeraldColor = Color(0xFF27AE60);
-  static const Color rubyColor = Color(0xFFE74C3C);
-  static const Color sapphireColor = Color(0xFF3498DB);
-  static const Color steelColor = Color(0xFF95A5A6);
+  static const Color secondaryColor = Color(0xFFF5B202); // Doré
+  static const Color amberColor = Color(0xFFF5B202);
+  static const Color amethystColor = Color(0xFF81377B);
+  static const Color emeraldColor = Color(0xFF2A8934);
+  static const Color rubyColor = Color(0xFFD3082F);
+  static const Color sapphireColor = Color(0xFF0189C4);
+  static const Color steelColor = Color(0xFF9FA8B4);
 
   /// Thème clair
   static ThemeData get lightTheme {
