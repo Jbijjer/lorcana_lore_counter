@@ -151,13 +151,13 @@ class PlayerZone extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 31.5,
                   backgroundColor: player.color.withValues(alpha: 0.08),
-                  child: Icon(
-                    IconData(
-                      player.iconCodePoint,
-                      fontFamily: 'MaterialIcons',
+                  child: ClipOval(
+                    child: Image.asset(
+                      player.iconAssetPath,
+                      width: 63,
+                      height: 63,
+                      fit: BoxFit.cover,
                     ),
-                    color: player.color,
-                    size: 36,
                   ),
                 ),
               ),

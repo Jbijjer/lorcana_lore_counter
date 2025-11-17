@@ -14,7 +14,7 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
     required this.playerColor,
     required this.backgroundColorStart,
     required this.backgroundColorEnd,
-    required this.iconCodePoint,
+    required this.iconAssetPath,
     required this.onPlayerUpdated,
   });
 
@@ -23,12 +23,12 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
   final Color playerColor;
   final Color backgroundColorStart;
   final Color backgroundColorEnd;
-  final int iconCodePoint;
+  final String iconAssetPath;
   final Function({
     required String name,
     required Color backgroundColorStart,
     required Color backgroundColorEnd,
-    required int iconCodePoint,
+    required String iconAssetPath,
   }) onPlayerUpdated;
 
   @override
@@ -39,7 +39,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
   late TextEditingController _nameController;
   late Color _backgroundColorStart;
   late Color _backgroundColorEnd;
-  late int _selectedIconCodePoint;
+  late String _selectedIconAssetPath;
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
     _nameController = TextEditingController(text: widget.playerName);
     _backgroundColorStart = widget.backgroundColorStart;
     _backgroundColorEnd = widget.backgroundColorEnd;
-    _selectedIconCodePoint = widget.iconCodePoint;
+    _selectedIconAssetPath = widget.iconAssetPath;
   }
 
   @override
@@ -204,10 +204,13 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
               child: CircleAvatar(
                 radius: 30,
                 backgroundColor: widget.playerColor.withValues(alpha: 0.3),
-                child: Icon(
-                  IconData(_selectedIconCodePoint, fontFamily: 'MaterialIcons'),
-                  color: widget.playerColor,
-                  size: 35,
+                child: ClipOval(
+                  child: Image.asset(
+                    _selectedIconAssetPath,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -265,8 +268,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
         itemCount: PlayerIcons.availableIcons.length,
         itemBuilder: (context, index) {
           final playerIcon = PlayerIcons.availableIcons[index];
-          final isSelected =
-              playerIcon.iconData.codePoint == _selectedIconCodePoint;
+          final isSelected = playerIcon.assetPath == _selectedIconAssetPath;
 
           return Tooltip(
             message: playerIcon.label,
@@ -274,7 +276,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
               onTap: () {
                 HapticUtils.light();
                 setState(() {
-                  _selectedIconCodePoint = playerIcon.iconData.codePoint;
+                  _selectedIconAssetPath = playerIcon.assetPath;
                 });
               },
               borderRadius: BorderRadius.circular(12),
@@ -291,10 +293,15 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
                     width: isSelected ? 2 : 1,
                   ),
                 ),
-                child: Icon(
-                  playerIcon.iconData,
-                  color: isSelected ? widget.playerColor : Colors.grey.shade600,
-                  size: 28,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Image.asset(
+                      playerIcon.assetPath,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -346,7 +353,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       newName: name,
       backgroundColorStart: _backgroundColorStart,
       backgroundColorEnd: _backgroundColorEnd,
-      iconCodePoint: _selectedIconCodePoint,
+      iconAssetPath: _selectedIconAssetPath,
     );
 
     // Callback avec les nouvelles données
@@ -354,7 +361,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       name: name,
       backgroundColorStart: _backgroundColorStart,
       backgroundColorEnd: _backgroundColorEnd,
-      iconCodePoint: _selectedIconCodePoint,
+      iconAssetPath: _selectedIconAssetPath,
     );
 
     if (mounted) {

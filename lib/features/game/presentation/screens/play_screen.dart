@@ -242,11 +242,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           // Note: Ne PAS appeler updatePlayerColors ici car updatePlayerById
           // dans PlayerEditDialog a déjà sauvegardé les couleurs
         },
-        onIconChanged: (iconCodePoint) {
+        onIconChanged: (iconAssetPath) {
           if (isPlayer1) {
-            ref.read(gameProvider.notifier).changePlayer1Icon(iconCodePoint);
+            ref.read(gameProvider.notifier).changePlayer1Icon(iconAssetPath);
           } else {
-            ref.read(gameProvider.notifier).changePlayer2Icon(iconCodePoint);
+            ref.read(gameProvider.notifier).changePlayer2Icon(iconAssetPath);
           }
           // Note: Ne PAS appeler updatePlayerIcon ici car updatePlayerById
           // dans PlayerEditDialog a déjà sauvegardé l'icône

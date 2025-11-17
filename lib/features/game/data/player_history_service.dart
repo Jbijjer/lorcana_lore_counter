@@ -187,13 +187,13 @@ class PlayerHistoryService {
   }
 
   /// Récupère l'icône d'un joueur (retourne null si non définie)
-  int? getPlayerIcon(String name) {
+  String? getPlayerIcon(String name) {
     final player = getPlayerByName(name);
-    return player?.iconCodePoint;
+    return player?.iconAssetPath;
   }
 
   /// Met à jour l'icône d'un joueur
-  Future<void> updatePlayerIcon(String name, int iconCodePoint) async {
+  Future<void> updatePlayerIcon(String name, String iconAssetPath) async {
     if (_box == null || name.trim().isEmpty) return;
 
     final trimmedName = name.trim();
@@ -208,7 +208,7 @@ class PlayerHistoryService {
       final existing = _box!.getAt(existingIndex);
       if (existing != null) {
         final updated = existing.copyWith(
-          iconCodePoint: iconCodePoint,
+          iconAssetPath: iconAssetPath,
         );
         await _box!.putAt(existingIndex, updated);
       }
@@ -217,7 +217,7 @@ class PlayerHistoryService {
       final newPlayerName = PlayerName(
         name: trimmedName,
         lastUsed: DateTime.now(),
-        iconCodePoint: iconCodePoint,
+        iconAssetPath: iconAssetPath,
       );
       await _box!.add(newPlayerName);
     }
@@ -230,7 +230,7 @@ class PlayerHistoryService {
     String? oldName,
     Color? backgroundColorStart,
     Color? backgroundColorEnd,
-    int? iconCodePoint,
+    String? iconAssetPath,
   }) async {
     if (_box == null) return;
 
@@ -259,7 +259,7 @@ class PlayerHistoryService {
           usageCount: existing.usageCount + 1,
           backgroundColorStartValue: backgroundColorStart?.toARGB32(),
           backgroundColorEndValue: backgroundColorEnd?.toARGB32(),
-          iconCodePoint: iconCodePoint,
+          iconAssetPath: iconAssetPath,
         );
         await _box!.putAt(index, updated);
       }
