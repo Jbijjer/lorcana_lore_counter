@@ -89,6 +89,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                 autofocus: true,
                 decoration: InputDecoration(
                   labelText: 'Nom du joueur',
+                  hintText: 'Appuyez sur Entrée pour valider',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -111,29 +112,20 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
 
               const SizedBox(height: 12),
 
-              // Boutons d'action
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      HapticUtils.light();
-                      setState(() {
-                        _showTextField = false;
-                        _controller.clear();
-                      });
-                    },
-                    child: const Text('Retour'),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: () => _handleSave(_controller.text),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: widget.playerColor,
-                    ),
-                    child: const Text('Confirmer'),
-                  ),
-                ],
+              // Bouton retour
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () {
+                    HapticUtils.light();
+                    setState(() {
+                      _showTextField = false;
+                      _controller.clear();
+                    });
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Retour'),
+                ),
               ),
             ] else ...[
               // Liste des joueurs existants
