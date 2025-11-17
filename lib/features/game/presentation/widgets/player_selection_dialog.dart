@@ -130,26 +130,27 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
                 ],
               ),
             ] else ...[
-              // Liste des joueurs existants
-              Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    // Joueurs existants
-                    ...playerNames.map((name) => _buildPlayerNameTile(name)),
-
-                    // Divider
-                    if (playerNames.isNotEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Divider(),
-                      ),
-
-                    // Option "Nouveau joueur"
-                    _buildNewPlayerTile(),
-                  ],
+              // Liste des joueurs existants (scrollable)
+              if (playerNames.isNotEmpty)
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      // Joueurs existants triés alphabétiquement
+                      ...(playerNames.toList()..sort()).map((name) => _buildPlayerNameTile(name)),
+                    ],
+                  ),
                 ),
-              ),
+
+              // Divider
+              if (playerNames.isNotEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Divider(),
+                ),
+
+              // Option "Nouveau joueur" (toujours visible)
+              _buildNewPlayerTile(),
             ],
           ],
         ),
