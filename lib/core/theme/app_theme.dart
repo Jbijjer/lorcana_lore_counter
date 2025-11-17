@@ -5,15 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   const AppTheme._();
 
-  // Couleurs inspirées de Lorcana
+  // Couleurs officielles de Lorcana (version vive)
   static const Color primaryColor = Color(0xFF6B4EFF); // Violet Lorcana
-  static const Color secondaryColor = Color(0xFFFFB800); // Doré
-  static const Color amberColor = Color(0xFFFFB800);
-  static const Color amethystColor = Color(0xFF9B59B6);
-  static const Color emeraldColor = Color(0xFF27AE60);
-  static const Color rubyColor = Color(0xFFE74C3C);
-  static const Color sapphireColor = Color(0xFF3498DB);
-  static const Color steelColor = Color(0xFF95A5A6);
+  static const Color secondaryColor = Color(0xFFFFC107); // Doré vif
+  static const Color amberColor = Color(0xFFFFC107);
+  static const Color amethystColor = Color(0xFFAB47BC);
+  static const Color emeraldColor = Color(0xFF00E676);
+  static const Color rubyColor = Color(0xFFFF1744);
+  static const Color sapphireColor = Color(0xFF2196F3);
+  static const Color steelColor = Color(0xFFB0BEC5);
 
   /// Thème clair
   static ThemeData get lightTheme {
@@ -256,8 +256,8 @@ class AppTheme {
   /// Couleurs Lorcana pour les joueurs (version contraste élevé)
   static const List<Color> lorcanaHighContrastColors = [
     Color(0xFFFFCC00), // Amber - jaune vif
-    Color(0xFFCC00FF), // Amethyst - magenta vif
-    Color(0xFF00FF00), // Emerald - vert vif
+    Color(0xFFD34EC5), // Amethyst - mauve vif
+    Color(0xFF3BDB4D), // Emerald - vert vif
     Color(0xFFFF0000), // Ruby - rouge vif
     Color(0xFF0000FF), // Sapphire - bleu vif
     Color(0xFFC0C0C0), // Steel - gris clair vif
