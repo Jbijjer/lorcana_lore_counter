@@ -51,14 +51,17 @@ class PlayerZone extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _ScoreActionButton(
-                          icon: Icons.remove,
-                          playerColor: player.color,
-                          semanticsLabel: 'Diminuer le score',
-                          onTap: () {
-                            HapticUtils.light();
-                            onDecrement(1);
-                          },
+                        Transform.translate(
+                          offset: const Offset(0, 25),
+                          child: _ScoreActionButton(
+                            icon: Icons.remove,
+                            playerColor: player.color,
+                            semanticsLabel: 'Diminuer le score',
+                            onTap: () {
+                              HapticUtils.light();
+                              onDecrement(1);
+                            },
+                          ),
                         ),
                         const SizedBox(width: AppConstants.defaultPadding * 2),
                         // Affichage du score avec cadre Lore
@@ -96,14 +99,17 @@ class PlayerZone extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: AppConstants.defaultPadding * 2),
-                        _ScoreActionButton(
-                          icon: Icons.add,
-                          playerColor: player.color,
-                          semanticsLabel: 'Augmenter le score',
-                          onTap: () {
-                            HapticUtils.light();
-                            onIncrement(1);
-                          },
+                        Transform.translate(
+                          offset: const Offset(0, 25),
+                          child: _ScoreActionButton(
+                            icon: Icons.add,
+                            playerColor: player.color,
+                            semanticsLabel: 'Augmenter le score',
+                            onTap: () {
+                              HapticUtils.light();
+                              onIncrement(1);
+                            },
+                          ),
                         ),
                       ],
                     ),
