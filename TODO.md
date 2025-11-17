@@ -13,6 +13,9 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Feedback haptique
 - [x] Bouton Undo (UI seulement)
 - [x] Bouton Menu/Options (UI seulement)
+- [x] Couleurs personnalisables avec palette Lorcana
+- [x] Modification manuelle du score (long press)
+- [x] Logo Lorcana SVG intégré
 
 ## 🔥 Haute Priorité
 
@@ -70,18 +73,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Implémenter reset des scores seulement (garder joueurs)
 - [ ] Animation de transition
 - [ ] Option "Nouvelle partie" vs "Reset scores"
-
-### 4. Couleurs personnalisables
-- [ ] Créer sélecteur de couleur pour chaque joueur
-- [ ] Ajouter palette de couleurs Lorcana (Amber, Amethyst, Emerald, Ruby, Sapphire, Steel)
-- [ ] Sauvegarder préférences de couleurs
-- [ ] Appliquer couleurs aux zones de joueurs et boutons
-
-### 5. Modification manuelle du score
-- [ ] Implémenter dialog sur long press du score
-- [ ] Champ de texte numérique
-- [ ] Validation (0-99)
-- [ ] Animation de transition
 
 ## 🎨 Problèmes Design / Contraste
 
@@ -202,19 +193,14 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🎨 Basse Priorité
 
-### 13. Logo Lorcana SVG
-- [ ] Remplacer Icons.auto_awesome par vrai logo
-- [ ] Trouver/créer SVG du logo Lorcana
-- [ ] Intégrer avec flutter_svg
-
-### 14. Statistiques avancées
+### 13. Statistiques avancées
 - [ ] Graphiques de progression
 - [ ] Winrate global par joueur
 - [ ] Temps moyen de partie
 - [ ] Scores moyens
 - [ ] Export en CSV/JSON
 
-### 15. Animations et polish
+### 14. Animations et polish
 - [ ] Animation sur changement de score (scale, bounce)
 - [ ] Particules de victoire (confetti, étoiles)
 - [ ] Transitions de page fluides
@@ -226,19 +212,19 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Shake animation quand le score descend
 - [ ] Glow effect autour du bouton central
 
-### 16. Mode nuit/jour
+### 15. Mode nuit/jour
 - [ ] Toggle thème clair/sombre manuel
 - [ ] Couleurs adaptées pour chaque mode
 - [ ] Persistance de la préférence
 
-### 17. Support multi-langues
+### 16. Support multi-langues
 - [ ] Français
 - [ ] Anglais
 - [ ] Utiliser package intl ou easy_localization
 
 ## ♿ Accessibilité
 
-### 18. Mode à contraste élevé
+### 17. Mode à contraste élevé
 - [ ] Implémenter un mode à contraste élevé pour l'application
 - [ ] Assurer une lisibilité optimale pour les utilisateurs malvoyants
 - [ ] Respecter les normes WCAG pour les ratios de contraste
