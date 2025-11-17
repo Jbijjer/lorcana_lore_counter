@@ -102,26 +102,6 @@ class Game extends _$Game {
     );
   }
 
-  /// Termine la partie
-  void endGame() {
-    if (state == null) return;
-    
-    state = state!.copyWith(
-      endTime: DateTime.now(),
-      status: GameStatus.finished,
-    );
-  }
-
-  /// Abandonne la partie
-  void abandonGame() {
-    if (state == null) return;
-    
-    state = state!.copyWith(
-      endTime: DateTime.now(),
-      status: GameStatus.abandoned,
-    );
-  }
-
   /// Réinitialise la partie
   void resetGame() {
     state = null;

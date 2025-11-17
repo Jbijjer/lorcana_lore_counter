@@ -24,8 +24,11 @@ mixin _$Player {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
   Color get color => throw _privateConstructorUsedError;
-  int get gamesPlayed => throw _privateConstructorUsedError;
-  int get gamesWon => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+  Color get backgroundColorStart => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+  Color get backgroundColorEnd => throw _privateConstructorUsedError;
+  int get iconCodePoint => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,8 +44,11 @@ abstract class $PlayerCopyWith<$Res> {
       {String id,
       String name,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) Color color,
-      int gamesPlayed,
-      int gamesWon});
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      Color backgroundColorStart,
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      Color backgroundColorEnd,
+      int iconCodePoint});
 }
 
 /// @nodoc
@@ -61,8 +67,9 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
     Object? id = null,
     Object? name = null,
     Object? color = null,
-    Object? gamesPlayed = null,
-    Object? gamesWon = null,
+    Object? backgroundColorStart = null,
+    Object? backgroundColorEnd = null,
+    Object? iconCodePoint = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -77,13 +84,17 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
               as Color,
-      gamesPlayed: null == gamesPlayed
-          ? _value.gamesPlayed
-          : gamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      gamesWon: null == gamesWon
-          ? _value.gamesWon
-          : gamesWon // ignore: cast_nullable_to_non_nullable
+      backgroundColorStart: null == backgroundColorStart
+          ? _value.backgroundColorStart
+          : backgroundColorStart // ignore: cast_nullable_to_non_nullable
+              as Color,
+      backgroundColorEnd: null == backgroundColorEnd
+          ? _value.backgroundColorEnd
+          : backgroundColorEnd // ignore: cast_nullable_to_non_nullable
+              as Color,
+      iconCodePoint: null == iconCodePoint
+          ? _value.iconCodePoint
+          : iconCodePoint // ignore: cast_nullable_to_non_nullable
               as int,
     ) as $Val);
   }
@@ -100,8 +111,11 @@ abstract class _$$PlayerImplCopyWith<$Res> implements $PlayerCopyWith<$Res> {
       {String id,
       String name,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) Color color,
-      int gamesPlayed,
-      int gamesWon});
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      Color backgroundColorStart,
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      Color backgroundColorEnd,
+      int iconCodePoint});
 }
 
 /// @nodoc
@@ -118,8 +132,9 @@ class __$$PlayerImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? color = null,
-    Object? gamesPlayed = null,
-    Object? gamesWon = null,
+    Object? backgroundColorStart = null,
+    Object? backgroundColorEnd = null,
+    Object? iconCodePoint = null,
   }) {
     return _then(_$PlayerImpl(
       id: null == id
@@ -134,13 +149,17 @@ class __$$PlayerImplCopyWithImpl<$Res>
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
               as Color,
-      gamesPlayed: null == gamesPlayed
-          ? _value.gamesPlayed
-          : gamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      gamesWon: null == gamesWon
-          ? _value.gamesWon
-          : gamesWon // ignore: cast_nullable_to_non_nullable
+      backgroundColorStart: null == backgroundColorStart
+          ? _value.backgroundColorStart
+          : backgroundColorStart // ignore: cast_nullable_to_non_nullable
+              as Color,
+      backgroundColorEnd: null == backgroundColorEnd
+          ? _value.backgroundColorEnd
+          : backgroundColorEnd // ignore: cast_nullable_to_non_nullable
+              as Color,
+      iconCodePoint: null == iconCodePoint
+          ? _value.iconCodePoint
+          : iconCodePoint // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
@@ -154,8 +173,11 @@ class _$PlayerImpl implements _Player {
       required this.name,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
       required this.color,
-      this.gamesPlayed = 0,
-      this.gamesWon = 0});
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      required this.backgroundColorStart,
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      required this.backgroundColorEnd,
+      this.iconCodePoint = 0xe491});
 
   factory _$PlayerImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlayerImplFromJson(json);
@@ -168,15 +190,18 @@ class _$PlayerImpl implements _Player {
   @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
   final Color color;
   @override
-  @JsonKey()
-  final int gamesPlayed;
+  @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+  final Color backgroundColorStart;
+  @override
+  @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+  final Color backgroundColorEnd;
   @override
   @JsonKey()
-  final int gamesWon;
+  final int iconCodePoint;
 
   @override
   String toString() {
-    return 'Player(id: $id, name: $name, color: $color, gamesPlayed: $gamesPlayed, gamesWon: $gamesWon)';
+    return 'Player(id: $id, name: $name, color: $color, backgroundColorStart: $backgroundColorStart, backgroundColorEnd: $backgroundColorEnd, iconCodePoint: $iconCodePoint)';
   }
 
   @override
@@ -187,16 +212,18 @@ class _$PlayerImpl implements _Player {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.gamesPlayed, gamesPlayed) ||
-                other.gamesPlayed == gamesPlayed) &&
-            (identical(other.gamesWon, gamesWon) ||
-                other.gamesWon == gamesWon));
+            (identical(other.backgroundColorStart, backgroundColorStart) ||
+                other.backgroundColorStart == backgroundColorStart) &&
+            (identical(other.backgroundColorEnd, backgroundColorEnd) ||
+                other.backgroundColorEnd == backgroundColorEnd) &&
+            (identical(other.iconCodePoint, iconCodePoint) ||
+                other.iconCodePoint == iconCodePoint));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, color, gamesPlayed, gamesWon);
+  int get hashCode => Object.hash(runtimeType, id, name, color,
+      backgroundColorStart, backgroundColorEnd, iconCodePoint);
 
   @JsonKey(ignore: true)
   @override
@@ -218,8 +245,11 @@ abstract class _Player implements Player {
       required final String name,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
       required final Color color,
-      final int gamesPlayed,
-      final int gamesWon}) = _$PlayerImpl;
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      required final Color backgroundColorStart,
+      @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+      required final Color backgroundColorEnd,
+      final int iconCodePoint}) = _$PlayerImpl;
 
   factory _Player.fromJson(Map<String, dynamic> json) = _$PlayerImpl.fromJson;
 
@@ -231,9 +261,13 @@ abstract class _Player implements Player {
   @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
   Color get color;
   @override
-  int get gamesPlayed;
+  @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+  Color get backgroundColorStart;
   @override
-  int get gamesWon;
+  @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
+  Color get backgroundColorEnd;
+  @override
+  int get iconCodePoint;
   @override
   @JsonKey(ignore: true)
   _$$PlayerImplCopyWith<_$PlayerImpl> get copyWith =>

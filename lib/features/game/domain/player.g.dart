@@ -10,8 +10,11 @@ _$PlayerImpl _$$PlayerImplFromJson(Map<String, dynamic> json) => _$PlayerImpl(
       id: json['id'] as String,
       name: json['name'] as String,
       color: _colorFromJson((json['color'] as num).toInt()),
-      gamesPlayed: (json['gamesPlayed'] as num?)?.toInt() ?? 0,
-      gamesWon: (json['gamesWon'] as num?)?.toInt() ?? 0,
+      backgroundColorStart: _colorFromJson(
+          (json['backgroundColorStart'] as num).toInt()),
+      backgroundColorEnd:
+          _colorFromJson((json['backgroundColorEnd'] as num).toInt()),
+      iconCodePoint: (json['iconCodePoint'] as num?)?.toInt() ?? 0xe491,
     );
 
 Map<String, dynamic> _$$PlayerImplToJson(_$PlayerImpl instance) =>
@@ -19,6 +22,7 @@ Map<String, dynamic> _$$PlayerImplToJson(_$PlayerImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'color': _colorToJson(instance.color),
-      'gamesPlayed': instance.gamesPlayed,
-      'gamesWon': instance.gamesWon,
+      'backgroundColorStart': _colorToJson(instance.backgroundColorStart),
+      'backgroundColorEnd': _colorToJson(instance.backgroundColorEnd),
+      'iconCodePoint': instance.iconCodePoint,
     };

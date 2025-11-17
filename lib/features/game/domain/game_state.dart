@@ -46,12 +46,6 @@ class GameState with _$GameState {
     if (!isFinished) return null;
     return player1Score >= 20 ? player1 : player2;
   }
-
-  /// Durée de la partie
-  Duration get duration {
-    final end = endTime ?? DateTime.now();
-    return end.difference(startTime);
-  }
 }
 
 /// Score d'un round
