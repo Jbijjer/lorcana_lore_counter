@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
+import '../../domain/player.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/constants/player_icons.dart';
 import 'player_edit_dialog.dart';
 
-/// Dialogue pour sélectionner ou créer un nom de joueur
-class PlayerNameDialog extends ConsumerStatefulWidget {
-  const PlayerNameDialog({
+/// Dialog simplifié pour sélectionner un joueur et retourner un objet Player complet
+class PlayerSelectionDialog extends ConsumerStatefulWidget {
+  const PlayerSelectionDialog({
     super.key,
-    required this.currentName,
-    required this.playerColor,
-    required this.backgroundColorStart,
-    required this.backgroundColorEnd,
-    required this.onBackgroundColorsChanged,
-    this.onIconChanged,
-    this.onNameChanged,
+    required this.title,
+    required this.defaultColor,
     this.excludedPlayerName,
   });
 
-  final String currentName;
-  final Color playerColor;
-  final Color backgroundColorStart;
-  final Color backgroundColorEnd;
-  final Function(Color start, Color end) onBackgroundColorsChanged;
-  final Function(String iconAssetPath)? onIconChanged;
-  final Function(String newName)? onNameChanged;
+  final String title;
+  final Color defaultColor;
   final String? excludedPlayerName;
 
   @override
-  ConsumerState<PlayerNameDialog> createState() => _PlayerNameDialogState();
+  ConsumerState<PlayerSelectionDialog> createState() => _PlayerSelectionDialogState();
 }
 
-class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
+class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
   final TextEditingController _controller = TextEditingController();
   bool _showTextField = false;
 
@@ -61,15 +53,15 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
               children: [
                 Icon(
                   Icons.person,
-                  color: widget.playerColor,
+                  color: widget.defaultColor,
                   size: 28,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Choisir un joueur',
+                    widget.title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: widget.playerColor,
+                          color: widget.defaultColor,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -91,14 +83,13 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                 autofocus: true,
                 decoration: InputDecoration(
                   labelText: 'Nom du joueur',
-                  hintText: 'Appuyez sur Entrée pour valider',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: widget.playerColor,
+                      color: widget.defaultColor,
                       width: 2,
                     ),
                   ),
@@ -109,25 +100,34 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                     },
                   ),
                 ),
-                onSubmitted: (value) => _handleSave(value),
+                onSubmitted: (value) => _handleCreatePlayer(value),
               ),
 
               const SizedBox(height: 12),
 
-              // Bouton retour
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: () {
-                    HapticUtils.light();
-                    setState(() {
-                      _showTextField = false;
-                      _controller.clear();
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Retour'),
-                ),
+              // Boutons d'action
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      HapticUtils.light();
+                      setState(() {
+                        _showTextField = false;
+                        _controller.clear();
+                      });
+                    },
+                    child: const Text('Retour'),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    onPressed: () => _handleCreatePlayer(_controller.text),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: widget.defaultColor,
+                    ),
+                    child: const Text('Confirmer'),
+                  ),
+                ],
               ),
             ] else ...[
               // Liste des joueurs existants
@@ -158,10 +158,9 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
   }
 
   Widget _buildPlayerNameTile(String name) {
-    final isCurrentPlayer = name == widget.currentName;
-    final isExcluded = widget.excludedPlayerName != null && name == widget.excludedPlayerName;
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
+    final isExcluded = widget.excludedPlayerName != null && name == widget.excludedPlayerName;
 
     return Opacity(
       opacity: isExcluded ? 0.4 : 1.0,
@@ -170,19 +169,13 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
           HapticUtils.light();
           _handleSelectPlayer(name);
         },
-        onLongPress: isExcluded ? null : () {
-          HapticUtils.medium();
-          _showEditDialog(name);
-        },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               CircleAvatar(
-                backgroundColor: isCurrentPlayer
-                    ? widget.playerColor.withValues(alpha: 0.2)
-                    : Colors.grey.withValues(alpha: 0.1),
+                backgroundColor: widget.defaultColor.withOpacity(0.2),
                 child: iconAssetPath != null
                     ? ClipOval(
                         child: Image.asset(
@@ -194,16 +187,15 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                       )
                     : Icon(
                         Icons.person,
-                        color: isCurrentPlayer ? widget.playerColor : Colors.grey,
+                        color: widget.defaultColor,
                       ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   name,
-                  style: TextStyle(
-                    fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
-                    color: isCurrentPlayer ? widget.playerColor : null,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ),
@@ -212,9 +204,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
                   Icons.block,
                   color: Colors.red,
                   size: 20,
-                )
-              else if (isCurrentPlayer)
-                Icon(Icons.check_circle, color: widget.playerColor),
+                ),
             ],
           ),
         ),
@@ -225,17 +215,17 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
   Widget _buildNewPlayerTile() {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: widget.playerColor.withValues(alpha: 0.2),
+        backgroundColor: widget.defaultColor.withOpacity(0.2),
         child: Icon(
           Icons.add,
-          color: widget.playerColor,
+          color: widget.defaultColor,
         ),
       ),
       title: Text(
         'Nouveau joueur',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: widget.playerColor,
+          color: widget.defaultColor,
         ),
       ),
       shape: RoundedRectangleBorder(
@@ -251,13 +241,29 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
   }
 
   void _handleSelectPlayer(String name) {
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Récupérer les couleurs sauvegardées
+    final (savedStartColor, savedEndColor) = service.getPlayerColors(name);
+    final iconAssetPath = service.getPlayerIcon(name);
+
+    // Créer l'objet Player
+    final player = Player.create(
+      name: name,
+      color: widget.defaultColor,
+      backgroundColorStart: savedStartColor ?? widget.defaultColor,
+      backgroundColorEnd: savedEndColor ?? widget.defaultColor,
+      iconAssetPath: iconAssetPath ?? PlayerIcons.defaultIcon,
+    );
+
     // Mettre à jour l'historique
-    ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name);
-    // Retourner le nom sélectionné
-    Navigator.of(context).pop(name);
+    service.addOrUpdatePlayerName(name);
+
+    // Retourner le joueur
+    Navigator.of(context).pop(player);
   }
 
-  void _handleSave(String name) {
+  Future<void> _handleCreatePlayer(String name) async {
     if (name.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -269,54 +275,58 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     }
 
     HapticUtils.medium();
-    // Ajouter à l'historique
-    ref.read(playerHistoryServiceProvider).addOrUpdatePlayerName(name.trim());
-    // Retourner le nom
-    Navigator.of(context).pop(name.trim());
-  }
 
-  Future<void> _showEditDialog(String oldName) async {
-    final service = ref.read(playerHistoryServiceProvider);
-    final player = service.getPlayerByName(oldName);
+    final trimmedName = name.trim();
 
-    if (player == null) return;
-
-    final (startColor, endColor) = service.getPlayerColors(oldName);
-    final iconAssetPath = service.getPlayerIcon(oldName);
+    // Ouvrir le dialog de personnalisation
+    Color? selectedStartColor = widget.defaultColor;
+    Color? selectedEndColor = widget.defaultColor;
+    String? selectedIcon = PlayerIcons.defaultIcon;
 
     await showDialog(
       context: context,
       builder: (context) => PlayerEditDialog(
-        playerId: player.id!,
-        playerName: oldName,
-        playerColor: widget.playerColor,
-        backgroundColorStart: startColor ?? widget.backgroundColorStart,
-        backgroundColorEnd: endColor ?? widget.backgroundColorEnd,
-        iconAssetPath: iconAssetPath ?? 'assets/images/player_icons/mickey_icon.png',
+        playerId: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        playerName: trimmedName,
+        playerColor: widget.defaultColor,
+        backgroundColorStart: widget.defaultColor,
+        backgroundColorEnd: widget.defaultColor,
+        iconAssetPath: PlayerIcons.defaultIcon,
         onPlayerUpdated: ({
           required String name,
           required Color backgroundColorStart,
           required Color backgroundColorEnd,
           required String iconAssetPath,
         }) {
-          // Mettre à jour les couleurs, l'icône et le nom du joueur actuel si c'est le même
-          if (oldName == widget.currentName) {
-            widget.onBackgroundColorsChanged(
-              backgroundColorStart,
-              backgroundColorEnd,
-            );
-            widget.onIconChanged?.call(iconAssetPath);
-            // Si le nom a changé, le signaler
-            if (name != oldName) {
-              widget.onNameChanged?.call(name);
-            }
-          }
-          // Invalider le provider pour rafraîchir la liste des joueurs
-          ref.invalidate(playerNamesProvider);
-          // Rafraîchir l'interface
-          setState(() {});
+          selectedStartColor = backgroundColorStart;
+          selectedEndColor = backgroundColorEnd;
+          selectedIcon = iconAssetPath;
         },
       ),
     );
+
+    // Si l'utilisateur a fermé le dialog sans valider, on ne crée pas le joueur
+    if (!mounted) return;
+
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Créer l'objet Player avec les valeurs personnalisées
+    final player = Player.create(
+      name: trimmedName,
+      color: widget.defaultColor,
+      backgroundColorStart: selectedStartColor!,
+      backgroundColorEnd: selectedEndColor!,
+      iconAssetPath: selectedIcon!,
+    );
+
+    // Ajouter à l'historique avec les personnalisations
+    await service.addOrUpdatePlayerName(trimmedName);
+    await service.updatePlayerColors(trimmedName, selectedStartColor!, selectedEndColor!);
+    await service.updatePlayerIcon(trimmedName, selectedIcon!);
+
+    if (!mounted) return;
+
+    // Retourner le joueur
+    Navigator.of(context).pop(player);
   }
 }
