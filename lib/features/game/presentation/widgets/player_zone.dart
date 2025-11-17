@@ -184,6 +184,9 @@ class _ScoreActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Mélange de la couleur du joueur avec du blanc pour une teinte pastel
+    final buttonColor = Color.lerp(Colors.white, playerColor, 0.15);
+
     return Semantics(
       button: true,
       label: semanticsLabel,
@@ -193,7 +196,7 @@ class _ScoreActionButton extends StatelessWidget {
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: playerColor.withValues(alpha: 0.02),
+            color: buttonColor,
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.black,
