@@ -21,10 +21,9 @@ Compteur de score moderne et épuré pour deux joueurs, avec :
 
 ## Commandes de lancement
 
-⚠️ À FAIRE AVANT D'UTILISER :
-
- IMPORTANT : Exécuter flutter pub run build_runner build --delete-conflicting-outputs
-Cela génère les fichiers .freezed.dart et .g.dart nécessaires
+**⚠️ À FAIRE AVANT D'UTILISER :**
+- [ ] **IMPORTANT** : Exécuter `flutter pub run build_runner build --delete-conflicting-outputs`
+  - Cela génère les fichiers `.freezed.dart` et `.g.dart` nécessaires
 
 ### Linux
 
