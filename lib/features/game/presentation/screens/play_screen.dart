@@ -178,8 +178,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       );
                     },
                     child: Container(
-                      width: 80,
-                      height: 80,
+                      width: 96,
+                      height: 96,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         boxShadow: [
@@ -193,8 +193,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       child: ClipOval(
                         child: SvgPicture.asset(
                           'assets/images/lorcana_logo.svg',
-                          width: 80,
-                          height: 80,
+                          width: 96,
+                          height: 96,
                           fit: BoxFit.cover,
                         ),
                       ),
