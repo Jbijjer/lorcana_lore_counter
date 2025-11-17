@@ -54,7 +54,7 @@ class PlayerZone extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Transform.translate(
-                          offset: const Offset(0, 25),
+                          offset: const Offset(0, 22),
                           child: _ScoreActionButton(
                             icon: Icons.remove,
                             playerColor: player.color,
@@ -76,9 +76,9 @@ class PlayerZone extends StatelessWidget {
                                 'assets/images/lore_frame.png',
                                 fit: BoxFit.contain,
                               ),
-                              // Score au centre, descendu de 25 pixels
+                              // Score au centre, descendu de 22 pixels
                               Transform.translate(
-                                offset: const Offset(0, 25),
+                                offset: const Offset(0, 22),
                                 child: Center(
                                   child: GestureDetector(
                                     onLongPress: onScoreLongPress != null
@@ -94,7 +94,7 @@ class PlayerZone extends StatelessWidget {
                                         child: Text(
                                           score.toString(),
                                           style: const TextStyle(
-                                            fontSize: 62.1,
+                                            fontSize: 55.9,
                                             fontWeight: FontWeight.w900,
                                             color: Colors.black,
                                             letterSpacing: -4,
@@ -110,7 +110,7 @@ class PlayerZone extends StatelessWidget {
                         ),
                         const SizedBox(width: AppConstants.defaultPadding * 2),
                         Transform.translate(
-                          offset: const Offset(0, 25),
+                          offset: const Offset(0, 22),
                           child: _ScoreActionButton(
                             icon: Icons.add,
                             playerColor: player.color,
