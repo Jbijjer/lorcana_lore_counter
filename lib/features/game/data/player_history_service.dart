@@ -1,8 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/player_name.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/constants/player_icons.dart';
 
 part 'player_history_service.g.dart';
 
@@ -79,10 +82,21 @@ class PlayerHistoryService {
         await _box!.putAt(existingIndex, updated);
       }
     } else {
-      // Ajouter un nouveau nom
+      // Ajouter un nouveau nom avec couleur et icône aléatoires
+      final random = Random();
+
+      // Sélectionner une couleur aléatoire
+      final randomColor = AppTheme.lorcanaColors[random.nextInt(AppTheme.lorcanaColors.length)];
+
+      // Sélectionner une icône aléatoire
+      final randomIcon = PlayerIcons.availableIcons[random.nextInt(PlayerIcons.availableIcons.length)];
+
       final newPlayerName = PlayerName(
         name: trimmedName,
         lastUsed: DateTime.now(),
+        backgroundColorStartValue: randomColor.toARGB32(),
+        backgroundColorEndValue: randomColor.toARGB32(),
+        iconAssetPath: randomIcon.assetPath,
       );
       await _box!.add(newPlayerName);
     }
