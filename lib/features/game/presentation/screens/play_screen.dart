@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/player_zone.dart';
 import '../widgets/player_name_dialog.dart';
 import '../widgets/score_edit_dialog.dart';
@@ -190,8 +191,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                         ],
                       ),
                       child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/lorcana_logo.png',
+                        child: SvgPicture.asset(
+                          'assets/images/lorcana_logo.svg',
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
