@@ -129,11 +129,11 @@ class PlayerZone extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.black,
-                    width: 4,
+                    width: 3.6,
                   ),
                 ),
                 child: CircleAvatar(
-                  radius: 35,
+                  radius: 31.5,
                   backgroundColor: player.color.withValues(alpha: 0.3),
                   child: Icon(
                     IconData(
@@ -141,7 +141,7 @@ class PlayerZone extends StatelessWidget {
                       fontFamily: 'MaterialIcons',
                     ),
                     color: player.color,
-                    size: 40,
+                    size: 36,
                   ),
                 ),
               ),
