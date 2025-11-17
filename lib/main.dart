@@ -6,6 +6,7 @@ import 'core/models/accessibility_preferences.dart';
 import 'core/providers/accessibility_provider.dart';
 import 'features/game/presentation/screens/play_screen.dart';
 import 'features/game/data/player_history_service.dart';
+import 'features/game/data/game_persistence_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,9 @@ void main() async {
 
   // Initialiser le service d'historique des joueurs
   await container.read(playerHistoryServiceProvider).init();
+
+  // Initialiser le service de persistence du jeu
+  await container.read(gamePersistenceServiceProvider).init();
 
   runApp(
     UncontrolledProviderScope(

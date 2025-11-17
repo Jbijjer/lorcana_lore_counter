@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/player_zone.dart';
 import '../widgets/player_name_dialog.dart';
 import '../widgets/score_edit_dialog.dart';
+import '../widgets/game_setup_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../data/player_history_service.dart';
+import '../../data/game_persistence_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
@@ -27,27 +29,46 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       DeviceOrientation.portraitUp,
     ]);
 
-    // Démarrer une partie de test après le build
+    // Vérifier s'il y a une partie en cours ou démarrer une nouvelle
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startTestGame();
+      _checkForOngoingGame();
     });
   }
 
-  void _startTestGame() {
-    final player1 = Player.create(
-      name: 'Adversaire',
-      color: AppTheme.amberColor,
+  /// Vérifie s'il y a une partie en cours et la charge, sinon affiche le dialog de sélection
+  Future<void> _checkForOngoingGame() async {
+    final persistenceService = ref.read(gamePersistenceServiceProvider);
+    final savedGame = persistenceService.loadLastGame();
+
+    if (savedGame != null && mounted) {
+      // Charger la partie sauvegardée
+      ref.read(gameProvider.notifier).loadGame(savedGame);
+    } else if (mounted) {
+      // Afficher le dialog de sélection des joueurs
+      await _showGameSetupDialog();
+    }
+  }
+
+  /// Affiche le dialog de sélection des joueurs pour démarrer une nouvelle partie
+  Future<void> _showGameSetupDialog() async {
+    final result = await showDialog<(Player, Player)>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const GameSetupDialog(),
     );
 
-    final player2 = Player.create(
-      name: 'Joueur',
-      color: AppTheme.sapphireColor,
-    );
-    
-    ref.read(gameProvider.notifier).startGame(
-          player1: player1,
-          player2: player2,
-        );
+    if (result != null && mounted) {
+      final (player1, player2) = result;
+      ref.read(gameProvider.notifier).startGame(
+            player1: player1,
+            player2: player2,
+          );
+
+      // Sauvegarder l'utilisation des joueurs dans l'historique
+      final historyService = ref.read(playerHistoryServiceProvider);
+      await historyService.addOrUpdatePlayerName(player1.name);
+      await historyService.addOrUpdatePlayerName(player2.name);
+    }
   }
 
   @override
@@ -193,6 +214,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     HapticUtils.success();
 
+    // Marquer la partie comme terminée et supprimer la sauvegarde
+    ref.read(gameProvider.notifier).finishGame();
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -204,10 +228,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop();
               ref.read(gameProvider.notifier).resetGame();
-              _startTestGame();
+              // Afficher le dialog de sélection des joueurs pour une nouvelle partie
+              await _showGameSetupDialog();
             },
             child: const Text('Nouvelle partie'),
           ),
