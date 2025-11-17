@@ -78,7 +78,7 @@ class PlayerZone extends StatelessWidget {
                               ),
                               // Score au centre, descendu de 22 pixels
                               Transform.translate(
-                                offset: const Offset(0, 22),
+                                offset: const Offset(-1, 22),
                                 child: Center(
                                   child: GestureDetector(
                                     onLongPress: onScoreLongPress != null
