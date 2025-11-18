@@ -105,6 +105,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
             // Champ de saisie du nom
             TextField(
               controller: _nameController,
+              maxLength: 15,
               decoration: InputDecoration(
                 labelText: 'Nom du joueur',
                 prefixIcon: const Icon(Icons.person),

@@ -32,6 +32,8 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     final playerNames = ref.watch(playerNamesProvider);
+    // Trier les noms par ordre alphabétique
+    final sortedPlayerNames = List<String>.from(playerNames)..sort();
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -77,10 +79,10 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
                 shrinkWrap: true,
                 children: [
                   // Joueurs existants
-                  ...playerNames.map((name) => _buildPlayerNameTile(name)),
+                  ...sortedPlayerNames.map((name) => _buildPlayerNameTile(name)),
 
                   // Divider
-                  if (playerNames.isNotEmpty)
+                  if (sortedPlayerNames.isNotEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Divider(),
