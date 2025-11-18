@@ -18,6 +18,9 @@ class GameState with _$GameState {
     @Default(1) int currentRound,
     @Default([]) List<RoundScore> rounds,
     @Default(GameStatus.inProgress) GameStatus status,
+    @Default(MatchFormat.bestOf1) MatchFormat matchFormat,
+    @Default(0) int player1Wins,
+    @Default(0) int player2Wins,
   }) = _GameState;
 
   const GameState._();
@@ -72,4 +75,28 @@ enum GameStatus {
   finished,
   @JsonValue('abandoned')
   abandoned,
+}
+
+/// Format du match (best of 1, 3 ou 5)
+enum MatchFormat {
+  @JsonValue('best_of_1')
+  bestOf1,
+  @JsonValue('best_of_3')
+  bestOf3,
+  @JsonValue('best_of_5')
+  bestOf5,
+}
+
+/// Extension pour obtenir le nombre de victoires nécessaires
+extension MatchFormatExtension on MatchFormat {
+  int get winsNeeded {
+    switch (this) {
+      case MatchFormat.bestOf1:
+        return 1;
+      case MatchFormat.bestOf3:
+        return 2;
+      case MatchFormat.bestOf5:
+        return 3;
+    }
+  }
 }

@@ -9,6 +9,7 @@ import '../widgets/game_setup_dialog.dart';
 import '../widgets/radial_menu.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
+import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -113,6 +114,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       player: gameState.player1,
                       score: gameState.player1Score,
                       isRotated: true,
+                      wins: gameState.player1Wins,
+                      winsNeeded: gameState.matchFormat.winsNeeded,
                       onIncrement: (amount) {
                         ref.read(gameProvider.notifier).incrementPlayer1Score(amount);
                         _checkWinner();
@@ -143,6 +146,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       player: gameState.player2,
                       score: gameState.player2Score,
                       isRotated: false,
+                      wins: gameState.player2Wins,
+                      winsNeeded: gameState.matchFormat.winsNeeded,
                       onIncrement: (amount) {
                         ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
                         _checkWinner();
@@ -188,31 +193,73 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     HapticUtils.success();
 
-    // Marquer la partie comme terminée et supprimer la sauvegarde
-    ref.read(gameProvider.notifier).finishGame();
+    // Déterminer qui a gagné la manche
+    final isPlayer1Winner = gameState.player1Score >= 20;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('🎉 Victoire !'),
-        content: Text(
-          '${gameState.winner?.name} a gagné avec ${gameState.winner == gameState.player1 ? gameState.player1Score : gameState.player2Score} points !',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              ref.read(gameProvider.notifier).resetGame();
-              // Afficher le dialog de sélection des joueurs pour une nouvelle partie
-              await _showGameSetupDialog();
-            },
-            child: const Text('Nouvelle partie'),
+    // Ajouter une victoire au gagnant de la manche
+    if (isPlayer1Winner) {
+      ref.read(gameProvider.notifier).addPlayer1Win();
+    } else {
+      ref.read(gameProvider.notifier).addPlayer2Win();
+    }
+
+    // Récupérer l'état mis à jour après l'ajout de la victoire
+    final updatedState = ref.read(gameProvider);
+    if (updatedState == null) return;
+
+    final winner = isPlayer1Winner ? updatedState.player1 : updatedState.player2;
+    final winnerWins = isPlayer1Winner ? updatedState.player1Wins : updatedState.player2Wins;
+    final winsNeeded = updatedState.matchFormat.winsNeeded;
+
+    // Vérifier si le joueur a gagné le match complet
+    if (winnerWins >= winsNeeded) {
+      // Match terminé
+      ref.read(gameProvider.notifier).finishGame();
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('🎉 Victoire du Match !'),
+          content: Text(
+            '${winner.name} remporte le match $winnerWins-${isPlayer1Winner ? updatedState.player2Wins : updatedState.player1Wins} !',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-        ],
-      ),
-    );
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                ref.read(gameProvider.notifier).resetGame();
+                // Afficher le dialog de sélection des joueurs pour une nouvelle partie
+                await _showGameSetupDialog();
+              },
+              child: const Text('Nouvelle partie'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Manche gagnée, mais le match continue
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('🎯 Manche Terminée !'),
+          content: Text(
+            '${winner.name} remporte la manche !\n\nScore du match : ${updatedState.player1.name} ${ updatedState.player1Wins} - ${updatedState.player2Wins} ${updatedState.player2.name}',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Manche suivante'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Future<void> _showPlayerNameDialog({
