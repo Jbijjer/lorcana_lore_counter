@@ -257,11 +257,14 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     );
 
     // Si l'utilisateur a annulé, on ne fait rien
-    // (Le joueur n'est créé que si l'utilisateur a validé dans PlayerEditDialog)
     if (!mounted || !playerValidated) return;
 
+    // MAINTENANT on crée le joueur dans la base de données
+    await service.addOrUpdatePlayerName(selectedName);
+    await service.updatePlayerColors(selectedName, selectedStartColor, selectedEndColor);
+    await service.updatePlayerIcon(selectedName, selectedIcon);
+
     // Créer l'objet Player avec les valeurs finales
-    // (Le joueur a déjà été créé dans PlayerEditDialog._handleSave())
     final player = Player.create(
       name: selectedName,
       color: widget.defaultColor,

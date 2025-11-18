@@ -260,11 +260,14 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     );
 
     // Si l'utilisateur a annulé, ne rien faire
-    // (Le joueur n'est créé que si l'utilisateur a validé dans PlayerEditDialog)
     if (!mounted || finalName == null) return;
 
+    // MAINTENANT on crée le joueur dans la base de données
+    await service.addOrUpdatePlayerName(finalName!);
+    await service.updatePlayerColors(finalName!, finalStartColor!, finalEndColor!);
+    await service.updatePlayerIcon(finalName!, finalIcon!);
+
     // Mettre à jour les couleurs et l'icône du joueur actuel si c'est le même
-    // (Le joueur a déjà été créé dans PlayerEditDialog._handleSave())
     if (finalName == widget.currentName) {
       widget.onBackgroundColorsChanged(
         finalStartColor!,
