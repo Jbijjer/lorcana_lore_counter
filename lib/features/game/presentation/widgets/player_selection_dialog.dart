@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
 import '../../domain/player.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/constants/player_icons.dart';
+import '../../../../core/theme/app_theme.dart';
 import 'player_edit_dialog.dart';
 
 /// Dialog simplifié pour sélectionner un joueur et retourner un objet Player complet
@@ -214,24 +216,26 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     // Générer un nom aléatoire Disney
     final randomName = service.generateRandomDisneyName();
 
-    // Créer d'abord le joueur avec des valeurs aléatoires
-    await service.addOrUpdatePlayerName(randomName);
-
-    // Récupérer les valeurs aléatoires qui viennent d'être assignées
-    final (randomStartColor, randomEndColor) = service.getPlayerColors(randomName);
-    final randomIcon = service.getPlayerIcon(randomName);
+    // Générer des valeurs aléatoires SANS créer le joueur
+    final random = Random();
+    final randomColorIndex = random.nextInt(AppTheme.lorcanaColors.length);
+    final randomColor = AppTheme.lorcanaColors[randomColorIndex];
+    final randomIconIndex = random.nextInt(PlayerIcons.availableIcons.length);
+    final randomIcon = PlayerIcons.availableIcons[randomIconIndex].assetPath;
 
     if (!mounted) return;
 
     // Ouvrir le dialog de personnalisation avec les valeurs aléatoires
-    Color selectedStartColor = randomStartColor ?? widget.defaultColor;
-    Color selectedEndColor = randomEndColor ?? widget.defaultColor;
-    String selectedIcon = randomIcon ?? PlayerIcons.defaultIcon;
+    Color selectedStartColor = randomColor;
+    Color selectedEndColor = randomColor;
+    String selectedIcon = randomIcon;
+    String selectedName = randomName;
+    bool playerValidated = false;
 
     await showDialog(
       context: context,
       builder: (context) => PlayerEditDialog(
-        playerId: service.getPlayerByName(randomName)?.id ?? '',
+        playerId: '', // ID vide car le joueur n'existe pas encore
         playerName: randomName,
         playerColor: widget.defaultColor,
         backgroundColorStart: selectedStartColor,
@@ -243,23 +247,23 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
           required Color backgroundColorEnd,
           required String iconAssetPath,
         }) {
+          selectedName = name;
           selectedStartColor = backgroundColorStart;
           selectedEndColor = backgroundColorEnd;
           selectedIcon = iconAssetPath;
+          playerValidated = true;
         },
       ),
     );
 
-    // Si l'utilisateur a fermé le dialog sans valider, on ne crée pas le joueur
-    if (!mounted) return;
-
-    // Mettre à jour avec les valeurs personnalisées (si l'utilisateur a modifié)
-    await service.updatePlayerColors(randomName, selectedStartColor, selectedEndColor);
-    await service.updatePlayerIcon(randomName, selectedIcon);
+    // Si l'utilisateur a annulé, on ne fait rien
+    // (Le joueur n'est créé que si l'utilisateur a validé dans PlayerEditDialog)
+    if (!mounted || !playerValidated) return;
 
     // Créer l'objet Player avec les valeurs finales
+    // (Le joueur a déjà été créé dans PlayerEditDialog._handleSave())
     final player = Player.create(
-      name: randomName,
+      name: selectedName,
       color: widget.defaultColor,
       backgroundColorStart: selectedStartColor,
       backgroundColorEnd: selectedEndColor,

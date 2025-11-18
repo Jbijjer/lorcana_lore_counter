@@ -346,16 +346,25 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
     HapticUtils.medium();
 
-    // Mettre à jour le joueur par ID (permet le renommage)
     final service = ref.read(playerHistoryServiceProvider);
-    await service.updatePlayerById(
-      id: widget.playerId,
-      oldName: widget.playerName,
-      newName: name,
-      backgroundColorStart: _backgroundColorStart,
-      backgroundColorEnd: _backgroundColorEnd,
-      iconAssetPath: _selectedIconAssetPath,
-    );
+
+    // Si c'est un nouveau joueur (ID vide), le créer d'abord
+    if (widget.playerId.isEmpty) {
+      // Créer le joueur avec toutes ses propriétés
+      await service.addOrUpdatePlayerName(name);
+      await service.updatePlayerColors(name, _backgroundColorStart, _backgroundColorEnd);
+      await service.updatePlayerIcon(name, _selectedIconAssetPath);
+    } else {
+      // Mettre à jour le joueur existant par ID (permet le renommage)
+      await service.updatePlayerById(
+        id: widget.playerId,
+        oldName: widget.playerName,
+        newName: name,
+        backgroundColorStart: _backgroundColorStart,
+        backgroundColorEnd: _backgroundColorEnd,
+        iconAssetPath: _selectedIconAssetPath,
+      );
+    }
 
     // Invalider le provider pour rafraîchir la liste
     ref.invalidate(playerNamesProvider);
