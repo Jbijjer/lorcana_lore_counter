@@ -18,7 +18,7 @@ class GameState with _$GameState {
     @Default(1) int currentRound,
     @Default([]) List<RoundScore> rounds,
     @Default(GameStatus.inProgress) GameStatus status,
-    @Default(MatchFormat.bestOf1) MatchFormat matchFormat,
+    @Default(MatchFormat.bestOf3) MatchFormat matchFormat,
     @Default(0) int player1Wins,
     @Default(0) int player2Wins,
   }) = _GameState;
