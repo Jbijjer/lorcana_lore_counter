@@ -32,8 +32,9 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     final playerNames = ref.watch(playerNamesProvider);
-    // Trier les noms par ordre alphabétique
-    final sortedPlayerNames = List<String>.from(playerNames)..sort();
+    // Trier les noms par ordre alphabétique (insensible à la casse)
+    final sortedPlayerNames = List<String>.from(playerNames)
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     return Dialog(
       shape: RoundedRectangleBorder(
