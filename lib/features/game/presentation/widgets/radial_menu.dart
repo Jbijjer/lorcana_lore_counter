@@ -27,6 +27,8 @@ class _RadialMenuState extends State<RadialMenu>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _rotationAnimation;
+  late Animation<double> _liftAnimation;
+  late Animation<double> _shadowAnimation;
   bool _isOpen = false;
 
   @override
@@ -49,6 +51,34 @@ class _RadialMenuState extends State<RadialMenu>
       parent: _controller,
       curve: Curves.easeInOut,
     ));
+
+    // Animation de soulèvement (scale) - monte au milieu puis redescend
+    _liftAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.15)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.15, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeIn)),
+        weight: 50,
+      ),
+    ]).animate(_controller);
+
+    // Animation de l'ombre - s'intensifie quand le logo se soulève
+    _shadowAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.8)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.8, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeIn)),
+        weight: 50,
+      ),
+    ]).animate(_controller);
   }
 
   @override
@@ -139,29 +169,32 @@ class _RadialMenuState extends State<RadialMenu>
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
-              return Transform.rotate(
-                angle: _rotationAnimation.value,
-                child: GestureDetector(
-                  onTap: _toggleMenu,
-                  child: Container(
-                    width: 88,
-                    height: 88,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          spreadRadius: 2,
+              return Transform.scale(
+                scale: _liftAnimation.value,
+                child: Transform.rotate(
+                  angle: _rotationAnimation.value,
+                  child: GestureDetector(
+                    onTap: _toggleMenu,
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
+                            blurRadius: 12 * _shadowAnimation.value,
+                            spreadRadius: 2 * _shadowAnimation.value,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: SvgPicture.asset(
+                          'assets/images/lorcana_logo.svg',
+                          width: 88,
+                          height: 88,
+                          fit: BoxFit.cover,
                         ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: SvgPicture.asset(
-                        'assets/images/lorcana_logo.svg',
-                        width: 88,
-                        height: 88,
-                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
