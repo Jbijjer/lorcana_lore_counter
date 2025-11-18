@@ -135,42 +135,42 @@ class _PlayerZoneState extends State<PlayerZone> {
           Positioned(
             top: AppConstants.defaultPadding,
             left: AppConstants.defaultPadding,
-            child: Column(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Nom du joueur au-dessus du portrait avec outline
-                Stack(
-                  children: [
-                    // Outline noir
-                    Text(
-                      widget.player.name,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 2
-                          ..color = Colors.black,
-                      ),
-                    ),
-                    // Texte blanc
-                    Text(
-                      widget.player.name,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                // Avatar avec icônes Mickey à droite
-                Row(
+                // Nom et avatar dans une colonne (centrés ensemble)
+                Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Nom du joueur au-dessus du portrait avec outline
+                    Stack(
+                      children: [
+                        // Outline noir
+                        Text(
+                          widget.player.name,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 2
+                              ..color = Colors.black,
+                          ),
+                        ),
+                        // Texte blanc
+                        Text(
+                          widget.player.name,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
                     // Avatar
                     GestureDetector(
                       onTap: widget.onNameTap != null
@@ -201,17 +201,17 @@ class _PlayerZoneState extends State<PlayerZone> {
                         ),
                       ),
                     ),
-                    // Icônes Mickey à droite
-                    if (widget.winsNeeded > 1)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: _MickeyWinsIndicator(
-                          wins: widget.wins,
-                          winsNeeded: widget.winsNeeded,
-                        ),
-                      ),
                   ],
                 ),
+                // Icônes Mickey à droite de l'avatar
+                if (widget.winsNeeded > 1)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, top: 16),
+                    child: _MickeyWinsIndicator(
+                      wins: widget.wins,
+                      winsNeeded: widget.winsNeeded,
+                    ),
+                  ),
               ],
             ),
           ),
