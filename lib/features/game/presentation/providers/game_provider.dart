@@ -150,7 +150,7 @@ class Game extends _$Game {
       player2Score: 0,
       currentRound: 1,
       rounds: [],
-      status: GameStatus.playing,
+      status: GameStatus.inProgress,
     );
     _saveState();
   }
