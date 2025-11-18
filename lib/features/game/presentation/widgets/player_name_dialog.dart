@@ -1,7 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/constants/player_icons.dart';
+import '../../../../core/theme/app_theme.dart';
 import 'player_edit_dialog.dart';
 
 /// Dialogue pour sélectionner ou créer un nom de joueur
@@ -216,53 +219,69 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog> {
     // Générer un nom aléatoire Disney
     final randomName = service.generateRandomDisneyName();
 
-    // Créer d'abord le joueur avec des valeurs aléatoires
-    await service.addOrUpdatePlayerName(randomName);
-
-    // Récupérer les valeurs aléatoires qui viennent d'être assignées
-    final (randomStartColor, randomEndColor) = service.getPlayerColors(randomName);
-    final randomIcon = service.getPlayerIcon(randomName);
+    // Générer des valeurs aléatoires SANS créer le joueur
+    final random = Random();
+    final randomColorIndex = random.nextInt(AppTheme.lorcanaColors.length);
+    final randomColor = AppTheme.lorcanaColors[randomColorIndex];
+    final randomIconIndex = random.nextInt(PlayerIcons.availableIcons.length);
+    final randomIcon = PlayerIcons.availableIcons[randomIconIndex].assetPath;
 
     if (!mounted) return;
+
+    // Variables pour stocker les valeurs finales
+    String? finalName;
+    Color? finalStartColor;
+    Color? finalEndColor;
+    String? finalIcon;
 
     // Ouvrir le dialog d'édition avec les valeurs aléatoires
     await showDialog(
       context: context,
       builder: (context) => PlayerEditDialog(
-        playerId: service.getPlayerByName(randomName)?.id ?? '',
+        playerId: '', // ID vide car le joueur n'existe pas encore
         playerName: randomName,
         playerColor: widget.playerColor,
-        backgroundColorStart: randomStartColor ?? widget.backgroundColorStart,
-        backgroundColorEnd: randomEndColor ?? widget.backgroundColorEnd,
-        iconAssetPath: randomIcon ?? 'assets/images/player_icons/mickey_icon.png',
+        backgroundColorStart: randomColor,
+        backgroundColorEnd: randomColor,
+        iconAssetPath: randomIcon,
         onPlayerUpdated: ({
           required String name,
           required Color backgroundColorStart,
           required Color backgroundColorEnd,
           required String iconAssetPath,
         }) {
-          // Mettre à jour les couleurs et l'icône du joueur actuel si c'est le même
-          if (randomName == widget.currentName) {
-            widget.onBackgroundColorsChanged(
-              backgroundColorStart,
-              backgroundColorEnd,
-            );
-            widget.onIconChanged?.call(iconAssetPath);
-            // Si le nom a changé, le signaler
-            if (name != randomName) {
-              widget.onNameChanged?.call(name);
-            }
-          }
-          // Invalider le provider pour rafraîchir la liste des joueurs
-          ref.invalidate(playerNamesProvider);
-
-          // Retourner le nom final
-          if (mounted) {
-            Navigator.of(context).pop(name);
-          }
+          // Stocker les valeurs finales
+          finalName = name;
+          finalStartColor = backgroundColorStart;
+          finalEndColor = backgroundColorEnd;
+          finalIcon = iconAssetPath;
         },
       ),
     );
+
+    // Si l'utilisateur a annulé, ne rien faire
+    if (!mounted || finalName == null) return;
+
+    // MAINTENANT on crée le joueur dans la base de données
+    await service.addOrUpdatePlayerName(finalName!);
+    await service.updatePlayerColors(finalName!, finalStartColor!, finalEndColor!);
+    await service.updatePlayerIcon(finalName!, finalIcon!);
+
+    // Mettre à jour les couleurs et l'icône du joueur actuel si c'est le même
+    if (finalName == widget.currentName) {
+      widget.onBackgroundColorsChanged(
+        finalStartColor!,
+        finalEndColor!,
+      );
+      widget.onIconChanged?.call(finalIcon!);
+    }
+    // Invalider le provider pour rafraîchir la liste des joueurs
+    ref.invalidate(playerNamesProvider);
+
+    // Retourner le nom final
+    if (mounted) {
+      Navigator.of(context).pop(finalName);
+    }
   }
 
   Future<void> _showEditDialog(String oldName) async {
