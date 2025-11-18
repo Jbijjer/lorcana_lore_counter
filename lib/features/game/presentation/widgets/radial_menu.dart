@@ -200,7 +200,7 @@ class _RadialMenuState extends State<RadialMenu>
           child: Transform.scale(
             scale: scale,
             child: Opacity(
-              opacity: scale,
+              opacity: scale.clamp(0.0, 1.0),
               child: _MenuButton(
                 icon: icon,
                 color: color,
