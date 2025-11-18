@@ -133,34 +133,67 @@ class PlayerZone extends StatelessWidget {
           Positioned(
             top: AppConstants.defaultPadding,
             left: AppConstants.defaultPadding,
-            child: GestureDetector(
-              onTap: onNameTap != null
-                  ? () {
-                      HapticUtils.light();
-                      onNameTap!();
-                    }
-                  : null,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 3.6,
-                  ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Nom du joueur au-dessus du portrait avec outline
+                Stack(
+                  children: [
+                    // Outline noir
+                    Text(
+                      player.name,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 2
+                          ..color = Colors.black,
+                      ),
+                    ),
+                    // Texte blanc
+                    Text(
+                      player.name,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                child: CircleAvatar(
-                  radius: 31.5,
-                  backgroundColor: player.color.withValues(alpha: 0.08),
-                  child: ClipOval(
-                    child: Image.asset(
-                      player.iconAssetPath,
-                      width: 63,
-                      height: 63,
-                      fit: BoxFit.cover,
+                const SizedBox(height: 2),
+                // Avatar
+                GestureDetector(
+                  onTap: onNameTap != null
+                      ? () {
+                          HapticUtils.light();
+                          onNameTap!();
+                        }
+                      : null,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 3.6,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 31.5,
+                      backgroundColor: player.color.withValues(alpha: 0.08),
+                      child: ClipOval(
+                        child: Image.asset(
+                          player.iconAssetPath,
+                          width: 63,
+                          height: 63,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
