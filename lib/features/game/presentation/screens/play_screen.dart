@@ -6,6 +6,7 @@ import '../widgets/player_zone.dart';
 import '../widgets/player_name_dialog.dart';
 import '../widgets/score_edit_dialog.dart';
 import '../widgets/game_setup_dialog.dart';
+import '../widgets/radial_menu.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../data/player_history_service.dart';
@@ -164,41 +165,13 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                   ],
                 ),
 
-                // Logo Lorcana au centre (au-dessus de tout)
+                // Menu radial au centre (au-dessus de tout)
                 Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      HapticUtils.medium();
-                      ref.read(gameProvider.notifier).nextRound();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Round ${gameState.currentRound + 1}'),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: SvgPicture.asset(
-                          'assets/images/lorcana_logo.svg',
-                          width: 96,
-                          height: 96,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                  child: RadialMenu(
+                    onStatisticsTap: _handleStatisticsTap,
+                    onResetTap: _handleResetTap,
+                    onTimerTap: _handleTimerTap,
+                    onHistoryTap: _handleHistoryTap,
                   ),
                 ),
               ],
@@ -357,6 +330,73 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       }
       _checkWinner();
     }
+  }
+
+  /// Gère l'ouverture de l'écran des statistiques
+  void _handleStatisticsTap() {
+    // TODO: Implémenter la navigation vers l'écran des statistiques
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Statistiques - À implémenter'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
+
+  /// Gère le reset de la partie avec confirmation
+  void _handleResetTap() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Réinitialiser la partie'),
+        content: const Text(
+          'Voulez-vous vraiment remettre les scores à zéro ?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Réinitialiser'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      HapticUtils.medium();
+      ref.read(gameProvider.notifier).resetScores();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Scores réinitialisés'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
+  /// Gère l'activation du timer
+  void _handleTimerTap() {
+    // TODO: Implémenter le timer de rounds
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Timer - À implémenter'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
+
+  /// Gère l'ouverture de l'historique des rounds
+  void _handleHistoryTap() {
+    // TODO: Implémenter l'historique des rounds
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Historique - À implémenter'),
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 }
 
