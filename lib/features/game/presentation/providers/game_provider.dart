@@ -148,6 +148,19 @@ class Game extends _$Game {
     state = state!.copyWith(
       player1Score: 0,
       player2Score: 0,
+    );
+    _saveState();
+  }
+
+  /// Réinitialise le round complet (scores et victoires)
+  void resetRound() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      player1Score: 0,
+      player2Score: 0,
+      player1Wins: 0,
+      player2Wins: 0,
       currentRound: 1,
       rounds: [],
       status: GameStatus.inProgress,
@@ -216,6 +229,40 @@ class Game extends _$Game {
       iconAssetPath: iconAssetPath,
     );
     state = state!.copyWith(player2: updatedPlayer);
+    _saveState();
+  }
+
+  /// Ajoute une victoire au joueur 1 et réinitialise les scores pour la manche suivante
+  void addPlayer1Win() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      player1Wins: state!.player1Wins + 1,
+      player1Score: 0,
+      player2Score: 0,
+      currentRound: state!.currentRound + 1,
+    );
+    _saveState();
+  }
+
+  /// Ajoute une victoire au joueur 2 et réinitialise les scores pour la manche suivante
+  void addPlayer2Win() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      player2Wins: state!.player2Wins + 1,
+      player1Score: 0,
+      player2Score: 0,
+      currentRound: state!.currentRound + 1,
+    );
+    _saveState();
+  }
+
+  /// Change le format du match
+  void setMatchFormat(MatchFormat format) {
+    if (state == null) return;
+
+    state = state!.copyWith(matchFormat: format);
     _saveState();
   }
 }

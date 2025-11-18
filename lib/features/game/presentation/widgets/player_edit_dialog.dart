@@ -105,6 +105,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
             // Champ de saisie du nom
             TextField(
               controller: _nameController,
+              maxLength: 15,
               decoration: InputDecoration(
                 labelText: 'Nom du joueur',
                 prefixIcon: const Icon(Icons.person),
@@ -355,6 +356,9 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       backgroundColorEnd: _backgroundColorEnd,
       iconAssetPath: _selectedIconAssetPath,
     );
+
+    // Invalider le provider pour rafraîchir la liste
+    ref.invalidate(playerNamesProvider);
 
     // Callback avec les nouvelles données
     widget.onPlayerUpdated(

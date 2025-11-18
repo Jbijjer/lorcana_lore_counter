@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/player.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -14,6 +15,8 @@ class PlayerZone extends StatefulWidget {
     required this.onDecrement,
     this.onNameTap,
     this.onScoreLongPress,
+    this.wins = 0,
+    this.winsNeeded = 1,
   });
 
   final Player player;
@@ -23,6 +26,8 @@ class PlayerZone extends StatefulWidget {
   final ValueChanged<int> onDecrement;
   final VoidCallback? onNameTap;
   final VoidCallback? onScoreLongPress;
+  final int wins;
+  final int winsNeeded;
 
   @override
   State<PlayerZone> createState() => _PlayerZoneState();
@@ -130,66 +135,83 @@ class _PlayerZoneState extends State<PlayerZone> {
           Positioned(
             top: AppConstants.defaultPadding,
             left: AppConstants.defaultPadding,
-            child: Column(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Nom du joueur au-dessus du portrait avec outline
-                Stack(
+                // Nom et avatar dans une colonne (centrés ensemble)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Outline noir
-                    Text(
-                      widget.player.name,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 2
-                          ..color = Colors.black,
-                      ),
+                    // Nom du joueur au-dessus du portrait avec outline
+                    Stack(
+                      children: [
+                        // Outline noir
+                        Text(
+                          widget.player.name,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 2
+                              ..color = Colors.black,
+                          ),
+                        ),
+                        // Texte blanc
+                        Text(
+                          widget.player.name,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    // Texte blanc
-                    Text(
-                      widget.player.name,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 2),
+                    // Avatar
+                    GestureDetector(
+                      onTap: widget.onNameTap != null
+                          ? () {
+                              HapticUtils.light();
+                              widget.onNameTap!();
+                            }
+                          : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 3.6,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: 31.5,
+                          backgroundColor: widget.player.color.withValues(alpha: 0.08),
+                          child: ClipOval(
+                            child: Image.asset(
+                              widget.player.iconAssetPath,
+                              width: 63,
+                              height: 63,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                // Avatar
-                GestureDetector(
-                  onTap: widget.onNameTap != null
-                      ? () {
-                          HapticUtils.light();
-                          widget.onNameTap!();
-                        }
-                      : null,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 3.6,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 31.5,
-                      backgroundColor: widget.player.color.withValues(alpha: 0.08),
-                      child: ClipOval(
-                        child: Image.asset(
-                          widget.player.iconAssetPath,
-                          width: 63,
-                          height: 63,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                // Icônes Mickey à droite de l'avatar
+                if (widget.winsNeeded > 1)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, top: 16),
+                    child: _MickeyWinsIndicator(
+                      wins: widget.wins,
+                      winsNeeded: widget.winsNeeded,
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -456,6 +478,38 @@ class _ScoreActionButtonState extends State<_ScoreActionButton>
           },
         ),
       ),
+    );
+  }
+}
+
+/// Widget affichant les victoires avec des icônes Mickey
+class _MickeyWinsIndicator extends StatelessWidget {
+  const _MickeyWinsIndicator({
+    required this.wins,
+    required this.winsNeeded,
+  });
+
+  final int wins;
+  final int winsNeeded;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(winsNeeded, (index) {
+        final isWon = index < wins;
+        return Padding(
+          padding: EdgeInsets.only(bottom: index < winsNeeded - 1 ? 2 : 0),
+          child: SvgPicture.asset(
+            isWon
+                ? 'assets/images/mickey-noir.svg'
+                : 'assets/images/mickey-blanc.svg',
+            width: 20,
+            height: 20,
+          ),
+        );
+      }),
     );
   }
 }
