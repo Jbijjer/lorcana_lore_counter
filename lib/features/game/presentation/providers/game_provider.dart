@@ -148,6 +148,19 @@ class Game extends _$Game {
     state = state!.copyWith(
       player1Score: 0,
       player2Score: 0,
+    );
+    _saveState();
+  }
+
+  /// Réinitialise le round complet (scores et victoires)
+  void resetRound() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      player1Score: 0,
+      player2Score: 0,
+      player1Wins: 0,
+      player2Wins: 0,
       currentRound: 1,
       rounds: [],
       status: GameStatus.inProgress,

@@ -392,32 +392,45 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   /// Gère le reset de la partie avec confirmation
   void _handleResetTap() async {
-    final confirmed = await showDialog<bool>(
+    final choice = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Réinitialiser la partie'),
+        title: const Text('Réinitialiser'),
         content: const Text(
-          'Voulez-vous vraiment remettre les scores à zéro ?',
+          'Que voulez-vous réinitialiser ?',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () => Navigator.of(context).pop('cancel'),
             child: const Text('Annuler'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Réinitialiser'),
+            onPressed: () => Navigator.of(context).pop('scores'),
+            child: const Text('Mettre à 0'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('round'),
+            child: const Text('Réinitialiser round'),
           ),
         ],
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if (choice == 'scores' && mounted) {
       HapticUtils.medium();
       ref.read(gameProvider.notifier).resetScores();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Scores réinitialisés'),
+          content: Text('Scores remis à 0'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else if (choice == 'round' && mounted) {
+      HapticUtils.medium();
+      ref.read(gameProvider.notifier).resetRound();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Round réinitialisé'),
           duration: Duration(seconds: 1),
         ),
       );
