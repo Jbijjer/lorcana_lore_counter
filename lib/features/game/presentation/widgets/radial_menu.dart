@@ -55,7 +55,7 @@ class _RadialMenuState extends State<RadialMenu>
     // Animation de soulèvement (scale) - monte progressivement jusqu'à la fin
     _liftAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.15,
+      end: 1.25,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
@@ -64,7 +64,7 @@ class _RadialMenuState extends State<RadialMenu>
     // Animation de l'ombre - s'intensifie progressivement
     _shadowAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.8,
+      end: 2.5,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
@@ -205,7 +205,7 @@ class _RadialMenuState extends State<RadialMenu>
     VoidCallback? onTap,
   }) {
     // Distance du centre (rayon)
-    const radius = 85.0;
+    const radius = 100.0;
 
     // Calculer la position x, y à partir de l'angle
     final x = radius * math.cos(angle);
