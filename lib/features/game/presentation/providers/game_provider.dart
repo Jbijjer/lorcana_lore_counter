@@ -141,6 +141,20 @@ class Game extends _$Game {
     state = null;
   }
 
+  /// Réinitialise uniquement les scores (garde les joueurs et l'état)
+  void resetScores() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      player1Score: 0,
+      player2Score: 0,
+      currentRound: 1,
+      rounds: [],
+      status: GameStatus.playing,
+    );
+    _saveState();
+  }
+
   /// Change le nom du joueur 1
   void changePlayer1Name(String newName) {
     if (state == null) return;
