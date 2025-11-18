@@ -144,8 +144,8 @@ class _RadialMenuState extends State<RadialMenu>
                 child: GestureDetector(
                   onTap: _toggleMenu,
                   child: Container(
-                    width: 96,
-                    height: 96,
+                    width: 88,
+                    height: 88,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -159,8 +159,8 @@ class _RadialMenuState extends State<RadialMenu>
                     child: ClipOval(
                       child: SvgPicture.asset(
                         'assets/images/lorcana_logo.svg',
-                        width: 96,
-                        height: 96,
+                        width: 88,
+                        height: 88,
                         fit: BoxFit.cover,
                       ),
                     ),
