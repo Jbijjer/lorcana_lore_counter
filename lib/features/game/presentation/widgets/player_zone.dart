@@ -137,6 +137,7 @@ class _PlayerZoneState extends State<PlayerZone> {
             left: AppConstants.defaultPadding,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Nom du joueur au-dessus du portrait avec outline
                 Stack(
