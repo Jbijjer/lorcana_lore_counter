@@ -176,7 +176,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
   Widget _buildPlayerPreview() {
     return Container(
-      height: 120,
+      height: 78,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
@@ -198,23 +198,23 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: Colors.black,
-                  width: 3,
+                  width: 2,
                 ),
               ),
               child: CircleAvatar(
-                radius: 30,
+                radius: 19.5,
                 backgroundColor: widget.playerColor.withValues(alpha: 0.3),
                 child: ClipOval(
                   child: Image.asset(
                     _selectedIconAssetPath,
-                    width: 60,
-                    height: 60,
+                    width: 39,
+                    height: 39,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             // Nom du joueur
             Stack(
               children: [
@@ -224,11 +224,11 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
                       ? _nameController.text
                       : 'Joueur',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 16,
                     fontWeight: FontWeight.w900,
                     foreground: Paint()
                       ..style = PaintingStyle.stroke
-                      ..strokeWidth = 3
+                      ..strokeWidth = 2
                       ..color = Colors.black,
                   ),
                 ),
@@ -238,7 +238,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
                       ? _nameController.text
                       : 'Joueur',
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
                   ),
