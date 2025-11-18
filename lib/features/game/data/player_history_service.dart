@@ -1,8 +1,12 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/player_name.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/constants/player_icons.dart';
+import '../../../core/constants/disney_names.dart';
 
 part 'player_history_service.g.dart';
 
@@ -79,10 +83,21 @@ class PlayerHistoryService {
         await _box!.putAt(existingIndex, updated);
       }
     } else {
-      // Ajouter un nouveau nom
+      // Ajouter un nouveau nom avec couleur et icône aléatoires
+      final random = Random();
+
+      // Sélectionner une couleur aléatoire
+      final randomColor = AppTheme.lorcanaColors[random.nextInt(AppTheme.lorcanaColors.length)];
+
+      // Sélectionner une icône aléatoire
+      final randomIcon = PlayerIcons.availableIcons[random.nextInt(PlayerIcons.availableIcons.length)];
+
       final newPlayerName = PlayerName(
         name: trimmedName,
         lastUsed: DateTime.now(),
+        backgroundColorStartValue: randomColor.toARGB32(),
+        backgroundColorEndValue: randomColor.toARGB32(),
+        iconAssetPath: randomIcon.assetPath,
       );
       await _box!.add(newPlayerName);
     }
@@ -269,6 +284,31 @@ class PlayerHistoryService {
   /// Ferme la box Hive
   Future<void> dispose() async {
     await _box?.close();
+  }
+
+  /// Génère un nom aléatoire Disney unique
+  String generateRandomDisneyName() {
+    final random = Random();
+    final existingNames = getAllPlayerNames().map((n) => n.toLowerCase()).toList();
+
+    // Choisir un nom aléatoire de la liste
+    String baseName = DisneyNames.availableNames[random.nextInt(DisneyNames.availableNames.length)];
+
+    // Si le nom n'est pas pris, le retourner
+    if (!existingNames.contains(baseName.toLowerCase())) {
+      return baseName;
+    }
+
+    // Sinon, ajouter un numéro
+    int suffix = 2;
+    String candidateName = '$baseName $suffix';
+
+    while (existingNames.contains(candidateName.toLowerCase())) {
+      suffix++;
+      candidateName = '$baseName $suffix';
+    }
+
+    return candidateName;
   }
 }
 

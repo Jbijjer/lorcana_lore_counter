@@ -176,7 +176,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
 
   Widget _buildPlayerPreview() {
     return Container(
-      height: 78,
+      height: 90,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
