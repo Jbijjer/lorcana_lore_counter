@@ -357,6 +357,9 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       iconAssetPath: _selectedIconAssetPath,
     );
 
+    // Invalider le provider pour rafraîchir la liste
+    ref.invalidate(playerNamesProvider);
+
     // Callback avec les nouvelles données
     widget.onPlayerUpdated(
       name: name,
