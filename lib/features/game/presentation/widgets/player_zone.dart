@@ -4,7 +4,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// Widget représentant la zone d'un joueur
-class PlayerZone extends StatelessWidget {
+class PlayerZone extends StatefulWidget {
   const PlayerZone({
     super.key,
     required this.player,
@@ -25,6 +25,13 @@ class PlayerZone extends StatelessWidget {
   final VoidCallback? onScoreLongPress;
 
   @override
+  State<PlayerZone> createState() => _PlayerZoneState();
+}
+
+class _PlayerZoneState extends State<PlayerZone> {
+  final GlobalKey<_AnimatedScoreDisplayState> _scoreKey = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
     final content = Container(
       decoration: BoxDecoration(
@@ -32,8 +39,8 @@ class PlayerZone extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            player.backgroundColorStart.withValues(alpha: 0.6),
-            player.backgroundColorEnd.withValues(alpha: 0.4),
+            widget.player.backgroundColorStart.withValues(alpha: 0.6),
+            widget.player.backgroundColorEnd.withValues(alpha: 0.4),
           ],
         ),
       ),
@@ -57,11 +64,15 @@ class PlayerZone extends StatelessWidget {
                           offset: const Offset(0, 22),
                           child: _ScoreActionButton(
                             icon: Icons.remove,
-                            playerColor: player.color,
+                            playerColor: widget.player.color,
                             semanticsLabel: 'Diminuer le score',
                             onTap: () {
+                              // Déclencher shake si on est déjà à 0
+                              if (widget.score <= AppConstants.minScore) {
+                                _scoreKey.currentState?.shake();
+                              }
                               HapticUtils.light();
-                              onDecrement(1);
+                              widget.onDecrement(1);
                             },
                           ),
                         ),
@@ -76,32 +87,14 @@ class PlayerZone extends StatelessWidget {
                                 'assets/images/lore_frame.png',
                                 fit: BoxFit.contain,
                               ),
-                              // Score au centre, descendu de 22 pixels
+                              // Score au centre, descendu de 22 pixels avec animations
                               Transform.translate(
                                 offset: const Offset(-1, 22),
                                 child: Center(
-                                  child: GestureDetector(
-                                    onLongPress: onScoreLongPress != null
-                                        ? () {
-                                            HapticUtils.medium();
-                                            onScoreLongPress!();
-                                          }
-                                        : null,
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
-                                        child: Text(
-                                          score.toString(),
-                                          style: const TextStyle(
-                                            fontSize: 70.7,
-                                            fontWeight: FontWeight.w900,
-                                            color: Colors.black,
-                                            letterSpacing: -4,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                  child: _AnimatedScoreDisplay(
+                                    key: _scoreKey,
+                                    score: widget.score,
+                                    onScoreLongPress: widget.onScoreLongPress,
                                   ),
                                 ),
                               ),
@@ -113,11 +106,15 @@ class PlayerZone extends StatelessWidget {
                           offset: const Offset(0, 22),
                           child: _ScoreActionButton(
                             icon: Icons.add,
-                            playerColor: player.color,
+                            playerColor: widget.player.color,
                             semanticsLabel: 'Augmenter le score',
                             onTap: () {
+                              // Déclencher shake si on est déjà à 25
+                              if (widget.score >= AppConstants.maxScore) {
+                                _scoreKey.currentState?.shake();
+                              }
                               HapticUtils.light();
-                              onIncrement(1);
+                              widget.onIncrement(1);
                             },
                           ),
                         ),
@@ -141,7 +138,7 @@ class PlayerZone extends StatelessWidget {
                   children: [
                     // Outline noir
                     Text(
-                      player.name,
+                      widget.player.name,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -153,7 +150,7 @@ class PlayerZone extends StatelessWidget {
                     ),
                     // Texte blanc
                     Text(
-                      player.name,
+                      widget.player.name,
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.white,
@@ -165,10 +162,10 @@ class PlayerZone extends StatelessWidget {
                 const SizedBox(height: 2),
                 // Avatar
                 GestureDetector(
-                  onTap: onNameTap != null
+                  onTap: widget.onNameTap != null
                       ? () {
                           HapticUtils.light();
-                          onNameTap!();
+                          widget.onNameTap!();
                         }
                       : null,
                   child: Container(
@@ -181,10 +178,10 @@ class PlayerZone extends StatelessWidget {
                     ),
                     child: CircleAvatar(
                       radius: 31.5,
-                      backgroundColor: player.color.withValues(alpha: 0.08),
+                      backgroundColor: widget.player.color.withValues(alpha: 0.08),
                       child: ClipOval(
                         child: Image.asset(
-                          player.iconAssetPath,
+                          widget.player.iconAssetPath,
                           width: 63,
                           height: 63,
                           fit: BoxFit.cover,
@@ -201,7 +198,7 @@ class PlayerZone extends StatelessWidget {
     );
 
     return Expanded(
-      child: isRotated
+      child: widget.isRotated
           ? RotatedBox(
               quarterTurns: 2,
               child: content,
@@ -211,8 +208,157 @@ class PlayerZone extends StatelessWidget {
   }
 }
 
-/// Bouton d'action pour augmenter ou diminuer le score
-class _ScoreActionButton extends StatelessWidget {
+/// Widget animé pour afficher le score avec bounce et shake
+class _AnimatedScoreDisplay extends StatefulWidget {
+  const _AnimatedScoreDisplay({
+    super.key,
+    required this.score,
+    this.onScoreLongPress,
+  });
+
+  final int score;
+  final VoidCallback? onScoreLongPress;
+
+  @override
+  State<_AnimatedScoreDisplay> createState() => _AnimatedScoreDisplayState();
+}
+
+class _AnimatedScoreDisplayState extends State<_AnimatedScoreDisplay>
+    with TickerProviderStateMixin {
+  late AnimationController _bounceController;
+  late AnimationController _shakeController;
+  late Animation<double> _bounceAnimation;
+  late Animation<double> _shakeAnimation;
+  int _previousScore = 0;
+  int _displayedScore = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _previousScore = widget.score;
+    _displayedScore = widget.score;
+
+    // Animation de bounce (quand le score change)
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _bounceAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(
+        parent: _bounceController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+
+    // Animation de shake (quand on atteint une limite)
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _shakeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _shakeController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void didUpdateWidget(_AnimatedScoreDisplay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Déclencher l'animation bounce si le score a changé
+    if (widget.score != _previousScore) {
+      // Ne déclencher le bounce que pour les petits changements (±1 ou ±2)
+      final delta = (widget.score - _previousScore).abs();
+      if (delta <= 2) {
+        _bounceController.forward(from: 0.0).then((_) {
+          if (mounted) {
+            _bounceController.reverse();
+          }
+        });
+      }
+      _displayedScore = _previousScore; // Sauvegarder pour TweenAnimationBuilder
+      _previousScore = widget.score;
+    }
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    _shakeController.dispose();
+    super.dispose();
+  }
+
+  /// Déclenche l'animation de shake (appelée depuis le parent)
+  void shake() {
+    _shakeController.forward(from: 0.0).then((_) {
+      if (mounted) {
+        _shakeController.reverse();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_bounceController, _shakeController]),
+      builder: (context, child) {
+        // Calculer l'offset de shake (oscillation horizontale)
+        final shakeOffset = _shakeAnimation.value * 10 *
+            (1 - _shakeAnimation.value) * // Décroissance
+            ((_shakeAnimation.value * 8).floor() % 2 == 0 ? 1 : -1); // Oscillation
+
+        return Transform.scale(
+          scale: _bounceAnimation.value,
+          child: Transform.translate(
+            offset: Offset(shakeOffset, 0),
+            child: GestureDetector(
+              onLongPress: widget.onScoreLongPress != null
+                  ? () {
+                      HapticUtils.medium();
+                      widget.onScoreLongPress!();
+                    }
+                  : null,
+              child: TweenAnimationBuilder<int>(
+                // Durée proportionnelle au delta (min 200ms, max 800ms)
+                duration: Duration(
+                  milliseconds: ((widget.score - _displayedScore).abs() * 50)
+                      .clamp(200, 800)
+                      .toInt(),
+                ),
+                curve: Curves.easeOut,
+                tween: IntTween(begin: _displayedScore, end: widget.score),
+                builder: (context, animatedScore, child) {
+                  return FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                      child: Text(
+                        animatedScore.toString(),
+                        style: const TextStyle(
+                          fontSize: 70.7,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black,
+                          letterSpacing: -4,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Bouton d'action pour augmenter ou diminuer le score avec animation
+class _ScoreActionButton extends StatefulWidget {
   const _ScoreActionButton({
     required this.icon,
     required this.playerColor,
@@ -226,31 +372,86 @@ class _ScoreActionButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_ScoreActionButton> createState() => _ScoreActionButtonState();
+}
+
+class _ScoreActionButtonState extends State<_ScoreActionButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    _scaleController.forward();
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    _scaleController.reverse();
+    widget.onTap();
+  }
+
+  void _handleTapCancel() {
+    _scaleController.reverse();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Mélange de la couleur du joueur avec du blanc pour une teinte pastel
-    final buttonColor = Color.lerp(Colors.white, playerColor, 0.15);
+    final buttonColor = Color.lerp(Colors.white, widget.playerColor, 0.15);
 
     return Semantics(
       button: true,
-      label: semanticsLabel,
+      label: widget.semanticsLabel,
       child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: buttonColor,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.black,
-              width: 2,
-            ),
-          ),
-          child: Icon(
-            icon,
-            color: Colors.black,
-            size: 32,
-          ),
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        child: AnimatedBuilder(
+          animation: _scaleAnimation,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: buttonColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                ),
+                child: Icon(
+                  widget.icon,
+                  color: Colors.black,
+                  size: 32,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
