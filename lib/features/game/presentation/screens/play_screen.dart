@@ -406,11 +406,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop('scores'),
-            child: const Text('Mettre à 0'),
+            child: const Text('Réinitialiser Partie'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop('round'),
-            child: const Text('Réinitialiser round'),
+            child: const Text('Réinitialiser Round'),
           ),
         ],
       ),
