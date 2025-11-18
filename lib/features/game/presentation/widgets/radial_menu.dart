@@ -44,7 +44,7 @@ class _RadialMenuState extends State<RadialMenu>
 
     _rotationAnimation = Tween<double>(
       begin: 0,
-      end: math.pi / 4, // Rotation de 45° pour le logo
+      end: math.pi, // Rotation de 180° pour le logo
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
