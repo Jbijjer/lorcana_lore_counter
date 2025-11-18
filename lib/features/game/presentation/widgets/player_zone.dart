@@ -240,7 +240,7 @@ class _AnimatedScoreDisplayState extends State<_AnimatedScoreDisplay>
 
     // Animation de bounce (quand le score change)
     _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 150),
       vsync: this,
     );
 
@@ -253,14 +253,14 @@ class _AnimatedScoreDisplayState extends State<_AnimatedScoreDisplay>
 
     // Animation de shake (quand on atteint une limite)
     _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     _shakeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _shakeController,
-        curve: Curves.easeInOut,
+        curve: Curves.elasticIn,
       ),
     );
   }
@@ -306,10 +306,12 @@ class _AnimatedScoreDisplayState extends State<_AnimatedScoreDisplay>
     return AnimatedBuilder(
       animation: Listenable.merge([_bounceController, _shakeController]),
       builder: (context, child) {
-        // Calculer l'offset de shake (oscillation horizontale)
-        final shakeOffset = _shakeAnimation.value * 10 *
-            (1 - _shakeAnimation.value) * // Décroissance
-            ((_shakeAnimation.value * 8).floor() % 2 == 0 ? 1 : -1); // Oscillation
+        // Calculer l'offset de shake (un seul mouvement gauche-droite-centre)
+        // Utilise une fonction sinusoïdale pour un mouvement fluide
+        final shakeOffset = _shakeAnimation.value *
+            (1 - _shakeAnimation.value) * // Décroissance pour revenir à 0
+            15 * // Amplitude max
+            (_shakeAnimation.value < 0.5 ? 1 : -1); // Direction
 
         return Transform.scale(
           scale: _bounceAnimation.value,
@@ -323,10 +325,10 @@ class _AnimatedScoreDisplayState extends State<_AnimatedScoreDisplay>
                     }
                   : null,
               child: TweenAnimationBuilder<int>(
-                // Durée proportionnelle au delta (min 200ms, max 800ms)
+                // Durée proportionnelle au delta (min 150ms, max 400ms)
                 duration: Duration(
-                  milliseconds: ((widget.score - _displayedScore).abs() * 50)
-                      .clamp(200, 800)
+                  milliseconds: ((widget.score - _displayedScore).abs() * 30)
+                      .clamp(150, 400)
                       .toInt(),
                 ),
                 curve: Curves.easeOut,
