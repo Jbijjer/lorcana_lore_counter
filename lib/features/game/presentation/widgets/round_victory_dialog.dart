@@ -401,10 +401,10 @@ class _ConfettiPainter extends CustomPainter {
 
       // Calculer l'opacité avec fade out progressif vers le bas
       double opacity = 0.8;
-      if (currentY > size.height * 0.7) {
-        // Commencer le fade out à 70% de la hauteur
-        final fadeStart = size.height * 0.7;
-        final fadeEnd = size.height + 100;
+      if (currentY > size.height * 0.85) {
+        // Commencer le fade out à 85% de la hauteur
+        final fadeStart = size.height * 0.85;
+        final fadeEnd = size.height + 50;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
         opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
       }
