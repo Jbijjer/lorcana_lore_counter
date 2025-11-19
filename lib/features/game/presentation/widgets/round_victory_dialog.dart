@@ -388,7 +388,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   }
 }
 
-/// Painter pour les confettis
+/// Painter pour les têtes de Mickey qui tombent
 class _ConfettiPainter extends CustomPainter {
   final double animationValue;
   final Color color;
@@ -400,42 +400,68 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
     final random = math.Random(42);
 
-    // Dessiner des confettis
-    for (int i = 0; i < 30; i++) {
+    // Dessiner des têtes de Mickey multicolores
+    for (int i = 0; i < 25; i++) {
       final offsetX = size.width * random.nextDouble();
-      final startY = -50 - (random.nextDouble() * 100);
-      final currentY = startY + (size.height + 100) * animationValue;
+      final startY = -50 - (random.nextDouble() * 150);
+      final currentY = startY + (size.height + 150) * animationValue;
 
       if (currentY > size.height) continue;
 
-      // Couleurs variées
+      // Couleurs multicolores variées
       final colors = [
         color,
         Colors.amber,
         Colors.blue,
         Colors.pink,
         Colors.purple,
+        Colors.red,
+        Colors.orange,
+        Colors.cyan,
+        Colors.teal,
+        Colors.lime,
       ];
-      paint.color = colors[i % colors.length].withValues(alpha: 0.7);
+      paint.color = colors[i % colors.length].withValues(alpha: 0.8);
 
-      // Rotation
-      final rotation = (animationValue + (i * 0.1)) * math.pi * 4;
+      // Rotation légère
+      final rotation = (animationValue + (i * 0.1)) * math.pi * 2;
+
+      // Taille de la tête de Mickey
+      final mickeySize = 12 + (random.nextDouble() * 8);
+      final headRadius = mickeySize / 2;
+      final earRadius = headRadius * 0.6;
 
       canvas.save();
       canvas.translate(offsetX, currentY);
       canvas.rotate(rotation);
 
-      // Dessiner un rectangle comme confetti
-      final rect = Rect.fromCenter(
-        center: Offset.zero,
-        width: 6 + (random.nextDouble() * 4),
-        height: 12 + (random.nextDouble() * 8),
+      // Dessiner la tête de Mickey (3 cercles)
+      // Oreille gauche
+      canvas.drawCircle(
+        Offset(-headRadius * 0.6, -headRadius * 0.6),
+        earRadius,
+        paint,
       );
-      canvas.drawRect(rect, paint);
+
+      // Oreille droite
+      canvas.drawCircle(
+        Offset(headRadius * 0.6, -headRadius * 0.6),
+        earRadius,
+        paint,
+      );
+
+      // Tête principale
+      canvas.drawCircle(
+        Offset.zero,
+        headRadius,
+        paint,
+      );
 
       canvas.restore();
     }
