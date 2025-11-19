@@ -93,7 +93,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     // Animation des confettis
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 5),
     )..repeat();
 
     // Incrémenter le compteur de cycles à chaque répétition
