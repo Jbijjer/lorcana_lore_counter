@@ -164,7 +164,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           ),
                         ),
 
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 4),
 
                         // Portrait du joueur
                         Stack(
