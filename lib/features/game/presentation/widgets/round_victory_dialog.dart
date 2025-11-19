@@ -506,9 +506,9 @@ class _SparklesPainter extends CustomPainter {
 
     // Dessiner 3 sparkles à des positions aléatoires
     for (int i = 0; i < 3; i++) {
-      // Position aléatoire mais fixe pour chaque sparkle
-      final x = size.width * (0.2 + random.nextDouble() * 0.6);
-      final y = size.height * (0.2 + random.nextDouble() * 0.6);
+      // Position aléatoire mais fixe pour chaque sparkle (évite les 10 premiers pixels de chaque côté)
+      final x = size.width * (0.25 + random.nextDouble() * 0.5);
+      final y = size.height * (0.25 + random.nextDouble() * 0.5);
 
       // Animation cyclique pour chaque sparkle avec un décalage
       final sparklePhase = (animationValue + (i * 0.33)) % 1.0;
@@ -522,8 +522,8 @@ class _SparklesPainter extends CustomPainter {
       }
       opacity = opacity.clamp(0.0, 1.0);
 
-      // Taille qui varie avec l'opacité
-      final size = 3.0 + (opacity * 2.0);
+      // Taille du sparkle qui varie avec l'opacité
+      final sparkleSize = 3.0 + (opacity * 2.0);
 
       paint.color = Colors.white.withValues(alpha: opacity * 0.9);
 
@@ -531,11 +531,11 @@ class _SparklesPainter extends CustomPainter {
       canvas.save();
       canvas.translate(x, y);
 
-      // Branche horizontale
-      canvas.drawCircle(const Offset(0, 0), size, paint);
+      // Centre de l'étoile
+      canvas.drawCircle(const Offset(0, 0), sparkleSize, paint);
 
       // Rayons de l'étoile
-      final rayLength = size * 1.5;
+      final rayLength = sparkleSize * 1.5;
       paint.strokeWidth = 1.5;
       paint.style = PaintingStyle.stroke;
 
