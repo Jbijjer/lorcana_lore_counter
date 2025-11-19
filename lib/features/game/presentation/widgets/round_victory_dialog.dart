@@ -523,29 +523,42 @@ class _SparklesPainter extends CustomPainter {
       opacity = opacity.clamp(0.0, 1.0);
 
       // Taille du sparkle qui varie avec l'opacité
-      final sparkleSize = 3.0 + (opacity * 2.0);
-
-      paint.color = Colors.white.withValues(alpha: opacity * 0.9);
+      final sparkleSize = 4.0 + (opacity * 3.0);
 
       // Dessiner une petite étoile à 4 branches
       canvas.save();
       canvas.translate(x, y);
 
-      // Centre de l'étoile
-      canvas.drawCircle(const Offset(0, 0), sparkleSize, paint);
+      // Dessiner d'abord un halo sombre pour créer du contraste
+      paint.color = Colors.black.withValues(alpha: opacity * 0.4);
+      canvas.drawCircle(const Offset(0, 0), sparkleSize + 1.5, paint);
 
-      // Rayons de l'étoile
-      final rayLength = sparkleSize * 1.5;
-      paint.strokeWidth = 1.5;
+      final rayLength = sparkleSize * 1.8;
+      paint.strokeWidth = 2.5;
       paint.style = PaintingStyle.stroke;
 
-      // 4 rayons
+      // Rayons sombres (halo)
       canvas.drawLine(Offset(-rayLength, 0), Offset(rayLength, 0), paint);
       canvas.drawLine(Offset(0, -rayLength), Offset(0, rayLength), paint);
       canvas.drawLine(Offset(-rayLength * 0.7, -rayLength * 0.7),
                      Offset(rayLength * 0.7, rayLength * 0.7), paint);
       canvas.drawLine(Offset(rayLength * 0.7, -rayLength * 0.7),
                      Offset(-rayLength * 0.7, rayLength * 0.7), paint);
+
+      // Dessiner le sparkle blanc par-dessus
+      paint.color = Colors.white.withValues(alpha: opacity);
+      paint.style = PaintingStyle.fill;
+      canvas.drawCircle(const Offset(0, 0), sparkleSize, paint);
+
+      // Rayons blancs
+      paint.strokeWidth = 2.0;
+      paint.style = PaintingStyle.stroke;
+      canvas.drawLine(Offset(-rayLength * 0.85, 0), Offset(rayLength * 0.85, 0), paint);
+      canvas.drawLine(Offset(0, -rayLength * 0.85), Offset(0, rayLength * 0.85), paint);
+      canvas.drawLine(Offset(-rayLength * 0.6, -rayLength * 0.6),
+                     Offset(rayLength * 0.6, rayLength * 0.6), paint);
+      canvas.drawLine(Offset(rayLength * 0.6, -rayLength * 0.6),
+                     Offset(-rayLength * 0.6, rayLength * 0.6), paint);
 
       canvas.restore();
       paint.style = PaintingStyle.fill;
