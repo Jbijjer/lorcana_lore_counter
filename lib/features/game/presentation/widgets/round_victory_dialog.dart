@@ -411,21 +411,34 @@ class _ConfettiPainter extends CustomPainter {
       final confettiRandom = math.Random(42 + cycleCount * 100 + i * 7);
 
       final offsetX = size.width * confettiRandom.nextDouble();
-      // Position de départ très variée pour éviter une disparition groupée
-      final startY = -50 - (confettiRandom.nextDouble() * 600);
 
-      // Vitesse différente pour chaque confetti (entre 0.7x et 1.4x)
-      final speedFactor = 0.7 + (confettiRandom.nextDouble() * 0.7);
-      final currentY = startY + (size.height + 300) * animationValue * speedFactor;
+      // Délai de départ pour chaque confetti (0.0 à 0.4 de l'animation)
+      final startDelay = confettiRandom.nextDouble() * 0.4;
 
-      // Calculer l'opacité avec fade out progressif vers le bas
+      // Temps effectif d'animation pour ce confetti
+      final effectiveAnimation = (animationValue - startDelay).clamp(0.0, 1.0);
+
+      // Position de départ
+      final startY = -50 - (confettiRandom.nextDouble() * 200);
+
+      // Vitesse différente pour chaque confetti (entre 0.8x et 1.3x)
+      final speedFactor = 0.8 + (confettiRandom.nextDouble() * 0.5);
+      final currentY = startY + (size.height + 300) * effectiveAnimation * speedFactor;
+
+      // Calculer l'opacité avec fade in au départ et fade out à la fin
       double opacity = 0.8;
+
+      // Fade in au début de l'animation de ce confetti
+      if (effectiveAnimation < 0.1) {
+        opacity = 0.8 * (effectiveAnimation / 0.1);
+      }
+
+      // Fade out progressif vers le bas
       final fadeStart = size.height * 0.85 - 30;
       if (currentY > fadeStart) {
-        // Zone de fade out plus longue pour une disparition progressive
         final fadeEnd = size.height + 150;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
-        opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
+        opacity *= (1.0 - fadeProgress.clamp(0.0, 1.0));
       }
 
       // Skip seulement si complètement transparent ou trop loin
