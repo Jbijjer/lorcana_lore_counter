@@ -21,8 +21,10 @@ class GameState with _$GameState {
     @Default(MatchFormat.bestOf3) MatchFormat matchFormat,
     @Default(0) int player1Wins,
     @Default(0) int player2Wins,
-    @Default(false) bool victoryDeclined,
-    @Default(20) int victoryThreshold,
+    @Default(false) bool player1VictoryDeclined,
+    @Default(false) bool player2VictoryDeclined,
+    @Default(20) int player1VictoryThreshold,
+    @Default(20) int player2VictoryThreshold,
   }) = _GameState;
 
   const GameState._();
@@ -43,26 +45,36 @@ class GameState with _$GameState {
     );
   }
 
+  /// Vérifie si le joueur 1 a atteint son seuil de victoire
+  bool get player1HasReachedThreshold => player1Score >= player1VictoryThreshold;
+
+  /// Vérifie si le joueur 2 a atteint son seuil de victoire
+  bool get player2HasReachedThreshold => player2Score >= player2VictoryThreshold;
+
   /// Vérifie si un joueur a atteint le seuil de victoire
   bool get hasReachedVictoryThreshold =>
-      player1Score >= victoryThreshold || player2Score >= victoryThreshold;
+      player1HasReachedThreshold || player2HasReachedThreshold;
 
   /// Vérifie si la partie est terminée (un joueur a atteint le seuil et la victoire est confirmée)
-  bool get isFinished => hasReachedVictoryThreshold && !victoryDeclined;
+  bool get isFinished =>
+      (player1HasReachedThreshold && !player1VictoryDeclined) ||
+      (player2HasReachedThreshold && !player2VictoryDeclined);
 
   /// Retourne le joueur qui a atteint le seuil de victoire (null si aucun)
   Player? get playerAtThreshold {
     if (!hasReachedVictoryThreshold) return null;
-    return player1Score >= victoryThreshold ? player1 : player2;
+    return player1HasReachedThreshold ? player1 : player2;
   }
 
   /// Retourne true si c'est le joueur 1 qui a atteint le seuil
-  bool get isPlayer1AtThreshold => player1Score >= victoryThreshold;
+  bool get isPlayer1AtThreshold => player1HasReachedThreshold;
 
   /// Retourne le gagnant si la partie est terminée
   Player? get winner {
     if (!isFinished) return null;
-    return player1Score >= victoryThreshold ? player1 : player2;
+    if (player1HasReachedThreshold && !player1VictoryDeclined) return player1;
+    if (player2HasReachedThreshold && !player2VictoryDeclined) return player2;
+    return null;
   }
 }
 

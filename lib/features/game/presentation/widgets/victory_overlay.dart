@@ -59,14 +59,13 @@ class _VictoryOverlayState extends State<VictoryOverlay>
 
     // Démarrer l'animation de flip
     _flipController.forward().then((_) {
-      // Attendre un court instant avant d'afficher le texte "Victoire?"
-      Future.delayed(const Duration(milliseconds: 200), () {
-        if (mounted) {
-          setState(() {
-            _showMenu = false;
-          });
-        }
-      });
+      // Afficher immédiatement les boutons après le flip
+      if (mounted) {
+        setState(() {
+          _showMenu = true;
+        });
+        _menuController.forward();
+      }
     });
   }
 
@@ -118,13 +117,13 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                 if (_showMenu) ...[
                   _buildMenuButton(
                     label: 'Oui',
-                    angle: widget.isPlayer1 ? -math.pi / 2 : math.pi / 2,
+                    angle: widget.isPlayer1 ? math.pi / 2 : -math.pi / 2,
                     color: Colors.green,
                     onTap: _handleConfirm,
                   ),
                   _buildMenuButton(
                     label: 'Non',
-                    angle: widget.isPlayer1 ? math.pi / 2 : -math.pi / 2,
+                    angle: widget.isPlayer1 ? -math.pi / 2 : math.pi / 2,
                     color: Colors.red,
                     onTap: _handleDecline,
                   ),
@@ -190,7 +189,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
     return GestureDetector(
       onTap: _showMenu ? null : _handleVictoryTap,
       child: Transform.rotate(
-        angle: widget.isPlayer1 ? 0 : math.pi,
+        angle: widget.isPlayer1 ? math.pi : 0,
         child: Container(
           width: 120,
           height: 120,
@@ -263,7 +262,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
               child: GestureDetector(
                 onTap: onTap,
                 child: Transform.rotate(
-                  angle: widget.isPlayer1 ? 0 : math.pi,
+                  angle: widget.isPlayer1 ? math.pi : 0,
                   child: Container(
                     width: 70,
                     height: 70,
