@@ -41,7 +41,7 @@ class _RadialMenuState extends State<RadialMenu>
 
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutBack,
+      curve: Curves.easeOut,
     );
 
     _rotationAnimation = Tween<double>(
