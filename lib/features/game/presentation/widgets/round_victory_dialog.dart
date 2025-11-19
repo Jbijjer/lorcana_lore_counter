@@ -93,7 +93,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     // Animation des confettis
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 8),
     )..repeat();
 
     // Incrémenter le compteur de cycles à chaque répétition
@@ -216,31 +216,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 ),
                               ),
                             ),
-
-                            // Effet shimmer autour du portrait
-                            AnimatedBuilder(
-                              animation: _shimmerController,
-                              builder: (context, child) {
-                                return Transform.rotate(
-                                  angle: _shimmerController.value * 2 * math.pi,
-                                  child: Container(
-                                    width: 162,
-                                    height: 162,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: SweepGradient(
-                                        colors: [
-                                          Colors.transparent,
-                                          _victoryColor.withValues(alpha: 0.5),
-                                          Colors.transparent,
-                                        ],
-                                        stops: const [0.0, 0.5, 1.0],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
                           ],
                         ),
 
@@ -307,52 +282,97 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                         const SizedBox(height: 24),
 
-                        // Bouton principal
+                        // Bouton principal avec effet shimmer
                         SizedBox(
                           width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {
-                              HapticUtils.light();
-                              Navigator.of(context).pop();
-                            },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: _victoryColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 16,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              elevation: 8,
-                              shadowColor: _victoryColor.withValues(alpha: 0.5),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  widget.isMatchComplete
-                                      ? Icons.refresh
-                                      : Icons.arrow_forward,
-                                  size: 22,
-                                ),
-                                const SizedBox(width: 10),
-                                Flexible(
-                                  child: Text(
-                                    widget.isMatchComplete
-                                        ? 'Nouvelle Partie'
-                                        : 'Manche Suivante',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
+                          height: 56,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Le bouton
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton(
+                                  onPressed: () {
+                                    HapticUtils.light();
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: _victoryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    elevation: 8,
+                                    shadowColor: _victoryColor.withValues(alpha: 0.5),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        widget.isMatchComplete
+                                            ? Icons.refresh
+                                            : Icons.arrow_forward,
+                                        size: 22,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Flexible(
+                                        child: Text(
+                                          widget.isMatchComplete
+                                              ? 'Nouvelle Partie'
+                                              : 'Manche Suivante',
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+
+                              // Effet shimmer sur le bouton
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: AnimatedBuilder(
+                                    animation: _shimmerController,
+                                    builder: (context, child) {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Transform.translate(
+                                          offset: Offset(
+                                            (MediaQuery.of(context).size.width *
+                                                _shimmerController.value) -
+                                                (MediaQuery.of(context).size.width * 0.5),
+                                            0,
+                                          ),
+                                          child: Container(
+                                            width: MediaQuery.of(context).size.width * 0.5,
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.transparent,
+                                                  Colors.white.withValues(alpha: 0.3),
+                                                  Colors.transparent,
+                                                ],
+                                                stops: const [0.0, 0.5, 1.0],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
