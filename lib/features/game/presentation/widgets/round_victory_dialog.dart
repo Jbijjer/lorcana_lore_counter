@@ -510,14 +510,23 @@ class _SparklesPainter extends CustomPainter {
 
     // Dessiner 3 sparkles à des positions aléatoires
     for (int i = 0; i < 3; i++) {
-      // Animation cyclique pour chaque sparkle avec un décalage
-      final sparklePhase = (animationValue + (i * 0.33)) % 1.0;
+      // Générer une durée aléatoire unique pour ce sparkle (entre 1.5 et 3.0 secondes normalisées)
+      final durationRandom = math.Random(seed + i * 999983);
+      final normalizedDuration = 1.5 + durationRandom.nextDouble() * 1.5; // Entre 1.5 et 3.0
+
+      // Calculer le temps ajusté pour cette durée personnalisée
+      final adjustedTime = animationValue * (2.0 / normalizedDuration) + (i * 0.33);
 
       // Calculer le numéro du cycle pour changer la position à chaque cycle
-      final cycleNumber = ((animationValue + (i * 0.33)) / 1.0).floor();
+      // Utiliser des nombres premiers grands pour éviter la périodicité
+      final cycleNumber = adjustedTime.floor();
 
-      // Générer une nouvelle position pour chaque cycle
-      final random = math.Random(seed + i * 1000 + cycleNumber * 100);
+      // Animation cyclique pour chaque sparkle avec un décalage et une durée aléatoire
+      final sparklePhase = adjustedTime % 1.0;
+
+      // Générer une nouvelle position pour chaque cycle avec un seed vraiment unique
+      // Les grands nombres premiers évitent la répétition du pattern
+      final random = math.Random(seed + i * 999983 + cycleNumber * 104729);
       final x = size.width * (0.25 + random.nextDouble() * 0.5);
       final y = size.height * (0.25 + random.nextDouble() * 0.5);
 
