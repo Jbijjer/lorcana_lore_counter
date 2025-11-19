@@ -59,14 +59,13 @@ class _VictoryOverlayState extends State<VictoryOverlay>
 
     // Démarrer l'animation de flip
     _flipController.forward().then((_) {
-      // Attendre un court instant avant d'afficher le texte "Victoire?"
-      Future.delayed(const Duration(milliseconds: 200), () {
-        if (mounted) {
-          setState(() {
-            _showMenu = false;
-          });
-        }
-      });
+      // Afficher immédiatement les boutons après le flip
+      if (mounted) {
+        setState(() {
+          _showMenu = true;
+        });
+        _menuController.forward();
+      }
     });
   }
 

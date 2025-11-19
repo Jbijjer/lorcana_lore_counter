@@ -163,8 +163,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             },
                             child: Text(
                               widget.isMatchComplete
-                                  ? '🏆 VICTOIRE DU MATCH 🏆'
-                                  : '🎯 GAGNANT 🎯',
+                                  ? 'VICTOIRE DU MATCH'
+                                  : 'GAGNANT',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
