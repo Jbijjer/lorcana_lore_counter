@@ -10,11 +10,12 @@ _$PlayerImpl _$$PlayerImplFromJson(Map<String, dynamic> json) => _$PlayerImpl(
       id: json['id'] as String,
       name: json['name'] as String,
       color: _colorFromJson((json['color'] as num).toInt()),
-      backgroundColorStart: _colorFromJson(
-          (json['backgroundColorStart'] as num).toInt()),
+      backgroundColorStart:
+          _colorFromJson((json['backgroundColorStart'] as num).toInt()),
       backgroundColorEnd:
           _colorFromJson((json['backgroundColorEnd'] as num).toInt()),
-      iconCodePoint: (json['iconCodePoint'] as num?)?.toInt() ?? 0xe491,
+      iconAssetPath: json['iconAssetPath'] as String? ??
+          'assets/images/player_icons/mickey_icon.png',
     );
 
 Map<String, dynamic> _$$PlayerImplToJson(_$PlayerImpl instance) =>
@@ -24,5 +25,5 @@ Map<String, dynamic> _$$PlayerImplToJson(_$PlayerImpl instance) =>
       'color': _colorToJson(instance.color),
       'backgroundColorStart': _colorToJson(instance.backgroundColorStart),
       'backgroundColorEnd': _colorToJson(instance.backgroundColorEnd),
-      'iconCodePoint': instance.iconCodePoint,
+      'iconAssetPath': instance.iconAssetPath,
     };
