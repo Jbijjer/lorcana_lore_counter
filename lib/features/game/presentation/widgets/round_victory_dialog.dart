@@ -410,7 +410,8 @@ class _ConfettiPainter extends CustomPainter {
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
       final offsetX = size.width * random.nextDouble();
-      final startY = -50 - (random.nextDouble() * 150);
+      // Position de départ très variée pour éviter une disparition groupée
+      final startY = -50 - (random.nextDouble() * 600);
 
       // Vitesse différente pour chaque confetti (entre 0.7x et 1.4x)
       final speedFactor = 0.7 + (random.nextDouble() * 0.7);
@@ -420,14 +421,14 @@ class _ConfettiPainter extends CustomPainter {
       double opacity = 0.8;
       final fadeStart = size.height * 0.85 - 30;
       if (currentY > fadeStart) {
-        // Commencer le fade out 30 pixels plus haut
-        final fadeEnd = size.height + 80;
+        // Zone de fade out plus longue pour une disparition progressive
+        final fadeEnd = size.height + 150;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
         opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
       }
 
       // Skip seulement si complètement transparent ou trop loin
-      if (opacity <= 0.0 || currentY > size.height + 150) continue;
+      if (opacity <= 0.0 || currentY > size.height + 200) continue;
 
       // Couleurs multicolores variées
       final colors = [
