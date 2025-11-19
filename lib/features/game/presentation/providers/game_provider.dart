@@ -276,39 +276,72 @@ class Game extends _$Game {
     _saveState();
   }
 
-  /// Refuse la victoire, augmente le seuil à 25 points
+  /// Refuse la victoire pour le joueur qui a atteint le seuil, augmente son seuil à 25 points
   void declineVictory() {
     if (state == null) return;
 
-    state = state!.copyWith(
-      victoryDeclined: true,
-      victoryThreshold: 25,
-    );
+    // Déterminer quel joueur a atteint le seuil
+    final isPlayer1 = state!.isPlayer1AtThreshold;
+
+    if (isPlayer1) {
+      state = state!.copyWith(
+        player1VictoryDeclined: true,
+        player1VictoryThreshold: 25,
+      );
+    } else {
+      state = state!.copyWith(
+        player2VictoryDeclined: true,
+        player2VictoryThreshold: 25,
+      );
+    }
     _saveState();
   }
 
-  /// Réinitialise le flag de victoire refusée quand le score retombe en dessous de 20
-  /// ou quand un joueur atteint le nouveau seuil de 25
+  /// Réinitialise les flags de victoire refusée individuellement pour chaque joueur
   void resetVictoryDeclined() {
     if (state == null) return;
 
-    if (state!.victoryDeclined) {
-      // Cas 1 : Les deux scores sont retombés en dessous du seuil initial (20)
-      if (state!.player1Score < 20 && state!.player2Score < 20) {
-        state = state!.copyWith(
-          victoryDeclined: false,
-          victoryThreshold: 20,
-        );
-        _saveState();
+    bool needsUpdate = false;
+    Map<String, dynamic> updates = {};
+
+    // Vérifier le joueur 1
+    if (state!.player1VictoryDeclined) {
+      // Cas 1 : Le score est retombé en dessous du seuil initial (20)
+      if (state!.player1Score < 20) {
+        updates['player1VictoryDeclined'] = false;
+        updates['player1VictoryThreshold'] = 20;
+        needsUpdate = true;
       }
-      // Cas 2 : Un joueur a atteint le nouveau seuil (25)
-      else if (state!.player1Score >= state!.victoryThreshold ||
-               state!.player2Score >= state!.victoryThreshold) {
-        state = state!.copyWith(
-          victoryDeclined: false,
-        );
-        _saveState();
+      // Cas 2 : Le joueur 1 a atteint son nouveau seuil (25)
+      else if (state!.player1Score >= state!.player1VictoryThreshold) {
+        updates['player1VictoryDeclined'] = false;
+        needsUpdate = true;
       }
+    }
+
+    // Vérifier le joueur 2
+    if (state!.player2VictoryDeclined) {
+      // Cas 1 : Le score est retombé en dessous du seuil initial (20)
+      if (state!.player2Score < 20) {
+        updates['player2VictoryDeclined'] = false;
+        updates['player2VictoryThreshold'] = 20;
+        needsUpdate = true;
+      }
+      // Cas 2 : Le joueur 2 a atteint son nouveau seuil (25)
+      else if (state!.player2Score >= state!.player2VictoryThreshold) {
+        updates['player2VictoryDeclined'] = false;
+        needsUpdate = true;
+      }
+    }
+
+    if (needsUpdate) {
+      state = state!.copyWith(
+        player1VictoryDeclined: updates['player1VictoryDeclined'] ?? state!.player1VictoryDeclined,
+        player1VictoryThreshold: updates['player1VictoryThreshold'] ?? state!.player1VictoryThreshold,
+        player2VictoryDeclined: updates['player2VictoryDeclined'] ?? state!.player2VictoryDeclined,
+        player2VictoryThreshold: updates['player2VictoryThreshold'] ?? state!.player2VictoryThreshold,
+      );
+      _saveState();
     }
   }
 }

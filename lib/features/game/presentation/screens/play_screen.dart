@@ -215,8 +215,16 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     final updatedGameState = ref.read(gameProvider);
     if (updatedGameState == null) return;
 
-    // Vérifier si un joueur a atteint le seuil de victoire
-    if (updatedGameState.hasReachedVictoryThreshold && !updatedGameState.victoryDeclined) {
+    // Vérifier si un joueur a atteint son seuil de victoire et n'a pas refusé
+    final player1ShouldShowOverlay =
+        updatedGameState.player1HasReachedThreshold &&
+        !updatedGameState.player1VictoryDeclined;
+
+    final player2ShouldShowOverlay =
+        updatedGameState.player2HasReachedThreshold &&
+        !updatedGameState.player2VictoryDeclined;
+
+    if (player1ShouldShowOverlay || player2ShouldShowOverlay) {
       setState(() {
         _showVictoryOverlay = true;
       });
@@ -229,8 +237,10 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     HapticUtils.success();
 
-    // Déterminer qui a gagné la manche
-    final isPlayer1Winner = gameState.player1Score >= gameState.victoryThreshold;
+    // Déterminer qui a gagné la manche (vérifier les seuils individuels)
+    final isPlayer1Winner =
+        gameState.player1HasReachedThreshold &&
+        !gameState.player1VictoryDeclined;
 
     // Ajouter une victoire au gagnant de la manche
     if (isPlayer1Winner) {
