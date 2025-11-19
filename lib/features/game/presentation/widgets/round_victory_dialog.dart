@@ -137,7 +137,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                       children: [
                         // Image de victoire
                         SizedBox(
-                          height: 80,
+                          height: 160,
                           child: Image.asset(
                             'assets/images/victoire_$_victoryImageName.png',
                             fit: BoxFit.contain,
@@ -401,9 +401,9 @@ class _ConfettiPainter extends CustomPainter {
 
       // Calculer l'opacité avec fade out progressif vers le bas
       double opacity = 0.8;
-      if (currentY > size.height * 0.85) {
-        // Commencer le fade out à 85% de la hauteur
-        final fadeStart = size.height * 0.85;
+      final fadeStart = size.height * 0.85 - 30;
+      if (currentY > fadeStart) {
+        // Commencer le fade out 30 pixels plus haut
         final fadeEnd = size.height + 50;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
         opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
