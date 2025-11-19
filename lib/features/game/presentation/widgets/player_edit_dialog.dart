@@ -125,11 +125,33 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
             const SizedBox(height: 24),
 
             // Sélection de l'icône
-            Text(
-              'Portrait',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Portrait',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.swipe_vertical,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Glissez pour voir plus',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             _buildIconSelector(),
@@ -199,17 +221,17 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: Colors.black,
-                  width: 2,
+                  width: 3,
                 ),
               ),
               child: CircleAvatar(
-                radius: 19.5,
+                radius: 29.25,
                 backgroundColor: widget.playerColor.withValues(alpha: 0.3),
                 child: ClipOval(
                   child: Image.asset(
                     _selectedIconAssetPath,
-                    width: 39,
-                    height: 39,
+                    width: 58.5,
+                    height: 58.5,
                     fit: BoxFit.cover,
                   ),
                 ),
