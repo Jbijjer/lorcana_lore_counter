@@ -53,11 +53,11 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Charger la dernière partie au démarrage
 - [ ] Persister l'état même après fermeture de l'app
 
-### 3. Restart rapide (One-tap)
-- [ ] Ajouter dialog de confirmation
-- [ ] Implémenter reset des scores seulement (garder joueurs)
-- [ ] Animation de transition
-- [ ] Option "Nouvelle partie" vs "Reset scores"
+### 3. Restart rapide (One-tap) ✅
+- [x] Ajouter dialog de confirmation avec animation
+- [x] Implémenter reset des scores seulement (garder joueurs)
+- [x] Animation de transition (flash blanc avec icône)
+- [x] Option "Réinitialiser Partie" vs "Réinitialiser Round"
 
 ## 🎨 Problèmes Design / Contraste
 
