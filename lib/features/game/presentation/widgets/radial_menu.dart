@@ -27,6 +27,8 @@ class _RadialMenuState extends State<RadialMenu>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _rotationAnimation;
+  late Animation<double> _liftAnimation;
+  late Animation<double> _shadowAnimation;
   bool _isOpen = false;
 
   @override
@@ -39,7 +41,7 @@ class _RadialMenuState extends State<RadialMenu>
 
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutBack,
+      curve: Curves.easeOut,
     );
 
     _rotationAnimation = Tween<double>(
@@ -48,6 +50,24 @@ class _RadialMenuState extends State<RadialMenu>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
+    ));
+
+    // Animation de soulèvement (scale) - monte progressivement avec bounce
+    _liftAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.25,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.elasticOut,
+    ));
+
+    // Animation de l'ombre - s'intensifie progressivement
+    _shadowAnimation = Tween<double>(
+      begin: 1.0,
+      end: 2.5,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
     ));
   }
 
@@ -139,29 +159,32 @@ class _RadialMenuState extends State<RadialMenu>
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
-              return Transform.rotate(
-                angle: _rotationAnimation.value,
-                child: GestureDetector(
-                  onTap: _toggleMenu,
-                  child: Container(
-                    width: 88,
-                    height: 88,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          spreadRadius: 2,
+              return Transform.scale(
+                scale: _liftAnimation.value,
+                child: Transform.rotate(
+                  angle: _rotationAnimation.value,
+                  child: GestureDetector(
+                    onTap: _toggleMenu,
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
+                            blurRadius: 12 * _shadowAnimation.value,
+                            spreadRadius: 2 * _shadowAnimation.value,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: SvgPicture.asset(
+                          'assets/images/lorcana_logo.svg',
+                          width: 88,
+                          height: 88,
+                          fit: BoxFit.cover,
                         ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: SvgPicture.asset(
-                        'assets/images/lorcana_logo.svg',
-                        width: 88,
-                        height: 88,
-                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -182,7 +205,7 @@ class _RadialMenuState extends State<RadialMenu>
     VoidCallback? onTap,
   }) {
     // Distance du centre (rayon)
-    const radius = 85.0;
+    const radius = 100.0;
 
     // Calculer la position x, y à partir de l'angle
     final x = radius * math.cos(angle);
