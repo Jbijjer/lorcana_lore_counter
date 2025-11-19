@@ -33,6 +33,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late Animation<double> _rotationAnimation;
   late Animation<double> _fadeAnimation;
 
+  // Compteur de cycles pour varier la disposition des confettis
+  int _confettiCycleCount = 0;
+
   // Couleur et image de victoire aléatoires
   late String _victoryImageName;
   late Color _victoryColor;
@@ -92,6 +95,15 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat();
+
+    // Incrémenter le compteur de cycles à chaque répétition
+    _confettiController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _confettiCycleCount++;
+        });
+      }
+    });
 
     _dialogAnimationController.forward();
     HapticUtils.success();
@@ -357,6 +369,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             painter: _ConfettiPainter(
                               animationValue: _confettiController.value,
                               color: _victoryColor,
+                              cycleCount: _confettiCycleCount,
                             ),
                           );
                         },
@@ -377,10 +390,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 class _ConfettiPainter extends CustomPainter {
   final double animationValue;
   final Color color;
+  final int cycleCount;
 
   _ConfettiPainter({
     required this.animationValue,
     required this.color,
+    required this.cycleCount,
   });
 
   @override
@@ -389,13 +404,17 @@ class _ConfettiPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    final random = math.Random(42);
+    // Utiliser une seed différente à chaque cycle pour varier la disposition
+    final random = math.Random(42 + cycleCount);
 
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
       final offsetX = size.width * random.nextDouble();
       final startY = -50 - (random.nextDouble() * 150);
-      final currentY = startY + (size.height + 300) * animationValue;
+
+      // Vitesse différente pour chaque confetti (entre 0.7x et 1.4x)
+      final speedFactor = 0.7 + (random.nextDouble() * 0.7);
+      final currentY = startY + (size.height + 300) * animationValue * speedFactor;
 
       // Calculer l'opacité avec fade out progressif vers le bas
       double opacity = 0.8;
