@@ -93,7 +93,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     // Animation des confettis
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 8),
+      duration: const Duration(seconds: 5),
     )..repeat();
 
     // Incrémenter le compteur de cycles à chaque répétition
@@ -443,7 +443,8 @@ class _ConfettiPainter extends CustomPainter {
 
       // Vitesse différente pour chaque confetti (entre 0.8x et 1.3x)
       final speedFactor = 0.8 + (confettiRandom.nextDouble() * 0.5);
-      final currentY = startY + (size.height + 300) * effectiveAnimation * speedFactor;
+      // Distance totale augmentée pour garantir que tous les confettis sortent de l'écran
+      final currentY = startY + (size.height + 500) * effectiveAnimation * speedFactor;
 
       // Calculer l'opacité avec fade in au départ et fade out à la fin
       double opacity = 0.8;
@@ -453,16 +454,16 @@ class _ConfettiPainter extends CustomPainter {
         opacity = 0.8 * (effectiveAnimation / 0.1);
       }
 
-      // Fade out progressif vers le bas
-      final fadeStart = size.height * 0.85 - 30;
+      // Fade out seulement une fois en dehors de l'écran visible
+      final fadeStart = size.height + 50;
       if (currentY > fadeStart) {
-        final fadeEnd = size.height + 150;
+        final fadeEnd = size.height + 300;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
         opacity *= (1.0 - fadeProgress.clamp(0.0, 1.0));
       }
 
-      // Skip seulement si complètement transparent ou trop loin
-      if (opacity <= 0.0 || currentY > size.height + 200) continue;
+      // Skip seulement si complètement transparent ou très loin en dehors
+      if (opacity <= 0.0 || currentY > size.height + 350) continue;
 
       // Couleurs multicolores variées
       final colors = [
