@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// Menu radial qui s'étend autour du logo Lorcana central
@@ -179,8 +178,8 @@ class _RadialMenuState extends State<RadialMenu>
                         ],
                       ),
                       child: ClipOval(
-                        child: SvgPicture.asset(
-                          'assets/images/lorcana_logo.svg',
+                        child: Image.asset(
+                          'assets/images/lorcana_logo.png',
                           width: 88,
                           height: 88,
                           fit: BoxFit.cover,

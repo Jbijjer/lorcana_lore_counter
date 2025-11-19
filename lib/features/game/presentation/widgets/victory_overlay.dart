@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// Overlay de victoire qui apparaît quand un joueur atteint 20 points
@@ -175,8 +174,8 @@ class _VictoryOverlayState extends State<VictoryOverlay>
         ],
       ),
       child: ClipOval(
-        child: SvgPicture.asset(
-          'assets/images/lorcana_logo.svg',
+        child: Image.asset(
+          'assets/images/lorcana_logo.png',
           width: 88,
           height: 88,
           fit: BoxFit.cover,

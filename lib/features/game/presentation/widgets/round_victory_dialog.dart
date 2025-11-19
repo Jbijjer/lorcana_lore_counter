@@ -33,9 +33,31 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late Animation<double> _rotationAnimation;
   late Animation<double> _fadeAnimation;
 
+  // Couleur et image de victoire aléatoires
+  late String _victoryImageName;
+  late Color _victoryColor;
+  late int _sparklesSeed;
+
+  // Map des couleurs disponibles
+  static const Map<String, Color> _colorMap = {
+    'bleu': Colors.blue,
+    'gris': Colors.grey,
+    'jaune': Colors.amber,
+    'mauve': Colors.purple,
+    'rouge': Colors.red,
+    'vert': Colors.green,
+  };
+
   @override
   void initState() {
     super.initState();
+
+    // Sélection aléatoire d'une couleur et d'une seed pour les sparkles
+    final random = math.Random();
+    final colorKeys = _colorMap.keys.toList();
+    _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
+    _victoryColor = _colorMap[_victoryImageName]!;
+    _sparklesSeed = random.nextInt(1000000);
 
     // Animation d'entrée du dialog
     _dialogAnimationController = AnimationController(
@@ -87,8 +109,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   @override
   Widget build(BuildContext context) {
-    final victoryColor = widget.isMatchComplete ? Colors.amber : Colors.green;
-
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ScaleTransition(
@@ -104,7 +124,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: victoryColor.withValues(alpha: 0.4),
+                    color: _victoryColor.withValues(alpha: 0.4),
                     blurRadius: 30,
                     spreadRadius: 8,
                   ),
@@ -112,72 +132,43 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
               ),
               child: Stack(
                 children: [
-                  // Confettis en arrière-plan
-                  Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: _confettiController,
-                      builder: (context, child) {
-                        return CustomPaint(
-                          painter: _ConfettiPainter(
-                            animationValue: _confettiController.value,
-                            color: victoryColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
                   // Contenu principal
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Titre "GAGNANT"
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                victoryColor.withValues(alpha: 0.2),
-                                victoryColor.withValues(alpha: 0.1),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: victoryColor.withValues(alpha: 0.4),
-                              width: 2,
-                            ),
-                          ),
-                          child: ShaderMask(
-                            shaderCallback: (bounds) {
-                              return LinearGradient(
-                                colors: [
-                                  victoryColor,
-                                  victoryColor.withValues(alpha: 0.7),
-                                ],
-                              ).createShader(bounds);
-                            },
-                            child: Text(
-                              widget.isMatchComplete
-                                  ? 'VICTOIRE DU MATCH'
-                                  : 'GAGNANT',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
-                                  ),
-                            ),
+                        // Image de victoire avec sparkles
+                        SizedBox(
+                          height: 160,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Image de victoire
+                              Image.asset(
+                                'assets/images/victoire_$_victoryImageName.png',
+                                fit: BoxFit.contain,
+                              ),
+
+                              // Sparkles animés
+                              AnimatedBuilder(
+                                animation: _shimmerController,
+                                builder: (context, child) {
+                                  return CustomPaint(
+                                    size: const Size(400, 160),
+                                    painter: _SparklesPainter(
+                                      animationValue: _shimmerController.value,
+                                      color: _victoryColor,
+                                      seed: _sparklesSeed,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
 
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 4),
 
                         // Portrait du joueur
                         Stack(
@@ -185,8 +176,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           children: [
                             // Halo de lumière
                             Container(
-                              width: 140,
-                              height: 140,
+                              width: 168,
+                              height: 168,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 boxShadow: [
@@ -202,8 +193,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                             // Portrait avec gradient
                             Container(
-                              width: 120,
-                              height: 120,
+                              width: 144,
+                              height: 144,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
@@ -215,12 +206,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                   ],
                                 ),
                                 border: Border.all(
-                                  color: widget.winner.color,
+                                  color: _victoryColor,
                                   width: 4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: widget.winner.color
+                                    color: _victoryColor
                                         .withValues(alpha: 0.3),
                                     blurRadius: 20,
                                     spreadRadius: 4,
@@ -230,8 +221,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               child: ClipOval(
                                 child: Image.asset(
                                   widget.winner.iconAssetPath,
-                                  width: 120,
-                                  height: 120,
+                                  width: 144,
+                                  height: 144,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -244,14 +235,14 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 return Transform.rotate(
                                   angle: _shimmerController.value * 2 * math.pi,
                                   child: Container(
-                                    width: 135,
-                                    height: 135,
+                                    width: 162,
+                                    height: 162,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       gradient: SweepGradient(
                                         colors: [
                                           Colors.transparent,
-                                          victoryColor.withValues(alpha: 0.5),
+                                          _victoryColor.withValues(alpha: 0.5),
                                           Colors.transparent,
                                         ],
                                         stops: const [0.0, 0.5, 1.0],
@@ -274,7 +265,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               .headlineMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: widget.winner.color,
+                                color: _victoryColor,
                               ),
                           textAlign: TextAlign.center,
                         ),
@@ -336,7 +327,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               Navigator.of(context).pop();
                             },
                             style: FilledButton.styleFrom(
-                              backgroundColor: victoryColor,
+                              backgroundColor: _victoryColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -346,7 +337,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               elevation: 8,
-                              shadowColor: victoryColor.withValues(alpha: 0.5),
+                              shadowColor: _victoryColor.withValues(alpha: 0.5),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -376,6 +367,23 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           ),
                         ),
                       ],
+                    ),
+                  ),
+
+                  // Confettis au premier plan
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: AnimatedBuilder(
+                        animation: _confettiController,
+                        builder: (context, child) {
+                          return CustomPaint(
+                            painter: _ConfettiPainter(
+                              animationValue: _confettiController.value,
+                              color: _victoryColor,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -410,9 +418,20 @@ class _ConfettiPainter extends CustomPainter {
     for (int i = 0; i < 25; i++) {
       final offsetX = size.width * random.nextDouble();
       final startY = -50 - (random.nextDouble() * 150);
-      final currentY = startY + (size.height + 150) * animationValue;
+      final currentY = startY + (size.height + 300) * animationValue;
 
-      if (currentY > size.height) continue;
+      // Calculer l'opacité avec fade out progressif vers le bas
+      double opacity = 0.8;
+      final fadeStart = size.height * 0.85 - 30;
+      if (currentY > fadeStart) {
+        // Commencer le fade out 30 pixels plus haut
+        final fadeEnd = size.height + 80;
+        final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
+        opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
+      }
+
+      // Skip seulement si complètement transparent ou trop loin
+      if (opacity <= 0.0 || currentY > size.height + 150) continue;
 
       // Couleurs multicolores variées
       final colors = [
@@ -427,7 +446,7 @@ class _ConfettiPainter extends CustomPainter {
         Colors.teal,
         Colors.lime,
       ];
-      paint.color = colors[i % colors.length].withValues(alpha: 0.8);
+      paint.color = colors[i % colors.length].withValues(alpha: opacity);
 
       // Rotation légère
       final rotation = (animationValue + (i * 0.1)) * math.pi * 2;
@@ -469,4 +488,80 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ConfettiPainter oldDelegate) => true;
+}
+
+/// Painter pour les sparkles brillants sur l'image de victoire
+class _SparklesPainter extends CustomPainter {
+  final double animationValue;
+  final Color color;
+  final int seed;
+
+  _SparklesPainter({
+    required this.animationValue,
+    required this.color,
+    required this.seed,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    // Dessiner 3 sparkles à des positions aléatoires
+    for (int i = 0; i < 3; i++) {
+      // Animation cyclique pour chaque sparkle avec un décalage
+      final sparklePhase = (animationValue + (i * 0.33)) % 1.0;
+
+      // Calculer le numéro du cycle pour changer la position à chaque cycle
+      final cycleNumber = ((animationValue + (i * 0.33)) / 1.0).floor();
+
+      // Générer une nouvelle position pour chaque cycle
+      final random = math.Random(seed + i * 1000 + cycleNumber * 100);
+      final x = size.width * (0.25 + random.nextDouble() * 0.5);
+      final y = size.height * (0.25 + random.nextDouble() * 0.5);
+
+      // Fade in/out en triangle
+      double opacity;
+      if (sparklePhase < 0.5) {
+        opacity = sparklePhase * 2; // Fade in
+      } else {
+        opacity = (1.0 - sparklePhase) * 2; // Fade out
+      }
+      opacity = opacity.clamp(0.0, 1.0);
+
+      // Taille du sparkle qui varie avec l'opacité
+      final sparkleSize = 3.5 + (opacity * 2.5);
+
+      // Mélanger la couleur de victoire avec du blanc pour une teinte colorée
+      final sparkleColor = Color.lerp(Colors.white, color, 0.4)!;
+      paint.color = sparkleColor.withValues(alpha: opacity * 0.95);
+
+      // Dessiner une petite étoile à 4 branches
+      canvas.save();
+      canvas.translate(x, y);
+
+      // Centre de l'étoile
+      canvas.drawCircle(const Offset(0, 0), sparkleSize, paint);
+
+      // Rayons de l'étoile
+      final rayLength = sparkleSize * 1.6;
+      paint.strokeWidth = 1.8;
+      paint.style = PaintingStyle.stroke;
+
+      // 4 rayons (horizontal, vertical, 2 diagonaux)
+      canvas.drawLine(Offset(-rayLength, 0), Offset(rayLength, 0), paint);
+      canvas.drawLine(Offset(0, -rayLength), Offset(0, rayLength), paint);
+      canvas.drawLine(Offset(-rayLength * 0.7, -rayLength * 0.7),
+                     Offset(rayLength * 0.7, rayLength * 0.7), paint);
+      canvas.drawLine(Offset(rayLength * 0.7, -rayLength * 0.7),
+                     Offset(-rayLength * 0.7, rayLength * 0.7), paint);
+
+      canvas.restore();
+      paint.style = PaintingStyle.fill;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SparklesPainter oldDelegate) => true;
 }
