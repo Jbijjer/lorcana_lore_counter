@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
@@ -22,12 +22,59 @@ class PlayerSelectionDialog extends ConsumerStatefulWidget {
   final String? excludedPlayerName;
 
   @override
-  ConsumerState<PlayerSelectionDialog> createState() => _PlayerSelectionDialogState();
+  ConsumerState<PlayerSelectionDialog> createState() =>
+      _PlayerSelectionDialogState();
 }
 
-class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
+class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
+    with TickerProviderStateMixin {
+  late AnimationController _dialogAnimationController;
+  late AnimationController _shimmerController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _rotationAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Animation d'entrée du dialog
+    _dialogAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _dialogAnimationController,
+      curve: Curves.elasticOut,
+    );
+
+    _rotationAnimation = Tween<double>(
+      begin: -0.1,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _dialogAnimationController,
+      curve: Curves.easeOutBack,
+    ));
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _dialogAnimationController,
+      curve: Curves.easeIn,
+    );
+
+    // Animation shimmer
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+
+    _dialogAnimationController.forward();
+  }
+
   @override
   void dispose() {
+    _dialogAnimationController.dispose();
+    _shimmerController.dispose();
     super.dispose();
   }
 
@@ -38,65 +85,154 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     final sortedPlayerNames = List<String>.from(playerNames)
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        constraints: const BoxConstraints(maxHeight: 500),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Titre
-            Row(
-              children: [
-                Icon(
-                  Icons.person,
-                  color: widget.defaultColor,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    widget.title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: widget.defaultColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: RotationTransition(
+          turns: _rotationAnimation,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 600, maxWidth: 450),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.defaultColor.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    spreadRadius: 5,
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Liste des joueurs existants
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
+                ],
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Joueurs existants
-                  ...sortedPlayerNames.map((name) => _buildPlayerNameTile(name)),
+                  // En-tête stylisé
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: widget.defaultColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.person_search,
+                          color: widget.defaultColor,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ShaderMask(
+                          shaderCallback: (bounds) {
+                            return LinearGradient(
+                              colors: [
+                                widget.defaultColor,
+                                widget.defaultColor.withValues(alpha: 0.6),
+                              ],
+                            ).createShader(bounds);
+                          },
+                          child: Text(
+                            widget.title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
 
-                  // Divider
+                  const SizedBox(height: 20),
+
+                  // Liste des joueurs existants
                   if (sortedPlayerNames.isNotEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Divider(),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.people,
+                          size: 16,
+                          color: Colors.grey[700],
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Joueurs existants',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[700],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ],
                     ),
 
-                  // Option "Nouveau joueur"
-                  _buildNewPlayerTile(),
+                  if (sortedPlayerNames.isNotEmpty) const SizedBox(height: 12),
+
+                  // Liste scrollable
+                  Flexible(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        // Joueurs existants
+                        ...sortedPlayerNames
+                            .map((name) => _buildPlayerNameTile(name)),
+
+                        // Divider
+                        if (sortedPlayerNames.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey[300],
+                                    thickness: 1,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    'ou',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey[300],
+                                    thickness: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        // Option "Nouveau joueur"
+                        _buildNewPlayerTile(),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -105,52 +241,100 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
   Widget _buildPlayerNameTile(String name) {
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
-    final isExcluded = widget.excludedPlayerName != null && name == widget.excludedPlayerName;
+    final isExcluded =
+        widget.excludedPlayerName != null && name == widget.excludedPlayerName;
 
     return Opacity(
       opacity: isExcluded ? 0.4 : 1.0,
-      child: InkWell(
-        onTap: isExcluded ? null : () {
-          HapticUtils.light();
-          _handleSelectPlayer(name);
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: widget.defaultColor.withOpacity(0.2),
-                child: iconAssetPath != null
-                    ? ClipOval(
-                        child: Image.asset(
-                          iconAssetPath,
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        color: widget.defaultColor,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: isExcluded
+                ? null
+                : () {
+                    HapticUtils.light();
+                    _handleSelectPlayer(name);
+                  },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    widget.defaultColor.withValues(alpha: 0.05),
+                    widget.defaultColor.withValues(alpha: 0.02),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: widget.defaultColor.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  // Avatar
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.defaultColor.withValues(alpha: 0.1),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 2,
                       ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.normal,
+                    ),
+                    child: ClipOval(
+                      child: iconAssetPath != null
+                          ? Image.asset(
+                              iconAssetPath,
+                              fit: BoxFit.cover,
+                            )
+                          : Icon(
+                              Icons.person,
+                              color: widget.defaultColor,
+                              size: 24,
+                            ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ),
+                  if (isExcluded)
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.block,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    )
+                  else
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: widget.defaultColor,
+                      size: 18,
+                    ),
+                ],
               ),
-              if (isExcluded)
-                const Icon(
-                  Icons.block,
-                  color: Colors.red,
-                  size: 20,
-                ),
-            ],
+            ),
           ),
         ),
       ),
@@ -158,28 +342,73 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
   }
 
   Widget _buildNewPlayerTile() {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: widget.defaultColor.withOpacity(0.2),
-        child: Icon(
-          Icons.add,
-          color: widget.defaultColor,
-        ),
-      ),
-      title: Text(
-        'Nouveau joueur',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: widget.defaultColor,
-        ),
-      ),
-      shape: RoundedRectangleBorder(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticUtils.light();
+          _handleCreatePlayer();
+        },
         borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                widget.defaultColor.withValues(alpha: 0.15),
+                widget.defaultColor.withValues(alpha: 0.08),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: widget.defaultColor.withValues(alpha: 0.4),
+              width: 2,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: widget.defaultColor.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.defaultColor.withValues(alpha: 0.2),
+                      blurRadius: 6,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.person_add,
+                  color: widget.defaultColor,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Nouveau joueur',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: widget.defaultColor,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.add_circle,
+                color: widget.defaultColor,
+                size: 24,
+              ),
+            ],
+          ),
+        ),
       ),
-      onTap: () {
-        HapticUtils.light();
-        _handleCreatePlayer();
-      },
     );
   }
 
@@ -217,7 +446,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
     final randomName = service.generateRandomDisneyName();
 
     // Générer des valeurs aléatoires SANS créer le joueur
-    final random = Random();
+    final random = math.Random();
     final randomColorIndex = random.nextInt(AppTheme.lorcanaColors.length);
     final randomColor = AppTheme.lorcanaColors[randomColorIndex];
     final randomIconIndex = random.nextInt(PlayerIcons.availableIcons.length);
@@ -261,7 +490,8 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog> {
 
     // MAINTENANT on crée le joueur dans la base de données
     await service.addOrUpdatePlayerName(selectedName);
-    await service.updatePlayerColors(selectedName, selectedStartColor, selectedEndColor);
+    await service.updatePlayerColors(
+        selectedName, selectedStartColor, selectedEndColor);
     await service.updatePlayerIcon(selectedName, selectedIcon);
 
     // Créer l'objet Player avec les valeurs finales
