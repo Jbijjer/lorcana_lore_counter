@@ -52,13 +52,13 @@ class _RadialMenuState extends State<RadialMenu>
       curve: Curves.easeInOut,
     ));
 
-    // Animation de soulèvement (scale) - monte progressivement jusqu'à la fin
+    // Animation de soulèvement (scale) - monte progressivement avec bounce
     _liftAnimation = Tween<double>(
       begin: 1.0,
       end: 1.25,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOut,
+      curve: Curves.elasticOut,
     ));
 
     // Animation de l'ombre - s'intensifie progressivement
