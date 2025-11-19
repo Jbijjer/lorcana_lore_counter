@@ -94,7 +94,7 @@ class _PlayerZoneState extends State<PlayerZone> {
                               ),
                               // Score au centre, descendu de 22 pixels avec animations
                               Transform.translate(
-                                offset: const Offset(-1, 22),
+                                offset: const Offset(0, 22),
                                 child: Center(
                                   child: _AnimatedScoreDisplay(
                                     key: _scoreKey,

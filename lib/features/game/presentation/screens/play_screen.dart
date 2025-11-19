@@ -7,6 +7,7 @@ import '../widgets/player_name_dialog.dart';
 import '../widgets/score_edit_dialog.dart';
 import '../widgets/game_setup_dialog.dart';
 import '../widgets/radial_menu.dart';
+import '../widgets/reset_confirmation_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -392,49 +393,70 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   /// Gère le reset de la partie avec confirmation
   void _handleResetTap() async {
-    final choice = await showDialog<String>(
+    final choice = await showDialog<ResetOption>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Réinitialiser'),
-        content: const Text(
-          'Que voulez-vous réinitialiser ?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop('cancel'),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop('scores'),
-            child: const Text('Réinitialiser Partie'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop('round'),
-            child: const Text('Réinitialiser Round'),
-          ),
-        ],
-      ),
+      builder: (context) => const ResetConfirmationDialog(),
     );
 
-    if (choice == 'scores' && mounted) {
+    if (choice == ResetOption.scores && mounted) {
       HapticUtils.medium();
-      ref.read(gameProvider.notifier).resetScores();
+      // Animation: faire un flash sur l'écran
+      _animateReset(() {
+        ref.read(gameProvider.notifier).resetScores();
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Scores remis à 0'),
-          duration: Duration(seconds: 1),
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Scores remis à 0'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
         ),
       );
-    } else if (choice == 'round' && mounted) {
+    } else if (choice == ResetOption.round && mounted) {
       HapticUtils.medium();
-      ref.read(gameProvider.notifier).resetRound();
+      // Animation: faire un flash sur l'écran
+      _animateReset(() {
+        ref.read(gameProvider.notifier).resetRound();
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Round réinitialisé'),
-          duration: Duration(seconds: 1),
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Round réinitialisé'),
+            ],
+          ),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 2),
         ),
       );
     }
+  }
+
+  /// Anime le reset avec un effet de flash
+  void _animateReset(VoidCallback onReset) {
+    // Créer un overlay pour l'animation de flash
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => _ResetFlashAnimation(
+        onComplete: () {
+          overlayEntry.remove();
+          onReset();
+        },
+      ),
+    );
+
+    overlay.insert(overlayEntry);
   }
 
   /// Gère l'activation du timer
@@ -456,6 +478,76 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         content: Text('Historique - À implémenter'),
         duration: Duration(seconds: 1),
       ),
+    );
+  }
+}
+
+/// Animation de flash lors du reset
+class _ResetFlashAnimation extends StatefulWidget {
+  const _ResetFlashAnimation({
+    required this.onComplete,
+  });
+
+  final VoidCallback onComplete;
+
+  @override
+  State<_ResetFlashAnimation> createState() => _ResetFlashAnimationState();
+}
+
+class _ResetFlashAnimationState extends State<_ResetFlashAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+
+    _animation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 0.3)
+            .chain(CurveTween(curve: Curves.easeIn)),
+        weight: 40,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.3, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 60,
+      ),
+    ]).animate(_controller);
+
+    _controller.forward().then((_) {
+      widget.onComplete();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          color: Colors.white.withOpacity(_animation.value),
+          child: Center(
+            child: Icon(
+              Icons.restart_alt,
+              size: 80,
+              color: Colors.black.withOpacity(_animation.value * 0.5),
+            ),
+          ),
+        );
+      },
     );
   }
 }

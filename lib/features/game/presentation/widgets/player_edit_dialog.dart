@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
@@ -35,11 +36,18 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
   ConsumerState<PlayerEditDialog> createState() => _PlayerEditDialogState();
 }
 
-class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
+class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
+    with TickerProviderStateMixin {
   late TextEditingController _nameController;
   late Color _backgroundColorStart;
   late Color _backgroundColorEnd;
   late String _selectedIconAssetPath;
+  late AnimationController _dialogAnimationController;
+  late AnimationController _shimmerController;
+  late AnimationController _portraitChangeController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _rotationAnimation;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
@@ -48,205 +56,408 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
     _backgroundColorStart = widget.backgroundColorStart;
     _backgroundColorEnd = widget.backgroundColorEnd;
     _selectedIconAssetPath = widget.iconAssetPath;
+
+    // Animation d'entrée du dialog
+    _dialogAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _dialogAnimationController,
+      curve: Curves.elasticOut,
+    );
+
+    _rotationAnimation = Tween<double>(
+      begin: -0.1,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _dialogAnimationController,
+      curve: Curves.easeOutBack,
+    ));
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _dialogAnimationController,
+      curve: Curves.easeIn,
+    );
+
+    // Animation shimmer pour l'aperçu
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+
+    // Animation pour le changement de portrait
+    _portraitChangeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    _dialogAnimationController.forward();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _dialogAnimationController.dispose();
+    _shimmerController.dispose();
+    _portraitChangeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        constraints: const BoxConstraints(maxHeight: 700, maxWidth: 550),
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-            // En-tête
-            Row(
-              children: [
-                Icon(
-                  Icons.edit,
-                  color: widget.playerColor,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Éditer le joueur',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: widget.playerColor,
-                          fontWeight: FontWeight.bold,
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: RotationTransition(
+          turns: _rotationAnimation,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 700, maxWidth: 550),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.playerColor.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // En-tête avec effet de brillance
+                    _buildHeader(),
+
+                    const SizedBox(height: 24),
+
+                    // Aperçu du joueur avec shimmer
+                    _buildPlayerPreview(),
+
+                    const SizedBox(height: 24),
+
+                    // Champ de saisie du nom
+                    TextField(
+                      controller: _nameController,
+                      maxLength: 15,
+                      onChanged: (_) => setState(() {}),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Nom du joueur',
+                        labelStyle: TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
                         ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
+                        counterStyle: TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Colors.grey[800],
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: widget.playerColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
 
-            const SizedBox(height: 24),
+                    const SizedBox(height: 19),
 
-            // Aperçu du joueur
-            _buildPlayerPreview(),
+                    // Sélection de l'icône
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              color: widget.playerColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Portrait',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.swipe_vertical,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Glissez pour voir plus',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildIconSelector(),
 
-            const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-            // Champ de saisie du nom
-            TextField(
-              controller: _nameController,
-              maxLength: 15,
-              decoration: InputDecoration(
-                labelText: 'Nom du joueur',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: widget.playerColor,
-                    width: 2,
-                  ),
+                    // Bouton pour changer les couleurs de fond
+                    _buildColorButton(),
+
+                    const SizedBox(height: 12),
+
+                    // Boutons d'action
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(
+                            'Annuler',
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        _buildSaveButton(),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
 
-            const SizedBox(height: 24),
-
-            // Sélection de l'icône
-            Text(
-              'Portrait',
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: widget.playerColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.edit,
+            color: widget.playerColor,
+            size: 28,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ShaderMask(
+            shaderCallback: (bounds) {
+              return LinearGradient(
+                colors: [
+                  widget.playerColor,
+                  widget.playerColor.withValues(alpha: 0.6),
+                ],
+              ).createShader(bounds);
+            },
+            child: Text(
+              'Éditer le joueur',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 12),
-            _buildIconSelector(),
-
-            const SizedBox(height: 24),
-
-            // Bouton pour changer les couleurs de fond
-            OutlinedButton.icon(
-              onPressed: _showColorPicker,
-              icon: Icon(Icons.palette, color: widget.playerColor),
-              label: const Text('Modifier les couleurs de fond'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: widget.playerColor,
-                side: BorderSide(color: widget.playerColor),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Boutons d'action
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Annuler'),
-                ),
-                const SizedBox(width: 12),
-                FilledButton(
-                  onPressed: _handleSave,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: widget.playerColor,
-                  ),
-                  child: const Text('Enregistrer'),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
     );
   }
 
   Widget _buildPlayerPreview() {
-    return Container(
-      height: 90,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _backgroundColorStart.withValues(alpha: 0.6),
-            _backgroundColorEnd.withValues(alpha: 0.4),
+    return AnimatedBuilder(
+      animation: _shimmerController,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            // Conteneur principal avec gradient
+            Container(
+              height: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    _backgroundColorStart,
+                    _backgroundColorEnd,
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.playerColor.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Avatar avec effet glow et changement animé
+                    _buildAnimatedAvatar(),
+                    const SizedBox(width: 12),
+                    // Nom du joueur
+                    Stack(
+                      children: [
+                        // Outline noir
+                        Text(
+                          _nameController.text.isNotEmpty
+                              ? _nameController.text
+                              : 'Joueur',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 3
+                              ..color = Colors.black,
+                          ),
+                        ),
+                        // Texte avec gradient
+                        ShaderMask(
+                          shaderCallback: (bounds) {
+                            return LinearGradient(
+                              colors: [
+                                Colors.white,
+                                Colors.white.withValues(alpha: 0.9),
+                              ],
+                            ).createShader(bounds);
+                          },
+                          child: Text(
+                            _nameController.text.isNotEmpty
+                                ? _nameController.text
+                                : 'Joueur',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Effet shimmer
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Transform.translate(
+                  offset: Offset(
+                    -200 + (_shimmerController.value * 400),
+                    0,
+                  ),
+                  child: Container(
+                    width: 100,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.transparent,
+                          Colors.white.withValues(alpha: 0.3),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget _buildAnimatedAvatar() {
+    return ScaleTransition(
+      scale: Tween<double>(begin: 1.0, end: 1.1).animate(
+        CurvedAnimation(
+          parent: _portraitChangeController,
+          curve: Curves.easeInOut,
         ),
       ),
-      child: Center(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Avatar avec l'icône sélectionnée
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.black,
-                  width: 2,
-                ),
-              ),
-              child: CircleAvatar(
-                radius: 19.5,
-                backgroundColor: widget.playerColor.withValues(alpha: 0.3),
-                child: ClipOval(
-                  child: Image.asset(
-                    _selectedIconAssetPath,
-                    width: 39,
-                    height: 39,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            // Nom du joueur
-            Stack(
-              children: [
-                // Outline noir
-                Text(
-                  _nameController.text.isNotEmpty
-                      ? _nameController.text
-                      : 'Joueur',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = 2
-                      ..color = Colors.black,
-                  ),
-                ),
-                // Texte blanc
-                Text(
-                  _nameController.text.isNotEmpty
-                      ? _nameController.text
-                      : 'Joueur',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: widget.playerColor.withValues(alpha: 0.5),
+              blurRadius: 15,
+              spreadRadius: 3,
             ),
           ],
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.black,
+              width: 3,
+            ),
+          ),
+          child: CircleAvatar(
+            radius: 29.25,
+            backgroundColor: widget.playerColor.withValues(alpha: 0.3),
+            child: ClipOval(
+              child: Image.asset(
+                _selectedIconAssetPath,
+                width: 58.5,
+                height: 58.5,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -256,13 +467,16 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(
+          color: widget.playerColor.withValues(alpha: 0.3),
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: GridView.builder(
         padding: const EdgeInsets.all(8),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 6,
+          crossAxisCount: 4,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
@@ -271,43 +485,147 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
           final playerIcon = PlayerIcons.availableIcons[index];
           final isSelected = playerIcon.assetPath == _selectedIconAssetPath;
 
-          return Tooltip(
-            message: playerIcon.label,
-            child: InkWell(
-              onTap: () {
-                HapticUtils.light();
-                setState(() {
-                  _selectedIconAssetPath = playerIcon.assetPath;
-                });
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? widget.playerColor.withValues(alpha: 0.2)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected
-                        ? widget.playerColor
-                        : Colors.grey.shade300,
-                    width: isSelected ? 2 : 1,
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Image.asset(
-                      playerIcon.assetPath,
-                      fit: BoxFit.cover,
+          return _buildIconItem(playerIcon, isSelected);
+        },
+      ),
+    );
+  }
+
+  Widget _buildIconItem(dynamic playerIcon, bool isSelected) {
+    return Tooltip(
+      message: playerIcon.label,
+      child: InkWell(
+        onTap: () {
+          HapticUtils.light();
+          setState(() {
+            _selectedIconAssetPath = playerIcon.assetPath;
+          });
+          // Animation de bounce lors du changement
+          _portraitChangeController.forward(from: 0.0);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? widget.playerColor.withValues(alpha: 0.2)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? widget.playerColor : Colors.grey.shade300,
+              width: isSelected ? 3 : 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: widget.playerColor.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      spreadRadius: 2,
                     ),
+                  ]
+                : [],
+          ),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Image.asset(
+                    playerIcon.assetPath,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
+              // Effet scintillant pour l'icône sélectionnée
+              if (isSelected)
+                Positioned.fill(
+                  child: _buildSparkles(),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSparkles() {
+    return AnimatedBuilder(
+      animation: _shimmerController,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _SparklesPainter(
+            animationValue: _shimmerController.value,
+            color: widget.playerColor,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildColorButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [
+            widget.playerColor.withValues(alpha: 0.1),
+            widget.playerColor.withValues(alpha: 0.05),
+          ],
+        ),
+      ),
+      child: OutlinedButton.icon(
+        onPressed: _showColorPicker,
+        icon: Icon(Icons.palette, color: widget.playerColor),
+        label: const Text('Modifier les couleurs de fond'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: widget.playerColor,
+          side: BorderSide(color: widget.playerColor, width: 2),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        gradient: LinearGradient(
+          colors: [
+            widget.playerColor,
+            widget.playerColor.withValues(alpha: 0.8),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: widget.playerColor.withValues(alpha: 0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: _handleSave,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.save, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text(
+              'Enregistrer',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -376,4 +694,40 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       Navigator.of(context).pop();
     }
   }
+}
+
+/// Painter pour les effets scintillants
+class _SparklesPainter extends CustomPainter {
+  final double animationValue;
+  final Color color;
+
+  _SparklesPainter({
+    required this.animationValue,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.6)
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+
+    // Dessiner quelques étoiles scintillantes
+    final random = math.Random(42); // Seed fixe pour cohérence
+    for (int i = 0; i < 3; i++) {
+      final x = size.width * random.nextDouble();
+      final y = size.height * random.nextDouble();
+      final sparklePhase = (animationValue + (i * 0.3)) % 1.0;
+      final opacity = (math.sin(sparklePhase * math.pi * 2) + 1) / 2;
+
+      paint.color = color.withValues(alpha: opacity * 0.8);
+
+      // Dessiner une petite étoile
+      canvas.drawCircle(Offset(x, y), 2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SparklesPainter oldDelegate) => true;
 }
