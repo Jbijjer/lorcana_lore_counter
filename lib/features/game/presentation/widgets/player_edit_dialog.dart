@@ -122,7 +122,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 19),
 
             // Sélection de l'icône
             Row(
@@ -170,7 +170,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 19),
 
             // Boutons d'action
             Row(
