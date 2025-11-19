@@ -9,6 +9,7 @@ import '../widgets/game_setup_dialog.dart';
 import '../widgets/radial_menu.dart';
 import '../widgets/reset_confirmation_dialog.dart';
 import '../widgets/victory_overlay.dart';
+import '../widgets/round_victory_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -243,58 +244,37 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     if (updatedState == null) return;
 
     final winner = isPlayer1Winner ? updatedState.player1 : updatedState.player2;
+    final loser = isPlayer1Winner ? updatedState.player2 : updatedState.player1;
     final winnerWins = isPlayer1Winner ? updatedState.player1Wins : updatedState.player2Wins;
+    final loserWins = isPlayer1Winner ? updatedState.player2Wins : updatedState.player1Wins;
     final winsNeeded = updatedState.matchFormat.winsNeeded;
 
     // Vérifier si le joueur a gagné le match complet
-    if (winnerWins >= winsNeeded) {
+    final isMatchComplete = winnerWins >= winsNeeded;
+
+    if (isMatchComplete) {
       // Match terminé
       ref.read(gameProvider.notifier).finishGame();
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text('🎉 Victoire du Match !'),
-          content: Text(
-            '${winner.name} remporte le match $winnerWins-${isPlayer1Winner ? updatedState.player2Wins : updatedState.player1Wins} !',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                ref.read(gameProvider.notifier).resetGame();
-                // Afficher le dialog de sélection des joueurs pour une nouvelle partie
-                await _showGameSetupDialog();
-              },
-              child: const Text('Nouvelle partie'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // Manche gagnée, mais le match continue
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text('🎯 Manche Terminée !'),
-          content: Text(
-            '${winner.name} remporte la manche !\n\nScore du match : ${updatedState.player1.name} ${ updatedState.player1Wins} - ${updatedState.player2Wins} ${updatedState.player2.name}',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Manche suivante'),
-            ),
-          ],
-        ),
-      );
     }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => RoundVictoryDialog(
+        winner: winner,
+        isMatchComplete: isMatchComplete,
+        winnerWins: winnerWins,
+        loserWins: loserWins,
+        loserName: loser.name,
+      ),
+    ).then((_) async {
+      if (isMatchComplete && mounted) {
+        // Après la fermeture du dialog de victoire du match
+        ref.read(gameProvider.notifier).resetGame();
+        // Afficher le dialog de sélection des joueurs pour une nouvelle partie
+        await _showGameSetupDialog();
+      }
+    });
   }
 
   void _handleVictoryConfirm() {
