@@ -36,7 +36,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   // Couleur et image de victoire aléatoires
   late String _victoryImageName;
   late Color _victoryColor;
-  late int _sparklesSeed;
 
   // Map des couleurs disponibles
   static const Map<String, Color> _colorMap = {
@@ -52,12 +51,11 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   void initState() {
     super.initState();
 
-    // Sélection aléatoire d'une couleur et d'une seed pour les sparkles
+    // Sélection aléatoire d'une couleur
     final random = math.Random();
     final colorKeys = _colorMap.keys.toList();
     _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
     _victoryColor = _colorMap[_victoryImageName]!;
-    _sparklesSeed = random.nextInt(1000000);
 
     // Animation d'entrée du dialog
     _dialogAnimationController = AnimationController(
@@ -83,7 +81,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       curve: Curves.easeIn,
     );
 
-    // Animation shimmer
+    // Animation shimmer pour l'effet rotatif autour du portrait
     _shimmerController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -138,33 +136,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image de victoire avec sparkles
+                        // Image de victoire
                         SizedBox(
                           height: 160,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Image de victoire
-                              Image.asset(
-                                'assets/images/victoire_$_victoryImageName.png',
-                                fit: BoxFit.contain,
-                              ),
-
-                              // Sparkles animés
-                              AnimatedBuilder(
-                                animation: _shimmerController,
-                                builder: (context, child) {
-                                  return CustomPaint(
-                                    size: const Size(400, 160),
-                                    painter: _SparklesPainter(
-                                      animationValue: _shimmerController.value,
-                                      color: _victoryColor,
-                                      seed: _sparklesSeed,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                          child: Image.asset(
+                            'assets/images/victoire_$_victoryImageName.png',
+                            fit: BoxFit.contain,
                           ),
                         ),
 
@@ -488,80 +465,4 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ConfettiPainter oldDelegate) => true;
-}
-
-/// Painter pour les sparkles brillants sur l'image de victoire
-class _SparklesPainter extends CustomPainter {
-  final double animationValue;
-  final Color color;
-  final int seed;
-
-  _SparklesPainter({
-    required this.animationValue,
-    required this.color,
-    required this.seed,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
-
-    // Dessiner 3 sparkles à des positions aléatoires
-    for (int i = 0; i < 3; i++) {
-      // Animation cyclique pour chaque sparkle avec un décalage
-      final sparklePhase = (animationValue + (i * 0.33)) % 1.0;
-
-      // Calculer le numéro du cycle pour changer la position à chaque cycle
-      final cycleNumber = ((animationValue + (i * 0.33)) / 1.0).floor();
-
-      // Générer une nouvelle position pour chaque cycle
-      final random = math.Random(seed + i * 1000 + cycleNumber * 100);
-      final x = size.width * (0.25 + random.nextDouble() * 0.5);
-      final y = size.height * (0.25 + random.nextDouble() * 0.5);
-
-      // Fade in/out en triangle
-      double opacity;
-      if (sparklePhase < 0.5) {
-        opacity = sparklePhase * 2; // Fade in
-      } else {
-        opacity = (1.0 - sparklePhase) * 2; // Fade out
-      }
-      opacity = opacity.clamp(0.0, 1.0);
-
-      // Taille du sparkle qui varie avec l'opacité
-      final sparkleSize = 3.5 + (opacity * 2.5);
-
-      // Mélanger la couleur de victoire avec du blanc pour une teinte colorée
-      final sparkleColor = Color.lerp(Colors.white, color, 0.4)!;
-      paint.color = sparkleColor.withValues(alpha: opacity * 0.95);
-
-      // Dessiner une petite étoile à 4 branches
-      canvas.save();
-      canvas.translate(x, y);
-
-      // Centre de l'étoile
-      canvas.drawCircle(const Offset(0, 0), sparkleSize, paint);
-
-      // Rayons de l'étoile
-      final rayLength = sparkleSize * 1.6;
-      paint.strokeWidth = 1.8;
-      paint.style = PaintingStyle.stroke;
-
-      // 4 rayons (horizontal, vertical, 2 diagonaux)
-      canvas.drawLine(Offset(-rayLength, 0), Offset(rayLength, 0), paint);
-      canvas.drawLine(Offset(0, -rayLength), Offset(0, rayLength), paint);
-      canvas.drawLine(Offset(-rayLength * 0.7, -rayLength * 0.7),
-                     Offset(rayLength * 0.7, rayLength * 0.7), paint);
-      canvas.drawLine(Offset(rayLength * 0.7, -rayLength * 0.7),
-                     Offset(-rayLength * 0.7, rayLength * 0.7), paint);
-
-      canvas.restore();
-      paint.style = PaintingStyle.fill;
-    }
-  }
-
-  @override
-  bool shouldRepaint(_SparklesPainter oldDelegate) => true;
 }
