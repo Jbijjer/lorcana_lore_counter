@@ -267,13 +267,12 @@ class Game extends _$Game {
   }
 
   /// Confirme la victoire et termine la partie
+  /// Note: Avec les seuils individuels, pas besoin de modifier l'état
+  /// La victoire est automatiquement confirmée si le flag individuel est false
   void confirmVictory() {
     if (state == null) return;
-
-    state = state!.copyWith(
-      victoryDeclined: false,
-    );
-    _saveState();
+    // Rien à faire : l'état actuel confirme déjà la victoire
+    // car le joueur n'a pas refusé (flag victoryDeclined = false)
   }
 
   /// Refuse la victoire pour le joueur qui a atteint le seuil, augmente son seuil à 25 points
