@@ -21,6 +21,8 @@ class GameState with _$GameState {
     @Default(MatchFormat.bestOf3) MatchFormat matchFormat,
     @Default(0) int player1Wins,
     @Default(0) int player2Wins,
+    @Default(false) bool victoryDeclined,
+    @Default(20) int victoryThreshold,
   }) = _GameState;
 
   const GameState._();
@@ -41,13 +43,26 @@ class GameState with _$GameState {
     );
   }
 
-  /// Vérifie si la partie est terminée (un joueur a atteint 20 points)
-  bool get isFinished => player1Score >= 20 || player2Score >= 20;
+  /// Vérifie si un joueur a atteint le seuil de victoire
+  bool get hasReachedVictoryThreshold =>
+      player1Score >= victoryThreshold || player2Score >= victoryThreshold;
+
+  /// Vérifie si la partie est terminée (un joueur a atteint le seuil et la victoire est confirmée)
+  bool get isFinished => hasReachedVictoryThreshold && !victoryDeclined;
+
+  /// Retourne le joueur qui a atteint le seuil de victoire (null si aucun)
+  Player? get playerAtThreshold {
+    if (!hasReachedVictoryThreshold) return null;
+    return player1Score >= victoryThreshold ? player1 : player2;
+  }
+
+  /// Retourne true si c'est le joueur 1 qui a atteint le seuil
+  bool get isPlayer1AtThreshold => player1Score >= victoryThreshold;
 
   /// Retourne le gagnant si la partie est terminée
   Player? get winner {
     if (!isFinished) return null;
-    return player1Score >= 20 ? player1 : player2;
+    return player1Score >= victoryThreshold ? player1 : player2;
   }
 }
 

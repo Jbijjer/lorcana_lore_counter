@@ -265,4 +265,39 @@ class Game extends _$Game {
     state = state!.copyWith(matchFormat: format);
     _saveState();
   }
+
+  /// Confirme la victoire et termine la partie
+  void confirmVictory() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      victoryDeclined: false,
+    );
+    _saveState();
+  }
+
+  /// Refuse la victoire, augmente le seuil à 25 points
+  void declineVictory() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      victoryDeclined: true,
+      victoryThreshold: 25,
+    );
+    _saveState();
+  }
+
+  /// Réinitialise le flag de victoire refusée quand le score retombe en dessous de 20
+  void resetVictoryDeclined() {
+    if (state == null) return;
+
+    // Ne réinitialiser que si la victoire a été refusée et que les deux scores sont < 20
+    if (state!.victoryDeclined && state!.player1Score < 20 && state!.player2Score < 20) {
+      state = state!.copyWith(
+        victoryDeclined: false,
+        victoryThreshold: 20,
+      );
+      _saveState();
+    }
+  }
 }
