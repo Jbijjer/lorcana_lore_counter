@@ -404,17 +404,18 @@ class _ConfettiPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    // Utiliser une seed différente à chaque cycle pour varier la disposition
-    final random = math.Random(42 + cycleCount);
-
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
-      final offsetX = size.width * random.nextDouble();
+      // Seed unique pour chaque confetti basée sur le cycle et l'index
+      // Cela garantit une vraie indépendance entre les confettis
+      final confettiRandom = math.Random(42 + cycleCount * 100 + i * 7);
+
+      final offsetX = size.width * confettiRandom.nextDouble();
       // Position de départ très variée pour éviter une disparition groupée
-      final startY = -50 - (random.nextDouble() * 600);
+      final startY = -50 - (confettiRandom.nextDouble() * 600);
 
       // Vitesse différente pour chaque confetti (entre 0.7x et 1.4x)
-      final speedFactor = 0.7 + (random.nextDouble() * 0.7);
+      final speedFactor = 0.7 + (confettiRandom.nextDouble() * 0.7);
       final currentY = startY + (size.height + 300) * animationValue * speedFactor;
 
       // Calculer l'opacité avec fade out progressif vers le bas
@@ -449,7 +450,7 @@ class _ConfettiPainter extends CustomPainter {
       final rotation = (animationValue + (i * 0.1)) * math.pi * 2;
 
       // Taille de la tête de Mickey
-      final mickeySize = 12 + (random.nextDouble() * 8);
+      final mickeySize = 12 + (confettiRandom.nextDouble() * 8);
       final headRadius = mickeySize / 2;
       final earRadius = headRadius * 0.6;
 
