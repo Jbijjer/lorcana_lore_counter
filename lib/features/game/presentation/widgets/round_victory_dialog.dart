@@ -36,6 +36,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   // Couleur et image de victoire aléatoires
   late String _victoryImageName;
   late Color _victoryColor;
+  late int _sparklesSeed;
 
   // Map des couleurs disponibles
   static const Map<String, Color> _colorMap = {
@@ -51,10 +52,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   void initState() {
     super.initState();
 
-    // Sélection aléatoire d'une couleur
+    // Sélection aléatoire d'une couleur et d'une seed pour les sparkles
+    final random = math.Random();
     final colorKeys = _colorMap.keys.toList();
-    _victoryImageName = colorKeys[math.Random().nextInt(colorKeys.length)];
+    _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
     _victoryColor = _colorMap[_victoryImageName]!;
+    _sparklesSeed = random.nextInt(1000000);
 
     // Animation d'entrée du dialog
     _dialogAnimationController = AnimationController(
@@ -156,6 +159,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                     painter: _SparklesPainter(
                                       animationValue: _shimmerController.value,
                                       color: _victoryColor,
+                                      seed: _sparklesSeed,
                                     ),
                                   );
                                 },
@@ -490,10 +494,12 @@ class _ConfettiPainter extends CustomPainter {
 class _SparklesPainter extends CustomPainter {
   final double animationValue;
   final Color color;
+  final int seed;
 
   _SparklesPainter({
     required this.animationValue,
     required this.color,
+    required this.seed,
   });
 
   @override
@@ -502,7 +508,7 @@ class _SparklesPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    final random = math.Random(42);
+    final random = math.Random(seed);
 
     // Dessiner 3 sparkles à des positions aléatoires
     for (int i = 0; i < 3; i++) {
