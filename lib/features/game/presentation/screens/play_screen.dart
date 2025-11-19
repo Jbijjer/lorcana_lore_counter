@@ -8,6 +8,7 @@ import '../widgets/score_edit_dialog.dart';
 import '../widgets/game_setup_dialog.dart';
 import '../widgets/radial_menu.dart';
 import '../widgets/reset_confirmation_dialog.dart';
+import '../widgets/victory_overlay.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -25,6 +26,8 @@ class PlayScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayScreenState extends ConsumerState<PlayScreen> {
+  bool _showVictoryOverlay = false;
+
   @override
   void initState() {
     super.initState();
@@ -119,10 +122,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       winsNeeded: gameState.matchFormat.winsNeeded,
                       onIncrement: (amount) {
                         ref.read(gameProvider.notifier).incrementPlayer1Score(amount);
-                        _checkWinner();
+                        _handleScoreChange();
                       },
                       onDecrement: (amount) {
                         ref.read(gameProvider.notifier).decrementPlayer1Score(amount);
+                        _handleScoreChange();
                       },
                       onNameTap: () => _showPlayerNameDialog(
                         currentName: gameState.player1.name,
@@ -151,10 +155,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       winsNeeded: gameState.matchFormat.winsNeeded,
                       onIncrement: (amount) {
                         ref.read(gameProvider.notifier).incrementPlayer2Score(amount);
-                        _checkWinner();
+                        _handleScoreChange();
                       },
                       onDecrement: (amount) {
                         ref.read(gameProvider.notifier).decrementPlayer2Score(amount);
+                        _handleScoreChange();
                       },
                       onNameTap: () => _showPlayerNameDialog(
                         currentName: gameState.player2.name,
@@ -180,12 +185,42 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onHistoryTap: _handleHistoryTap,
                   ),
                 ),
+
+                // Overlay de victoire (au-dessus du menu radial)
+                if (_showVictoryOverlay)
+                  Positioned.fill(
+                    child: VictoryOverlay(
+                      isPlayer1: gameState.isPlayer1AtThreshold,
+                      onConfirm: _handleVictoryConfirm,
+                      onDecline: _handleVictoryDecline,
+                    ),
+                  ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _handleScoreChange() {
+    final gameState = ref.read(gameProvider);
+    if (gameState == null) return;
+
+    // Vérifier si le score est retombé en dessous de 20
+    ref.read(gameProvider.notifier).resetVictoryDeclined();
+
+    // Vérifier si un joueur a atteint le seuil de victoire
+    if (gameState.hasReachedVictoryThreshold && !gameState.victoryDeclined) {
+      setState(() {
+        _showVictoryOverlay = true;
+      });
+    }
+
+    // Ancienne logique : si la victoire est confirmée (isFinished = true)
+    if (gameState.isFinished) {
+      _checkWinner();
+    }
   }
 
   void _checkWinner() {
@@ -195,7 +230,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     HapticUtils.success();
 
     // Déterminer qui a gagné la manche
-    final isPlayer1Winner = gameState.player1Score >= 20;
+    final isPlayer1Winner = gameState.player1Score >= gameState.victoryThreshold;
 
     // Ajouter une victoire au gagnant de la manche
     if (isPlayer1Winner) {
@@ -261,6 +296,21 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         ),
       );
     }
+  }
+
+  void _handleVictoryConfirm() {
+    ref.read(gameProvider.notifier).confirmVictory();
+    setState(() {
+      _showVictoryOverlay = false;
+    });
+    _checkWinner();
+  }
+
+  void _handleVictoryDecline() {
+    ref.read(gameProvider.notifier).declineVictory();
+    setState(() {
+      _showVictoryOverlay = false;
+    });
   }
 
   Future<void> _showPlayerNameDialog({
@@ -376,7 +426,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       } else {
         ref.read(gameProvider.notifier).setPlayer2Score(newScore);
       }
-      _checkWinner();
+      _handleScoreChange();
     }
   }
 

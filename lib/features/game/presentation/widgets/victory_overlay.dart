@@ -1,0 +1,304 @@
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/utils/haptic_utils.dart';
+
+/// Overlay de victoire qui apparaît quand un joueur atteint 20 points
+class VictoryOverlay extends StatefulWidget {
+  const VictoryOverlay({
+    super.key,
+    required this.isPlayer1,
+    required this.onConfirm,
+    required this.onDecline,
+  });
+
+  final bool isPlayer1;
+  final VoidCallback onConfirm;
+  final VoidCallback onDecline;
+
+  @override
+  State<VictoryOverlay> createState() => _VictoryOverlayState();
+}
+
+class _VictoryOverlayState extends State<VictoryOverlay>
+    with TickerProviderStateMixin {
+  late AnimationController _flipController;
+  late AnimationController _menuController;
+  late Animation<double> _flipAnimation;
+  late Animation<double> _scaleAnimation;
+  bool _showMenu = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Animation de flip du logo
+    _flipController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _flipAnimation = Tween<double>(
+      begin: 0,
+      end: math.pi, // 180 degrés
+    ).animate(CurvedAnimation(
+      parent: _flipController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Animation du menu radial
+    _menuController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _menuController,
+      curve: Curves.easeOut,
+    );
+
+    // Démarrer l'animation de flip
+    _flipController.forward().then((_) {
+      // Attendre un court instant avant d'afficher le texte "Victoire?"
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted) {
+          setState(() {
+            _showMenu = false;
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _flipController.dispose();
+    _menuController.dispose();
+    super.dispose();
+  }
+
+  void _handleVictoryTap() {
+    HapticUtils.medium();
+    setState(() {
+      _showMenu = true;
+    });
+    _menuController.forward();
+  }
+
+  void _handleConfirm() {
+    HapticUtils.success();
+    widget.onConfirm();
+  }
+
+  void _handleDecline() {
+    HapticUtils.medium();
+    widget.onDecline();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Fond semi-transparent
+        Positioned.fill(
+          child: Container(
+            color: Colors.black.withOpacity(0.7),
+          ),
+        ),
+
+        // Logo et texte au centre
+        Center(
+          child: SizedBox(
+            width: 300,
+            height: 300,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Menu radial (si activé)
+                if (_showMenu) ...[
+                  _buildMenuButton(
+                    label: 'Oui',
+                    angle: widget.isPlayer1 ? -math.pi / 2 : math.pi / 2,
+                    color: Colors.green,
+                    onTap: _handleConfirm,
+                  ),
+                  _buildMenuButton(
+                    label: 'Non',
+                    angle: widget.isPlayer1 ? math.pi / 2 : -math.pi / 2,
+                    color: Colors.red,
+                    onTap: _handleDecline,
+                  ),
+                ],
+
+                // Logo au centre avec animation de flip
+                AnimatedBuilder(
+                  animation: _flipAnimation,
+                  builder: (context, child) {
+                    // Déterminer si on affiche le logo ou le texte "Victoire?"
+                    final showFront = _flipAnimation.value < math.pi / 2;
+
+                    return Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, 0.001)
+                        ..rotateX(_flipAnimation.value),
+                      child: showFront
+                          ? _buildLogo()
+                          : Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..rotateX(math.pi),
+                              child: _buildVictoryText(),
+                            ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogo() {
+    return Container(
+      width: 88,
+      height: 88,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 20,
+            spreadRadius: 5,
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: SvgPicture.asset(
+          'assets/images/lorcana_logo.svg',
+          width: 88,
+          height: 88,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVictoryText() {
+    return GestureDetector(
+      onTap: _showMenu ? null : _handleVictoryTap,
+      child: Transform.rotate(
+        angle: widget.isPlayer1 ? 0 : math.pi,
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                Colors.amber.shade300,
+                Colors.amber.shade600,
+              ],
+            ),
+            border: Border.all(
+              color: Colors.white,
+              width: 3,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.amber.withOpacity(0.6),
+                blurRadius: 30,
+                spreadRadius: 10,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'Victoire?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withOpacity(0.5),
+                    offset: const Offset(0, 2),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuButton({
+    required String label,
+    required double angle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    const radius = 120.0;
+    final x = radius * math.cos(angle);
+    final y = radius * math.sin(angle);
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        final scale = _scaleAnimation.value;
+        final offsetX = x * scale;
+        final offsetY = y * scale;
+
+        return Transform.translate(
+          offset: Offset(offsetX, offsetY),
+          child: Transform.scale(
+            scale: scale,
+            child: Opacity(
+              opacity: scale.clamp(0.0, 1.0),
+              child: GestureDetector(
+                onTap: onTap,
+                child: Transform.rotate(
+                  angle: widget.isPlayer1 ? 0 : math.pi,
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 3,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
