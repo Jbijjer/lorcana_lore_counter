@@ -172,8 +172,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           children: [
                             // Halo de lumière
                             Container(
-                              width: 140,
-                              height: 140,
+                              width: 168,
+                              height: 168,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 boxShadow: [
@@ -189,8 +189,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                             // Portrait avec gradient
                             Container(
-                              width: 120,
-                              height: 120,
+                              width: 144,
+                              height: 144,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
@@ -217,8 +217,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               child: ClipOval(
                                 child: Image.asset(
                                   widget.winner.iconAssetPath,
-                                  width: 120,
-                                  height: 120,
+                                  width: 144,
+                                  height: 144,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -231,8 +231,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 return Transform.rotate(
                                   angle: _shimmerController.value * 2 * math.pi,
                                   child: Container(
-                                    width: 135,
-                                    height: 135,
+                                    width: 162,
+                                    height: 162,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       gradient: SweepGradient(
@@ -416,18 +416,18 @@ class _ConfettiPainter extends CustomPainter {
       final startY = -50 - (random.nextDouble() * 150);
       final currentY = startY + (size.height + 300) * animationValue;
 
-      // Skip si trop loin en dehors de l'écran
-      if (currentY > size.height + 100) continue;
-
       // Calculer l'opacité avec fade out progressif vers le bas
       double opacity = 0.8;
       final fadeStart = size.height * 0.85 - 30;
       if (currentY > fadeStart) {
         // Commencer le fade out 30 pixels plus haut
-        final fadeEnd = size.height + 50;
+        final fadeEnd = size.height + 80;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
         opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
       }
+
+      // Skip seulement si complètement transparent ou trop loin
+      if (opacity <= 0.0 || currentY > size.height + 150) continue;
 
       // Couleurs multicolores variées
       final colors = [
