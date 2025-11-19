@@ -207,11 +207,15 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     final gameState = ref.read(gameProvider);
     if (gameState == null) return;
 
-    // Vérifier si le score est retombé en dessous de 20
+    // Vérifier si le score est retombé en dessous de 20 ou si on a atteint le nouveau seuil de 25
     ref.read(gameProvider.notifier).resetVictoryDeclined();
 
+    // Relire l'état après la réinitialisation potentielle du flag victoryDeclined
+    final updatedGameState = ref.read(gameProvider);
+    if (updatedGameState == null) return;
+
     // Vérifier si un joueur a atteint le seuil de victoire
-    if (gameState.hasReachedVictoryThreshold && !gameState.victoryDeclined) {
+    if (updatedGameState.hasReachedVictoryThreshold && !updatedGameState.victoryDeclined) {
       setState(() {
         _showVictoryOverlay = true;
       });

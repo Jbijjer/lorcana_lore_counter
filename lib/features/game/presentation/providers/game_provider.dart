@@ -288,16 +288,27 @@ class Game extends _$Game {
   }
 
   /// Réinitialise le flag de victoire refusée quand le score retombe en dessous de 20
+  /// ou quand un joueur atteint le nouveau seuil de 25
   void resetVictoryDeclined() {
     if (state == null) return;
 
-    // Ne réinitialiser que si la victoire a été refusée et que les deux scores sont < 20
-    if (state!.victoryDeclined && state!.player1Score < 20 && state!.player2Score < 20) {
-      state = state!.copyWith(
-        victoryDeclined: false,
-        victoryThreshold: 20,
-      );
-      _saveState();
+    if (state!.victoryDeclined) {
+      // Cas 1 : Les deux scores sont retombés en dessous du seuil initial (20)
+      if (state!.player1Score < 20 && state!.player2Score < 20) {
+        state = state!.copyWith(
+          victoryDeclined: false,
+          victoryThreshold: 20,
+        );
+        _saveState();
+      }
+      // Cas 2 : Un joueur a atteint le nouveau seuil (25)
+      else if (state!.player1Score >= state!.victoryThreshold ||
+               state!.player2Score >= state!.victoryThreshold) {
+        state = state!.copyWith(
+          victoryDeclined: false,
+        );
+        _saveState();
+      }
     }
   }
 }
