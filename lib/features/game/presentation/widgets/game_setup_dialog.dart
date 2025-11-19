@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../domain/player.dart';
+import '../../domain/game_state.dart';
 import 'player_selection_dialog.dart';
 
 /// Dialog pour configurer une nouvelle partie en sélectionnant les deux joueurs
@@ -19,6 +20,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
     with TickerProviderStateMixin {
   Player? _player1;
   Player? _player2;
+  MatchFormat _selectedFormat = MatchFormat.bestOf3;
   late AnimationController _dialogAnimationController;
   late AnimationController _shimmerController;
   late Animation<double> _scaleAnimation;
@@ -213,6 +215,10 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                       label: 'Joueur 2',
                       onTap: () => _selectPlayer(2),
                     ),
+                    const SizedBox(height: 24),
+
+                    // Sélection du format de match
+                    _buildMatchFormatSelector(),
                     const SizedBox(height: 24),
 
                     // Bouton démarrer
@@ -453,7 +459,11 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
         onPressed: canStart
             ? () {
                 HapticUtils.success();
-                Navigator.of(context).pop((_player1!, _player2!));
+                Navigator.of(context).pop({
+                  'player1': _player1!,
+                  'player2': _player2!,
+                  'matchFormat': _selectedFormat,
+                });
               }
             : null,
         style: ElevatedButton.styleFrom(
@@ -484,6 +494,116 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMatchFormatSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.sports_score,
+              color: AppTheme.amberColor,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Format du match',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildFormatButton(
+                format: MatchFormat.bestOf1,
+                label: 'Best of 1',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildFormatButton(
+                format: MatchFormat.bestOf3,
+                label: 'Best of 3',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildFormatButton(
+                format: MatchFormat.bestOf5,
+                label: 'Best of 5',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFormatButton({
+    required MatchFormat format,
+    required String label,
+  }) {
+    final isSelected = _selectedFormat == format;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          _selectedFormat = format;
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.amberColor,
+                    AppTheme.amberColor.withValues(alpha: 0.8),
+                  ],
+                )
+              : null,
+          color: isSelected ? null : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.amberColor
+                : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.amberColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+            color: isSelected ? Colors.black : Colors.grey[700],
+          ),
         ),
       ),
     );

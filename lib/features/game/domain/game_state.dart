@@ -36,12 +36,14 @@ class GameState with _$GameState {
   factory GameState.create({
     required Player player1,
     required Player player2,
+    MatchFormat matchFormat = MatchFormat.bestOf3,
   }) {
     return GameState(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       player1: player1,
       player2: player2,
       startTime: DateTime.now(),
+      matchFormat: matchFormat,
     );
   }
 

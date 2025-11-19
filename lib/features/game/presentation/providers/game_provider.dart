@@ -31,10 +31,12 @@ class Game extends _$Game {
   void startGame({
     required Player player1,
     required Player player2,
+    MatchFormat matchFormat = MatchFormat.bestOf3,
   }) {
     state = GameState.create(
       player1: player1,
       player2: player2,
+      matchFormat: matchFormat,
     );
     _saveState();
   }
