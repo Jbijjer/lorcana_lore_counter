@@ -393,36 +393,39 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                 ),
               ],
             ),
-            // Effet shimmer pour joueur sélectionné
+            // Effet shimmer sur tout le bouton
             if (isSelected)
               Positioned.fill(
-                child: AnimatedBuilder(
-                  animation: _shimmerController,
-                  builder: (context, child) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Transform.translate(
-                        offset: Offset(
-                          -200 + (_shimmerController.value * 400),
-                          0,
-                        ),
-                        child: Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                Colors.transparent,
-                                Colors.white.withValues(alpha: 0.3),
-                                Colors.transparent,
-                              ],
+                child: IgnorePointer(
+                  child: AnimatedBuilder(
+                    animation: _shimmerController,
+                    builder: (context, child) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Transform.translate(
+                          offset: Offset(
+                            (MediaQuery.of(context).size.width *
+                                _shimmerController.value) -
+                                (MediaQuery.of(context).size.width * 0.5),
+                            0,
+                          ),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.white.withValues(alpha: 0.3),
+                                  Colors.transparent,
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
           ],
