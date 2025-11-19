@@ -262,7 +262,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog> {
       child: GridView.builder(
         padding: const EdgeInsets.all(8),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 6,
+          crossAxisCount: 4,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
