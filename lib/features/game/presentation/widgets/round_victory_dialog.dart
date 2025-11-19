@@ -514,8 +514,13 @@ class _SparklesPainter extends CustomPainter {
       final durationRandom = math.Random(seed + i * 999983);
       final normalizedDuration = 1.5 + durationRandom.nextDouble() * 1.5; // Entre 1.5 et 3.0
 
-      // Calculer le temps ajusté pour cette durée personnalisée
-      final adjustedTime = animationValue * (2.0 / normalizedDuration) + (i * 0.33);
+      // Générer un offset de départ aléatoire pour chaque sparkle (au lieu de i * 0.33)
+      // Cela rend chaque sparkle complètement indépendant
+      final offsetRandom = math.Random(seed + i * 987653);
+      final randomOffset = offsetRandom.nextDouble() * 10.0; // Offset aléatoire entre 0 et 10
+
+      // Calculer le temps ajusté pour cette durée personnalisée avec offset aléatoire
+      final adjustedTime = animationValue * (2.0 / normalizedDuration) + randomOffset;
 
       // Calculer le numéro du cycle pour changer la position à chaque cycle
       // Utiliser des nombres premiers grands pour éviter la périodicité
