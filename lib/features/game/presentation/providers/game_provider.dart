@@ -243,6 +243,10 @@ class Game extends _$Game {
       player1Score: 0,
       player2Score: 0,
       currentRound: state!.currentRound + 1,
+      player1VictoryThreshold: 20,
+      player2VictoryThreshold: 20,
+      player1VictoryDeclined: false,
+      player2VictoryDeclined: false,
     );
     _saveState();
   }
@@ -256,6 +260,10 @@ class Game extends _$Game {
       player1Score: 0,
       player2Score: 0,
       currentRound: state!.currentRound + 1,
+      player1VictoryThreshold: 20,
+      player2VictoryThreshold: 20,
+      player1VictoryDeclined: false,
+      player2VictoryDeclined: false,
     );
     _saveState();
   }
