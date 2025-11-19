@@ -394,9 +394,20 @@ class _ConfettiPainter extends CustomPainter {
     for (int i = 0; i < 25; i++) {
       final offsetX = size.width * random.nextDouble();
       final startY = -50 - (random.nextDouble() * 150);
-      final currentY = startY + (size.height + 150) * animationValue;
+      final currentY = startY + (size.height + 300) * animationValue;
 
-      if (currentY > size.height) continue;
+      // Skip si trop loin en dehors de l'écran
+      if (currentY > size.height + 100) continue;
+
+      // Calculer l'opacité avec fade out progressif vers le bas
+      double opacity = 0.8;
+      if (currentY > size.height * 0.7) {
+        // Commencer le fade out à 70% de la hauteur
+        final fadeStart = size.height * 0.7;
+        final fadeEnd = size.height + 100;
+        final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
+        opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
+      }
 
       // Couleurs multicolores variées
       final colors = [
@@ -411,7 +422,7 @@ class _ConfettiPainter extends CustomPainter {
         Colors.teal,
         Colors.lime,
       ];
-      paint.color = colors[i % colors.length].withValues(alpha: 0.8);
+      paint.color = colors[i % colors.length].withValues(alpha: opacity);
 
       // Rotation légère
       final rotation = (animationValue + (i * 0.1)) * math.pi * 2;
