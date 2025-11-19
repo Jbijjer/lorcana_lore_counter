@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../domain/player.dart';
 
@@ -229,7 +228,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 ],
                               ),
                               child: ClipOval(
-                                child: SvgPicture.asset(
+                                child: Image.asset(
                                   widget.winner.iconAssetPath,
                                   width: 120,
                                   height: 120,
@@ -340,7 +339,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               backgroundColor: victoryColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
+                                horizontal: 24,
                                 vertical: 16,
                               ),
                               shape: RoundedRectangleBorder(
@@ -351,21 +350,25 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   widget.isMatchComplete
                                       ? Icons.refresh
                                       : Icons.arrow_forward,
-                                  size: 24,
+                                  size: 22,
                                 ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  widget.isMatchComplete
-                                      ? 'Nouvelle Partie'
-                                      : 'Manche Suivante',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                    widget.isMatchComplete
+                                        ? 'Nouvelle Partie'
+                                        : 'Manche Suivante',
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
