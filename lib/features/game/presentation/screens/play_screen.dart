@@ -216,11 +216,6 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         _showVictoryOverlay = true;
       });
     }
-
-    // Ancienne logique : si la victoire est confirmée (isFinished = true)
-    if (gameState.isFinished) {
-      _checkWinner();
-    }
   }
 
   void _checkWinner() {
