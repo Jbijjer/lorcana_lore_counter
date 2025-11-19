@@ -81,10 +81,10 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       curve: Curves.easeIn,
     );
 
-    // Animation shimmer - durée très longue pour éviter la répétition du pattern
+    // Animation shimmer pour l'effet rotatif autour du portrait
     _shimmerController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3600), // 1 heure pour un effet "infini"
+      duration: const Duration(seconds: 2),
     )..repeat();
 
     // Animation des confettis
