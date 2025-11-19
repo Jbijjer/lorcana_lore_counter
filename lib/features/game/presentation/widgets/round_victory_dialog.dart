@@ -135,12 +135,48 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image de victoire
+                        // Image de victoire avec effet shinny
                         SizedBox(
                           height: 160,
-                          child: Image.asset(
-                            'assets/images/victoire_$_victoryImageName.png',
-                            fit: BoxFit.contain,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Image de victoire
+                              Image.asset(
+                                'assets/images/victoire_$_victoryImageName.png',
+                                fit: BoxFit.contain,
+                              ),
+
+                              // Effet shimmer sur l'image
+                              AnimatedBuilder(
+                                animation: _shimmerController,
+                                builder: (context, child) {
+                                  return ShaderMask(
+                                    blendMode: BlendMode.srcATop,
+                                    shaderCallback: (bounds) {
+                                      return LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.white.withValues(alpha: 0.3),
+                                          Colors.transparent,
+                                        ],
+                                        stops: [
+                                          (_shimmerController.value - 0.3).clamp(0.0, 1.0),
+                                          _shimmerController.value,
+                                          (_shimmerController.value + 0.3).clamp(0.0, 1.0),
+                                        ],
+                                      ).createShader(bounds);
+                                    },
+                                    child: Image.asset(
+                                      'assets/images/victoire_$_victoryImageName.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
 
@@ -182,12 +218,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                   ],
                                 ),
                                 border: Border.all(
-                                  color: widget.winner.color,
+                                  color: _victoryColor,
                                   width: 4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: widget.winner.color
+                                    color: _victoryColor
                                         .withValues(alpha: 0.3),
                                     blurRadius: 20,
                                     spreadRadius: 4,
@@ -241,7 +277,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               .headlineMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: widget.winner.color,
+                                color: _victoryColor,
                               ),
                           textAlign: TextAlign.center,
                         ),
