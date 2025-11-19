@@ -427,8 +427,8 @@ class _ConfettiPainter extends CustomPainter {
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
       // Seed unique pour chaque confetti basée sur le cycle et l'index
-      // Cela garantit une vraie indépendance entre les confettis
-      final confettiRandom = math.Random(42 + cycleCount * 100 + i * 7);
+      // Utilisation d'une variation forte pour créer des patterns vraiment différents
+      final confettiRandom = math.Random(42 + cycleCount * 1234 + i * 789 + (cycleCount * i * 37));
 
       final offsetX = size.width * confettiRandom.nextDouble();
 
@@ -444,7 +444,7 @@ class _ConfettiPainter extends CustomPainter {
       // Vitesse différente pour chaque confetti (entre 0.8x et 1.3x)
       final speedFactor = 0.8 + (confettiRandom.nextDouble() * 0.5);
       // Distance totale augmentée pour garantir que tous les confettis sortent de l'écran
-      final currentY = startY + (size.height + 500) * effectiveAnimation * speedFactor;
+      final currentY = startY + (size.height + 700) * effectiveAnimation * speedFactor;
 
       // Calculer l'opacité avec fade in au départ et fade out à la fin
       double opacity = 0.8;
@@ -455,15 +455,15 @@ class _ConfettiPainter extends CustomPainter {
       }
 
       // Fade out seulement une fois en dehors de l'écran visible
-      final fadeStart = size.height + 50;
+      final fadeStart = size.height + 100;
       if (currentY > fadeStart) {
-        final fadeEnd = size.height + 300;
+        final fadeEnd = size.height + 400;
         final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
         opacity *= (1.0 - fadeProgress.clamp(0.0, 1.0));
       }
 
       // Skip seulement si complètement transparent ou très loin en dehors
-      if (opacity <= 0.0 || currentY > size.height + 350) continue;
+      if (opacity <= 0.0 || currentY > size.height + 500) continue;
 
       // Couleurs multicolores variées
       final colors = [
