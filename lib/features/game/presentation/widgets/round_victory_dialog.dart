@@ -129,21 +129,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
               ),
               child: Stack(
                 children: [
-                  // Confettis en arrière-plan
-                  Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: _confettiController,
-                      builder: (context, child) {
-                        return CustomPaint(
-                          painter: _ConfettiPainter(
-                            animationValue: _confettiController.value,
-                            color: _victoryColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
                   // Contenu principal
                   Padding(
                     padding: const EdgeInsets.all(24),
@@ -358,6 +343,23 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           ),
                         ),
                       ],
+                    ),
+                  ),
+
+                  // Confettis au premier plan
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: AnimatedBuilder(
+                        animation: _confettiController,
+                        builder: (context, child) {
+                          return CustomPaint(
+                            painter: _ConfettiPainter(
+                              animationValue: _confettiController.value,
+                              color: _victoryColor,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
