@@ -59,17 +59,21 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   /// Affiche le dialog de sélection des joueurs pour démarrer une nouvelle partie
   Future<void> _showGameSetupDialog() async {
-    final result = await showDialog<(Player, Player)>(
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
       builder: (context) => const GameSetupDialog(),
     );
 
     if (result != null && mounted) {
-      final (player1, player2) = result;
+      final player1 = result['player1'] as Player;
+      final player2 = result['player2'] as Player;
+      final matchFormat = result['matchFormat'] as MatchFormat;
+
       ref.read(gameProvider.notifier).startGame(
             player1: player1,
             player2: player2,
+            matchFormat: matchFormat,
           );
 
       // Sauvegarder l'utilisation des joueurs dans l'historique
