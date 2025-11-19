@@ -149,9 +149,24 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                       controller: _nameController,
                       maxLength: 15,
                       onChanged: (_) => setState(() {}),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                       decoration: InputDecoration(
                         labelText: 'Nom du joueur',
-                        prefixIcon: const Icon(Icons.person),
+                        labelStyle: TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                        counterStyle: TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Colors.grey[800],
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -186,6 +201,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                                   .titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
                                   ),
                             ),
                           ],
@@ -220,7 +236,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                     // Bouton pour changer les couleurs de fond
                     _buildColorButton(),
 
-                    const SizedBox(height: 19),
+                    const SizedBox(height: 12),
 
                     // Boutons d'action
                     Row(
@@ -228,7 +244,13 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                       children: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Annuler'),
+                          child: Text(
+                            'Annuler',
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 12),
                         _buildSaveButton(),
@@ -272,7 +294,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
             },
             child: Text(
               'Éditer le joueur',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -302,8 +324,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    _backgroundColorStart.withValues(alpha: 0.6),
-                    _backgroundColorEnd.withValues(alpha: 0.4),
+                    _backgroundColorStart,
+                    _backgroundColorEnd,
                   ],
                 ),
                 boxShadow: [
@@ -588,7 +610,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
