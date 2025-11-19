@@ -33,9 +33,28 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late Animation<double> _rotationAnimation;
   late Animation<double> _fadeAnimation;
 
+  // Couleur et image de victoire aléatoires
+  late String _victoryImageName;
+  late Color _victoryColor;
+
+  // Map des couleurs disponibles
+  static const Map<String, Color> _colorMap = {
+    'bleu': Colors.blue,
+    'gris': Colors.grey,
+    'jaune': Colors.amber,
+    'mauve': Colors.purple,
+    'rouge': Colors.red,
+    'vert': Colors.green,
+  };
+
   @override
   void initState() {
     super.initState();
+
+    // Sélection aléatoire d'une couleur
+    final colorKeys = _colorMap.keys.toList();
+    _victoryImageName = colorKeys[math.Random().nextInt(colorKeys.length)];
+    _victoryColor = _colorMap[_victoryImageName]!;
 
     // Animation d'entrée du dialog
     _dialogAnimationController = AnimationController(
@@ -87,8 +106,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   @override
   Widget build(BuildContext context) {
-    final victoryColor = widget.isMatchComplete ? Colors.amber : Colors.green;
-
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ScaleTransition(
@@ -104,7 +121,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: victoryColor.withValues(alpha: 0.4),
+                    color: _victoryColor.withValues(alpha: 0.4),
                     blurRadius: 30,
                     spreadRadius: 8,
                   ),
@@ -120,7 +137,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                         return CustomPaint(
                           painter: _ConfettiPainter(
                             animationValue: _confettiController.value,
-                            color: victoryColor,
+                            color: _victoryColor,
                           ),
                         );
                       },
@@ -133,47 +150,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Titre "GAGNANT"
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                victoryColor.withValues(alpha: 0.2),
-                                victoryColor.withValues(alpha: 0.1),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: victoryColor.withValues(alpha: 0.4),
-                              width: 2,
-                            ),
-                          ),
-                          child: ShaderMask(
-                            shaderCallback: (bounds) {
-                              return LinearGradient(
-                                colors: [
-                                  victoryColor,
-                                  victoryColor.withValues(alpha: 0.7),
-                                ],
-                              ).createShader(bounds);
-                            },
-                            child: Text(
-                              widget.isMatchComplete
-                                  ? 'VICTOIRE DU MATCH'
-                                  : 'GAGNANT',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
-                                  ),
-                            ),
+                        // Image de victoire
+                        SizedBox(
+                          height: 80,
+                          child: Image.asset(
+                            'assets/images/victoire_$_victoryImageName.png',
+                            fit: BoxFit.contain,
                           ),
                         ),
 
@@ -251,7 +233,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                       gradient: SweepGradient(
                                         colors: [
                                           Colors.transparent,
-                                          victoryColor.withValues(alpha: 0.5),
+                                          _victoryColor.withValues(alpha: 0.5),
                                           Colors.transparent,
                                         ],
                                         stops: const [0.0, 0.5, 1.0],
@@ -336,7 +318,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               Navigator.of(context).pop();
                             },
                             style: FilledButton.styleFrom(
-                              backgroundColor: victoryColor,
+                              backgroundColor: _victoryColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -346,7 +328,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               elevation: 8,
-                              shadowColor: victoryColor.withValues(alpha: 0.5),
+                              shadowColor: _victoryColor.withValues(alpha: 0.5),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
