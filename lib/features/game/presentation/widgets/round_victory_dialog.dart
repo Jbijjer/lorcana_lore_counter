@@ -135,7 +135,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image de victoire avec effet shinny
+                        // Image de victoire avec sparkles
                         SizedBox(
                           height: 160,
                           child: Stack(
@@ -147,31 +147,15 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 fit: BoxFit.contain,
                               ),
 
-                              // Effet shimmer sur l'image
+                              // Sparkles animés
                               AnimatedBuilder(
                                 animation: _shimmerController,
                                 builder: (context, child) {
-                                  return ShaderMask(
-                                    blendMode: BlendMode.srcATop,
-                                    shaderCallback: (bounds) {
-                                      return LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Colors.transparent,
-                                          Colors.white.withValues(alpha: 0.3),
-                                          Colors.transparent,
-                                        ],
-                                        stops: [
-                                          (_shimmerController.value - 0.3).clamp(0.0, 1.0),
-                                          _shimmerController.value,
-                                          (_shimmerController.value + 0.3).clamp(0.0, 1.0),
-                                        ],
-                                      ).createShader(bounds);
-                                    },
-                                    child: Image.asset(
-                                      'assets/images/victoire_$_victoryImageName.png',
-                                      fit: BoxFit.contain,
+                                  return CustomPaint(
+                                    size: const Size(400, 160),
+                                    painter: _SparklesPainter(
+                                      animationValue: _shimmerController.value,
+                                      color: _victoryColor,
                                     ),
                                   );
                                 },
@@ -500,4 +484,74 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ConfettiPainter oldDelegate) => true;
+}
+
+/// Painter pour les sparkles brillants sur l'image de victoire
+class _SparklesPainter extends CustomPainter {
+  final double animationValue;
+  final Color color;
+
+  _SparklesPainter({
+    required this.animationValue,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final random = math.Random(42);
+
+    // Dessiner 3 sparkles à des positions aléatoires
+    for (int i = 0; i < 3; i++) {
+      // Position aléatoire mais fixe pour chaque sparkle
+      final x = size.width * (0.2 + random.nextDouble() * 0.6);
+      final y = size.height * (0.2 + random.nextDouble() * 0.6);
+
+      // Animation cyclique pour chaque sparkle avec un décalage
+      final sparklePhase = (animationValue + (i * 0.33)) % 1.0;
+
+      // Fade in/out en triangle
+      double opacity;
+      if (sparklePhase < 0.5) {
+        opacity = sparklePhase * 2; // Fade in
+      } else {
+        opacity = (1.0 - sparklePhase) * 2; // Fade out
+      }
+      opacity = opacity.clamp(0.0, 1.0);
+
+      // Taille qui varie avec l'opacité
+      final size = 3.0 + (opacity * 2.0);
+
+      paint.color = Colors.white.withValues(alpha: opacity * 0.9);
+
+      // Dessiner une petite étoile à 4 branches
+      canvas.save();
+      canvas.translate(x, y);
+
+      // Branche horizontale
+      canvas.drawCircle(const Offset(0, 0), size, paint);
+
+      // Rayons de l'étoile
+      final rayLength = size * 1.5;
+      paint.strokeWidth = 1.5;
+      paint.style = PaintingStyle.stroke;
+
+      // 4 rayons
+      canvas.drawLine(Offset(-rayLength, 0), Offset(rayLength, 0), paint);
+      canvas.drawLine(Offset(0, -rayLength), Offset(0, rayLength), paint);
+      canvas.drawLine(Offset(-rayLength * 0.7, -rayLength * 0.7),
+                     Offset(rayLength * 0.7, rayLength * 0.7), paint);
+      canvas.drawLine(Offset(rayLength * 0.7, -rayLength * 0.7),
+                     Offset(-rayLength * 0.7, rayLength * 0.7), paint);
+
+      canvas.restore();
+      paint.style = PaintingStyle.fill;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SparklesPainter oldDelegate) => true;
 }
