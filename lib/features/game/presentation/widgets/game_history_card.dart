@@ -34,42 +34,21 @@ class GameHistoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // En-tête avec date et durée
+              // En-tête avec date
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 14,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _formatDate(game.endTime),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                    ],
+                  Icon(
+                    Icons.calendar_today,
+                    size: 14,
+                    color: Colors.grey[600],
                   ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.timer_outlined,
-                        size: 14,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        game.formattedDuration,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                      ),
-                    ],
+                  const SizedBox(width: 6),
+                  Text(
+                    _formatDate(game.timestamp),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -83,7 +62,6 @@ class GameHistoryCard extends StatelessWidget {
                     child: _PlayerScoreColumn(
                       playerName: game.player1Name,
                       score: game.player1FinalScore,
-                      wins: game.player1Wins,
                       isWinner: isPlayer1Winner,
                       isDraw: game.isDraw,
                       deckColors: game.player1DeckColors,
@@ -118,7 +96,6 @@ class GameHistoryCard extends StatelessWidget {
                     child: _PlayerScoreColumn(
                       playerName: game.player2Name,
                       score: game.player2FinalScore,
-                      wins: game.player2Wins,
                       isWinner: !isPlayer1Winner && !game.isDraw,
                       isDraw: game.isDraw,
                       deckColors: game.player2DeckColors,
@@ -126,43 +103,18 @@ class GameHistoryCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              // Format et bouton supprimer
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      game.matchFormat,
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 20),
-                    color: Colors.red[400],
-                    onPressed: () {
-                      HapticUtils.medium();
-                      _showDeleteConfirmation(context);
-                    },
-                    tooltip: 'Supprimer',
-                  ),
-                ],
+              // Bouton supprimer
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.delete_outline, size: 20),
+                  color: Colors.red[400],
+                  onPressed: () {
+                    HapticUtils.medium();
+                    _showDeleteConfirmation(context);
+                  },
+                  tooltip: 'Supprimer',
+                ),
               ),
             ],
           ),
@@ -204,26 +156,14 @@ class GameHistoryCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               _DetailRow(
-                label: 'Format',
-                value: game.matchFormat,
-                icon: Icons.gamepad,
-              ),
-              const SizedBox(height: 8),
-              _DetailRow(
-                label: 'Durée',
-                value: game.formattedDuration,
-                icon: Icons.timer,
-              ),
-              const SizedBox(height: 8),
-              _DetailRow(
                 label: 'Date',
-                value: _formatFullDate(game.endTime),
+                value: _formatFullDate(game.timestamp),
                 icon: Icons.calendar_today,
               ),
               const Divider(height: 24),
               _DetailRow(
                 label: game.player1Name,
-                value: '${game.player1FinalScore} pts (${game.player1Wins} victoires)',
+                value: '${game.player1FinalScore} pts',
                 icon: Icons.person,
                 color: Colors.blue,
               ),
@@ -244,7 +184,7 @@ class GameHistoryCard extends StatelessWidget {
               const SizedBox(height: 8),
               _DetailRow(
                 label: game.player2Name,
-                value: '${game.player2FinalScore} pts (${game.player2Wins} victoires)',
+                value: '${game.player2FinalScore} pts',
                 icon: Icons.person,
                 color: Colors.purple,
               ),
@@ -313,7 +253,6 @@ class _PlayerScoreColumn extends StatelessWidget {
   const _PlayerScoreColumn({
     required this.playerName,
     required this.score,
-    required this.wins,
     required this.isWinner,
     required this.isDraw,
     required this.deckColors,
@@ -321,7 +260,6 @@ class _PlayerScoreColumn extends StatelessWidget {
 
   final String playerName;
   final int score;
-  final int wins;
   final bool isWinner;
   final bool isDraw;
   final List<String> deckColors;
@@ -417,16 +355,6 @@ class _PlayerScoreColumn extends StatelessWidget {
                   ? Colors.orange[700]
                   : (isWinner ? Colors.amber[700] : Colors.black87),
             ),
-          ),
-        ),
-
-        // Nombre de victoires
-        const SizedBox(height: 4),
-        Text(
-          '$wins victoire${wins > 1 ? 's' : ''}',
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey[600],
           ),
         ),
       ],

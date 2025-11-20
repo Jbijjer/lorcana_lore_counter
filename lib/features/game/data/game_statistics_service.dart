@@ -48,7 +48,7 @@ class GameStatisticsService {
     }
 
     final games = _box!.values.toList()
-      ..sort((a, b) => b.endTime.compareTo(a.endTime)); // Plus récent en premier
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp)); // Plus récent en premier
 
     print('📊 getAllGames: ${games.length} partie(s) récupérée(s)');
     return games;
@@ -152,50 +152,29 @@ class GameStatisticsService {
     );
   }
 
-  /// Crée un GameHistory à partir d'un GameState terminé
-  GameHistory createHistoryFromGameState(GameState gameState) {
-    // Créer la liste des rounds
-    final rounds = <RoundResult>[];
-    int roundNumber = 1;
-
-    // Si on a un gagnant, ajouter le round final
-    if (gameState.winner != null) {
-      rounds.add(RoundResult(
-        roundNumber: roundNumber,
-        player1Score: gameState.player1Score,
-        player2Score: gameState.player2Score,
-        winnerName: gameState.winner!.name,
-        timestamp: DateTime.now(),
-      ));
-    }
-
-    return GameHistory(
-      id: gameState.id,
-      player1Name: gameState.player1.name,
-      player2Name: gameState.player2.name,
-      player1FinalScore: gameState.player1Score,
-      player2FinalScore: gameState.player2Score,
-      winnerName: gameState.winner?.name, // Null si match nul
-      startTime: gameState.startTime,
-      endTime: gameState.endTime ?? DateTime.now(),
-      matchFormat: _formatToString(gameState.matchFormat),
-      player1Wins: gameState.player1Wins,
-      player2Wins: gameState.player2Wins,
-      rounds: rounds,
-      player1DeckColors: gameState.player1DeckColors,
-      player2DeckColors: gameState.player2DeckColors,
+  /// Sauvegarde une partie terminée (20 pts)
+  Future<void> savePartie({
+    required String player1Name,
+    required String player2Name,
+    required int player1Score,
+    required int player2Score,
+    required String? winnerName,
+    required List<String> player1DeckColors,
+    required List<String> player2DeckColors,
+  }) async {
+    final gameHistory = GameHistory(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      player1Name: player1Name,
+      player2Name: player2Name,
+      player1FinalScore: player1Score,
+      player2FinalScore: player2Score,
+      winnerName: winnerName,
+      timestamp: DateTime.now(),
+      player1DeckColors: player1DeckColors,
+      player2DeckColors: player2DeckColors,
     );
-  }
 
-  String _formatToString(MatchFormat format) {
-    switch (format) {
-      case MatchFormat.bestOf1:
-        return 'Best of 1';
-      case MatchFormat.bestOf3:
-        return 'Best of 3';
-      case MatchFormat.bestOf5:
-        return 'Best of 5';
-    }
+    await saveGame(gameHistory);
   }
 }
 
