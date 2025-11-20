@@ -453,8 +453,8 @@ class _ConfettiPainter extends CustomPainter {
       // Position de départ
       final startY = -50 - (confettiRandom.nextDouble() * 200);
 
-      // Vitesse différente pour chaque confetti (entre 0.8x et 1.3x)
-      final speedFactor = 0.8 + (confettiRandom.nextDouble() * 0.5);
+      // Vitesse différente pour chaque confetti (entre 1.1x et 1.6x)
+      final speedFactor = 1.1 + (confettiRandom.nextDouble() * 0.5);
       // Distance totale augmentée pour garantir que tous les confettis sortent de l'écran
       final currentY = startY + (size.height + 700) * effectiveAnimation * speedFactor;
 
