@@ -41,35 +41,40 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🔥 Haute Priorité
 
-### 0. Système de statistiques (EN COURS)
+### 0. Système de statistiques ✅ COMPLÉTÉ
 
-**✅ Déjà complété :**
+**✅ Complété :**
 - [x] Modèle de données `GameHistory` avec Hive (typeId: 2, 3)
 - [x] Service `GameStatisticsService` pour stocker/récupérer les parties
 - [x] Sauvegarde automatique des parties terminées dans `GameProvider`
 - [x] Écran `StatisticsScreen` avec vue d'ensemble et historique
 - [x] Widgets `StatisticsOverviewCard` et `GameHistoryCard`
 - [x] Initialisation du service dans `main.dart`
-
-**⚠️ À FAIRE AVANT D'UTILISER :**
-- [ ] **IMPORTANT** : Exécuter `flutter pub run build_runner build --delete-conflicting-outputs`
-  - Cela génère les fichiers `.freezed.dart` et `.g.dart` nécessaires
-
-**🔨 Intégration restante :**
+- [x] Exécution de `flutter pub run build_runner build --delete-conflicting-outputs`
 - [x] Créer le widget de menu radial pour le bouton central
   - [x] Animation d'expansion/contraction
-  - [ ] Bouton "Statistiques" dans le menu
+  - [x] Bouton "Statistiques" dans le menu
   - [x] Bouton "Reset" dans le menu
-  - [ ] Bouton "Timer" dans le menu (si implémenté)
-  - [ ] Bouton "Historique des rounds" dans le menu
 - [x] Modifier `_CenterDivider` dans `play_screen.dart` pour utiliser le menu radial
-- [ ] Ajouter la navigation vers `StatisticsScreen` depuis le menu radial
-- [ ] Tester la sauvegarde et l'affichage des statistiques
+- [x] Ajouter la navigation vers `StatisticsScreen` depuis le menu radial
+- [x] Tester la sauvegarde et l'affichage des statistiques
+- [x] Application du thème Material 3 aux statistiques
+- [x] Tri alphabétique des joueurs dans la vue d'ensemble
+- [x] Correction du fond (utilisation de `colorScheme.surfaceBright`)
 
-**📊 Fonctionnalités des statistiques :**
-- Compteur de parties jouées
-- Victoires par joueur avec pourcentage de winrate
-- Suppression individuelle ou globale des statistiques
+**📊 Fonctionnalités opérationnelles :**
+- ✅ Compteur de parties jouées
+- ✅ Victoires par joueur avec pourcentage de winrate
+- ✅ Suppression individuelle ou globale des statistiques
+- ✅ Historique complet des parties avec détails
+- ✅ Support des parties nulles
+- ✅ Affichage des couleurs de deck
+
+**⏸️ Améliorations optionnelles (reportées) :**
+- [ ] Bouton "Timer" dans le menu (voir section 10)
+- [ ] Bouton "Historique des rounds" dans le menu (à clarifier si différent des stats)
+- [ ] Animations de transition vers l'écran stats
+- [ ] Feedback haptique supplémentaire sur les actions
 
 ### 1. Auto-save avec Hive
 - [ ] Créer adaptateur Hive pour GameState
@@ -99,12 +104,12 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Détecter fin de match complet
 - [x] Résumé final du match
 
-### 7. Historique des parties
-- [ ] Sauvegarder les 15 dernières parties complètes
-- [ ] Écran liste des parties passées
-- [ ] Détails d'une partie (scores finaux, durée, gagnant)
-- [ ] Option de supprimer une partie de l'historique
-- [ ] Statistiques de base (winrate par joueur)
+### 7. Historique des parties ✅ COMPLÉTÉ (voir section 0)
+- [x] Sauvegarder les parties complètes (toutes les parties, pas de limite)
+- [x] Écran liste des parties passées (`StatisticsScreen` avec onglet Historique)
+- [x] Détails d'une partie (scores finaux, gagnant, date, couleurs de deck)
+- [x] Option de supprimer une partie de l'historique
+- [x] Statistiques de base (winrate par joueur, parties jouées, parties nulles)
 
 ### 8. Menu d'options complet
 - [ ] Écran de paramètres
@@ -193,7 +198,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ### 13. Statistiques avancées
 - [ ] Graphiques de progression
-- [ ] Winrate global par joueur
+- [x] Winrate global par joueur ✅ (déjà implémenté)
 - [ ] Scores moyens
 - [ ] Export en CSV/JSON
 
