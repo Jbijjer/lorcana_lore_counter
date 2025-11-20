@@ -199,54 +199,53 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
 
                   if (sortedPlayerNames.isNotEmpty) const SizedBox(height: 12),
 
-                  // Liste scrollable
-                  Flexible(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        // Joueurs existants
-                        ...sortedPlayerNames
-                            .map((name) => _buildPlayerNameTile(name)),
+                  // Liste scrollable des joueurs uniquement
+                  if (sortedPlayerNames.isNotEmpty)
+                    Flexible(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: sortedPlayerNames
+                            .map((name) => _buildPlayerNameTile(name))
+                            .toList(),
+                      ),
+                    ),
 
-                        // Divider
-                        if (sortedPlayerNames.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey[300],
-                                    thickness: 1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 12),
-                                  child: Text(
-                                    'ou',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey[300],
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ],
+                  // Divider
+                  if (sortedPlayerNames.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
                             ),
                           ),
-
-                        // Option "Nouveau joueur"
-                        _buildNewPlayerTile(),
-                      ],
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'ou',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+
+                  // Option "Nouveau joueur" (fixe, toujours visible)
+                  _buildNewPlayerTile(),
                 ],
               ),
             ),
