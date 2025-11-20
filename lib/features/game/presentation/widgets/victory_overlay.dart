@@ -213,7 +213,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
 
   Widget _buildVictoryText() {
     return GestureDetector(
-      onTap: _showMenu ? null : _handleVictoryTap,
+      onTap: _showMenu ? _handleDecline : _handleVictoryTap,
       child: Transform.rotate(
         angle: widget.isPlayer1 ? math.pi : 0,
         child: Container(
