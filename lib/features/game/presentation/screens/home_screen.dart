@@ -84,6 +84,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   void _performFlip() {
+    // Rétablir la durée par défaut pour les flips automatiques
+    _flipController.duration = const Duration(milliseconds: 1200);
     _flipController.forward(from: 0);
   }
 
@@ -158,40 +160,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Column(
       children: [
         // Logo Lorcana avec animation de flip
-        AnimatedBuilder(
-          animation: _flipAnimation,
-          builder: (context, child) {
-            // Calculer la rotation
-            final angle = _flipAnimation.value;
+        GestureDetector(
+          onHorizontalDragEnd: (details) {
+            // Calculer la vitesse du geste (en pixels par seconde)
+            final velocity = details.primaryVelocity?.abs() ?? 0;
 
-            // Déterminer si on doit afficher l'arrière (quand l'angle fait qu'on voit l'envers)
-            final showBack = (angle % (2 * math.pi)) > math.pi / 2 &&
-                             (angle % (2 * math.pi)) < 3 * math.pi / 2;
+            // Ajuster la durée du flip en fonction de la vitesse
+            // Plus le geste est rapide, plus le flip est rapide
+            final duration = velocity > 500
+                ? const Duration(milliseconds: 600)  // Geste rapide
+                : velocity > 200
+                    ? const Duration(milliseconds: 900)  // Geste moyen
+                    : const Duration(milliseconds: 1200); // Geste lent
 
-            return Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001) // Perspective
-                ..rotateY(angle),
-              child: SizedBox(
-                width: 120,
-                height: 120,
-                child: showBack
-                    ? Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()..rotateY(math.pi),
-                        child: Image.asset(
+            // Mettre à jour la durée de l'animation
+            _flipController.duration = duration;
+
+            // Faire flipper le logo
+            _flipController.forward(from: 0);
+
+            // Feedback haptique
+            HapticUtils.light();
+          },
+          child: AnimatedBuilder(
+            animation: _flipAnimation,
+            builder: (context, child) {
+              // Calculer la rotation
+              final angle = _flipAnimation.value;
+
+              // Déterminer si on doit afficher l'arrière (quand l'angle fait qu'on voit l'envers)
+              final showBack = (angle % (2 * math.pi)) > math.pi / 2 &&
+                               (angle % (2 * math.pi)) < 3 * math.pi / 2;
+
+              return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001) // Perspective
+                  ..rotateY(angle),
+                child: SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: showBack
+                      ? Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.identity()..rotateY(math.pi),
+                          child: Image.asset(
+                            'assets/images/lorcana_logo.png',
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : Image.asset(
                           'assets/images/lorcana_logo.png',
                           fit: BoxFit.contain,
                         ),
-                      )
-                    : Image.asset(
-                        'assets/images/lorcana_logo.png',
-                        fit: BoxFit.contain,
-                      ),
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
         const SizedBox(height: 24),
 
