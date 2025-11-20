@@ -33,6 +33,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late Animation<double> _rotationAnimation;
   late Animation<double> _fadeAnimation;
 
+  // Compteur de cycles pour varier la disposition des confettis
+  int _confettiCycleCount = 0;
+
   // Couleur et image de victoire aléatoires
   late String _victoryImageName;
   late Color _victoryColor;
@@ -90,8 +93,17 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     // Animation des confettis
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 5),
     )..repeat();
+
+    // Incrémenter le compteur de cycles à chaque répétition
+    _confettiController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _confettiCycleCount++;
+        });
+      }
+    });
 
     _dialogAnimationController.forward();
     HapticUtils.success();
@@ -204,31 +216,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                 ),
                               ),
                             ),
-
-                            // Effet shimmer autour du portrait
-                            AnimatedBuilder(
-                              animation: _shimmerController,
-                              builder: (context, child) {
-                                return Transform.rotate(
-                                  angle: _shimmerController.value * 2 * math.pi,
-                                  child: Container(
-                                    width: 162,
-                                    height: 162,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: SweepGradient(
-                                        colors: [
-                                          Colors.transparent,
-                                          _victoryColor.withValues(alpha: 0.5),
-                                          Colors.transparent,
-                                        ],
-                                        stops: const [0.0, 0.5, 1.0],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
                           ],
                         ),
 
@@ -295,52 +282,97 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                         const SizedBox(height: 24),
 
-                        // Bouton principal
+                        // Bouton principal avec effet shimmer
                         SizedBox(
                           width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {
-                              HapticUtils.light();
-                              Navigator.of(context).pop();
-                            },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: _victoryColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 16,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              elevation: 8,
-                              shadowColor: _victoryColor.withValues(alpha: 0.5),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  widget.isMatchComplete
-                                      ? Icons.refresh
-                                      : Icons.arrow_forward,
-                                  size: 22,
-                                ),
-                                const SizedBox(width: 10),
-                                Flexible(
-                                  child: Text(
-                                    widget.isMatchComplete
-                                        ? 'Nouvelle Partie'
-                                        : 'Manche Suivante',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
+                          height: 56,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Le bouton
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton(
+                                  onPressed: () {
+                                    HapticUtils.light();
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: _victoryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    elevation: 8,
+                                    shadowColor: _victoryColor.withValues(alpha: 0.5),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        widget.isMatchComplete
+                                            ? Icons.refresh
+                                            : Icons.arrow_forward,
+                                        size: 22,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Flexible(
+                                        child: Text(
+                                          widget.isMatchComplete
+                                              ? 'Nouvelle Partie'
+                                              : 'Manche Suivante',
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+
+                              // Effet shimmer sur le bouton
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: AnimatedBuilder(
+                                    animation: _shimmerController,
+                                    builder: (context, child) {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Transform.translate(
+                                          offset: Offset(
+                                            (MediaQuery.of(context).size.width *
+                                                _shimmerController.value) -
+                                                (MediaQuery.of(context).size.width * 0.5),
+                                            0,
+                                          ),
+                                          child: Container(
+                                            width: MediaQuery.of(context).size.width * 0.5,
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.transparent,
+                                                  Colors.white.withValues(alpha: 0.3),
+                                                  Colors.transparent,
+                                                ],
+                                                stops: const [0.0, 0.5, 1.0],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -357,6 +389,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             painter: _ConfettiPainter(
                               animationValue: _confettiController.value,
                               color: _victoryColor,
+                              cycleCount: _confettiCycleCount,
                             ),
                           );
                         },
@@ -377,10 +410,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 class _ConfettiPainter extends CustomPainter {
   final double animationValue;
   final Color color;
+  final int cycleCount;
 
   _ConfettiPainter({
     required this.animationValue,
     required this.color,
+    required this.cycleCount,
   });
 
   @override
@@ -389,26 +424,46 @@ class _ConfettiPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    final random = math.Random(42);
-
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
-      final offsetX = size.width * random.nextDouble();
-      final startY = -50 - (random.nextDouble() * 150);
-      final currentY = startY + (size.height + 700) * animationValue;
+      // Seed unique pour chaque confetti basée sur le cycle et l'index
+      // Utilisation d'une variation forte pour créer des patterns vraiment différents
+      final confettiRandom = math.Random(42 + cycleCount * 1234 + i * 789 + (cycleCount * i * 37));
 
-      // Calculer l'opacité avec fade out progressif vers le bas
+      final offsetX = size.width * confettiRandom.nextDouble();
+
+      // Délai de départ pour chaque confetti (0.0 à 0.4 de l'animation)
+      final startDelay = confettiRandom.nextDouble() * 0.4;
+
+      // Temps effectif d'animation pour ce confetti
+      final effectiveAnimation = (animationValue - startDelay).clamp(0.0, 1.0);
+
+      // Position de départ
+      final startY = -50 - (confettiRandom.nextDouble() * 200);
+
+      // Vitesse différente pour chaque confetti (entre 0.8x et 1.3x)
+      final speedFactor = 0.8 + (confettiRandom.nextDouble() * 0.5);
+      // Distance totale augmentée pour garantir que tous les confettis sortent de l'écran
+      final currentY = startY + (size.height + 700) * effectiveAnimation * speedFactor;
+
+      // Calculer l'opacité avec fade in au départ et fade out à la fin
       double opacity = 0.8;
-      final fadeStart = size.height * 0.85 - 30;
-      if (currentY > fadeStart) {
-        // Commencer le fade out 30 pixels plus haut
-        final fadeEnd = size.height + 80;
-        final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
-        opacity = 0.8 * (1.0 - fadeProgress.clamp(0.0, 1.0));
+
+      // Fade in au début de l'animation de ce confetti
+      if (effectiveAnimation < 0.1) {
+        opacity = 0.8 * (effectiveAnimation / 0.1);
       }
 
-      // Skip seulement si complètement transparent ou trop loin
-      if (opacity <= 0.0 || currentY > size.height + 150) continue;
+      // Fade out seulement une fois en dehors de l'écran visible
+      final fadeStart = size.height + 100;
+      if (currentY > fadeStart) {
+        final fadeEnd = size.height + 400;
+        final fadeProgress = (currentY - fadeStart) / (fadeEnd - fadeStart);
+        opacity *= (1.0 - fadeProgress.clamp(0.0, 1.0));
+      }
+
+      // Skip seulement si complètement transparent ou très loin en dehors
+      if (opacity <= 0.0 || currentY > size.height + 500) continue;
 
       // Couleurs multicolores variées
       final colors = [
@@ -429,7 +484,7 @@ class _ConfettiPainter extends CustomPainter {
       final rotation = (animationValue + (i * 0.1)) * math.pi * 2;
 
       // Taille de la tête de Mickey
-      final mickeySize = 12 + (random.nextDouble() * 8);
+      final mickeySize = 12 + (confettiRandom.nextDouble() * 8);
       final headRadius = mickeySize / 2;
       final earRadius = headRadius * 0.6;
 
