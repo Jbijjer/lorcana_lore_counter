@@ -4,6 +4,7 @@ import '../../domain/game_state.dart';
 import '../../domain/player.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../data/game_persistence_service.dart';
+import '../../data/game_statistics_service.dart';
 
 part 'game_provider.g.dart';
 
@@ -20,6 +21,26 @@ class Game extends _$Game {
     if (state != null) {
       ref.read(gamePersistenceServiceProvider).saveGame(state!);
     }
+  }
+
+  /// Sauvegarde la partie terminée dans les statistiques
+  void _savePartieToStatistics({required String? winnerName}) {
+    if (state == null) return;
+
+    print('📊 Sauvegarde de la partie dans les statistiques');
+    print('  - ${state!.player1.name} ${state!.player1Score} - ${state!.player2Score} ${state!.player2.name}');
+    print('  - Gagnant: ${winnerName ?? "Match nul"}');
+
+    final statisticsService = ref.read(gameStatisticsServiceProvider);
+    statisticsService.savePartie(
+      player1Name: state!.player1.name,
+      player2Name: state!.player2.name,
+      player1Score: state!.player1Score,
+      player2Score: state!.player2Score,
+      winnerName: winnerName,
+      player1DeckColors: state!.player1DeckColors,
+      player2DeckColors: state!.player2DeckColors,
+    );
   }
 
   /// Charge une partie existante
@@ -123,17 +144,26 @@ class Game extends _$Game {
     _saveState();
   }
 
-  /// Termine la partie en cours
+  /// Termine le round en cours
+  /// Note: Les parties individuelles sont déjà sauvegardées dans addPlayer1Win/addPlayer2Win
   void finishGame() {
-    if (state == null) return;
+    if (state == null) {
+      print('🔴 finishGame: state est null, abandon');
+      return;
+    }
+
+    print('🎮 finishGame: Fin du round');
+    print('  - Joueur 1: ${state!.player1.name} (${state!.player1Wins} victoires)');
+    print('  - Joueur 2: ${state!.player2.name} (${state!.player2Wins} victoires)');
+    print('  - Gagnant du round: ${state!.winner?.name ?? "Aucun"}');
 
     state = state!.copyWith(
       status: GameStatus.finished,
-      endTime: DateTime.now(),
     );
 
-    // Supprimer la sauvegarde car la partie est terminée
+    // Supprimer la sauvegarde car le round est terminé
     ref.read(gamePersistenceServiceProvider).clearGame();
+    print('🧹 Sauvegarde temporaire supprimée');
   }
 
   /// Réinitialise la partie
@@ -238,6 +268,9 @@ class Game extends _$Game {
   void addPlayer1Win() {
     if (state == null) return;
 
+    // 💾 Sauvegarder la partie AVANT de remettre les scores à 0
+    _savePartieToStatistics(winnerName: state!.player1.name);
+
     state = state!.copyWith(
       player1Wins: state!.player1Wins + 1,
       player1Score: 0,
@@ -254,6 +287,9 @@ class Game extends _$Game {
   /// Ajoute une victoire au joueur 2 et réinitialise les scores pour la manche suivante
   void addPlayer2Win() {
     if (state == null) return;
+
+    // 💾 Sauvegarder la partie AVANT de remettre les scores à 0
+    _savePartieToStatistics(winnerName: state!.player2.name);
 
     state = state!.copyWith(
       player2Wins: state!.player2Wins + 1,
