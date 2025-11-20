@@ -73,11 +73,15 @@ class GameState with _$GameState {
   /// Retourne true si c'est le joueur 1 qui a atteint le seuil
   bool get isPlayer1AtThreshold => player1HasReachedThreshold;
 
-  /// Retourne le gagnant si la partie est terminée
+  /// Retourne le gagnant du match (basé sur le nombre de victoires de rounds)
   Player? get winner {
-    if (!isFinished) return null;
-    if (player1HasReachedThreshold && !player1VictoryDeclined) return player1;
-    if (player2HasReachedThreshold && !player2VictoryDeclined) return player2;
+    final winsNeeded = matchFormat.winsNeeded;
+
+    // Vérifier qui a gagné le match complet
+    if (player1Wins >= winsNeeded) return player1;
+    if (player2Wins >= winsNeeded) return player2;
+
+    // Aucun gagnant (match non terminé ou égalité)
     return null;
   }
 }
