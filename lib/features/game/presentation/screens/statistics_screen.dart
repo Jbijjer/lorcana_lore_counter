@@ -1,0 +1,300 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/game_statistics_service.dart';
+import '../widgets/statistics_overview_card.dart';
+import '../widgets/game_history_card.dart';
+import '../../../../core/utils/haptic_utils.dart';
+
+/// Écran des statistiques et de l'historique des parties
+class StatisticsScreen extends ConsumerStatefulWidget {
+  const StatisticsScreen({super.key});
+
+  @override
+  ConsumerState<StatisticsScreen> createState() => _StatisticsScreenState();
+}
+
+class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final statisticsService = ref.watch(gameStatisticsServiceProvider);
+    final globalStats = statisticsService.getGlobalStatistics();
+    final allGames = statisticsService.getAllGames();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Statistiques',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        actions: [
+          if (allGames.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.delete_sweep),
+              tooltip: 'Tout supprimer',
+              onPressed: () => _showDeleteAllConfirmation(context),
+            ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Theme.of(context).colorScheme.primary,
+          labelColor: Theme.of(context).colorScheme.primary,
+          unselectedLabelColor: Colors.grey,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.bar_chart),
+              text: 'Vue d\'ensemble',
+            ),
+            Tab(
+              icon: Icon(Icons.history),
+              text: 'Historique',
+            ),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Onglet Vue d'ensemble
+          _buildOverviewTab(globalStats),
+
+          // Onglet Historique
+          _buildHistoryTab(allGames, statisticsService),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverviewTab(GlobalStatistics stats) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          StatisticsOverviewCard(statistics: stats),
+          const SizedBox(height: 16),
+
+          // Informations supplémentaires
+          if (stats.totalGames > 0) ...[
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.blue[700],
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Informations',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _InfoRow(
+                      label: 'Parties jouées',
+                      value: '${stats.totalGames}',
+                      icon: Icons.games,
+                    ),
+                    const SizedBox(height: 8),
+                    _InfoRow(
+                      label: 'Joueurs uniques',
+                      value: '${stats.playerStats.length}',
+                      icon: Icons.people,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryTab(
+    List<dynamic> games,
+    GameStatisticsService service,
+  ) {
+    if (games.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.history,
+                size: 80,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Aucune partie dans l\'historique',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Vos parties terminées apparaîtront ici',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[500],
+                    ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: games.length,
+      itemBuilder: (context, index) {
+        final game = games[index];
+        return GameHistoryCard(
+          game: game,
+          onDelete: () => _deleteGame(game.id, service),
+        );
+      },
+    );
+  }
+
+  void _deleteGame(String gameId, GameStatisticsService service) {
+    HapticUtils.medium();
+    service.deleteGame(gameId).then((_) {
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Partie supprimée'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    });
+  }
+
+  void _showDeleteAllConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Supprimer tout l\'historique ?'),
+        content: const Text(
+          'Cette action supprimera TOUTES les parties et statistiques. '
+          'Cette action est irréversible.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _deleteAllGames();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Tout supprimer'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteAllGames() {
+    HapticUtils.medium();
+    final service = ref.read(gameStatisticsServiceProvider);
+    service.deleteAllGames().then((_) {
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Tout l\'historique a été supprimé'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    });
+  }
+}
+
+/// Widget pour afficher une ligne d'information
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.grey[600]),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[700],
+                ),
+          ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ],
+    );
+  }
+}

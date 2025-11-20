@@ -4,6 +4,7 @@ import '../../domain/game_state.dart';
 import '../../domain/player.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../data/game_persistence_service.dart';
+import '../../data/game_statistics_service.dart';
 
 part 'game_provider.g.dart';
 
@@ -131,6 +132,11 @@ class Game extends _$Game {
       status: GameStatus.finished,
       endTime: DateTime.now(),
     );
+
+    // Sauvegarder dans les statistiques
+    final statisticsService = ref.read(gameStatisticsServiceProvider);
+    final gameHistory = statisticsService.createHistoryFromGameState(state!);
+    statisticsService.saveGame(gameHistory);
 
     // Supprimer la sauvegarde car la partie est terminée
     ref.read(gamePersistenceServiceProvider).clearGame();

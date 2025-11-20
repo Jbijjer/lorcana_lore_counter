@@ -14,6 +14,7 @@ import '../../domain/player.dart';
 import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
+import 'statistics_screen.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// Écran principal du jeu
@@ -423,11 +424,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   /// Gère l'ouverture de l'écran des statistiques
   void _handleStatisticsTap() {
-    // TODO: Implémenter la navigation vers l'écran des statistiques
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Statistiques - À implémenter'),
-        duration: Duration(seconds: 1),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const StatisticsScreen(),
       ),
     );
   }

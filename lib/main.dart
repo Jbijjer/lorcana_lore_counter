@@ -7,6 +7,8 @@ import 'core/providers/accessibility_provider.dart';
 import 'features/game/presentation/screens/play_screen.dart';
 import 'features/game/data/player_history_service.dart';
 import 'features/game/data/game_persistence_service.dart';
+import 'features/game/data/game_statistics_service.dart';
+import 'features/game/domain/game_history.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,12 @@ void main() async {
   if (!Hive.isAdapterRegistered(1)) {
     Hive.registerAdapter(AccessibilityPreferencesAdapter());
   }
+  if (!Hive.isAdapterRegistered(2)) {
+    Hive.registerAdapter(GameHistoryAdapter());
+  }
+  if (!Hive.isAdapterRegistered(3)) {
+    Hive.registerAdapter(RoundResultAdapter());
+  }
 
   // Créer le container de providers
   final container = ProviderContainer();
@@ -27,6 +35,9 @@ void main() async {
 
   // Initialiser le service de persistence du jeu
   await container.read(gamePersistenceServiceProvider).init();
+
+  // Initialiser le service de statistiques
+  await container.read(gameStatisticsServiceProvider).init();
 
   runApp(
     UncontrolledProviderScope(
