@@ -194,16 +194,6 @@ class _VictoryOverlayState extends State<VictoryOverlay>
           height: 120,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                Colors.amber.shade300,
-                Colors.amber.shade600,
-              ],
-            ),
-            border: Border.all(
-              color: Colors.white,
-              width: 3,
-            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.amber.withValues(alpha: 0.6),
@@ -212,23 +202,41 @@ class _VictoryOverlayState extends State<VictoryOverlay>
               ),
             ],
           ),
-          child: Center(
-            child: Text(
-              'Victoire?',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Image du jeton multicolore
+              ClipOval(
+                child: Image.asset(
+                  'assets/images/jeton_multicolor.png',
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
+              // Texte "Victoire" par-dessus
+              Text(
+                'Victoire',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.8),
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      offset: const Offset(0, 0),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
