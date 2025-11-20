@@ -196,17 +196,17 @@ class _PlayerStatsRow extends StatelessWidget {
               _StatChip(
                 icon: Icons.emoji_events,
                 label: '${stats.wins}V',
-                color: Colors.green,
+                color: _getWinsColor(context),
               ),
               _StatChip(
                 icon: Icons.close,
                 label: '${stats.losses}D',
-                color: Colors.red,
+                color: _getLossesColor(context),
               ),
               _StatChip(
                 icon: Icons.handshake,
                 label: '${stats.draws}N',
-                color: Colors.orange,
+                color: _getDrawsColor(context),
               ),
             ],
           ),
@@ -220,6 +220,21 @@ class _PlayerStatsRow extends StatelessWidget {
     if (winrate >= 60) return colorScheme.primary; // Bon taux (utilise la couleur primaire)
     if (winrate >= 40) return colorScheme.tertiary; // Taux moyen
     return colorScheme.error; // Faible taux
+  }
+
+  /// Retourne la couleur pour les victoires
+  Color _getWinsColor(BuildContext context) {
+    return Theme.of(context).colorScheme.primary;
+  }
+
+  /// Retourne la couleur pour les défaites
+  Color _getLossesColor(BuildContext context) {
+    return Theme.of(context).colorScheme.error;
+  }
+
+  /// Retourne la couleur pour les matchs nuls
+  Color _getDrawsColor(BuildContext context) {
+    return Theme.of(context).colorScheme.tertiary;
   }
 }
 

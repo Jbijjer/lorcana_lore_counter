@@ -139,6 +139,8 @@ class GameHistoryCard extends StatelessWidget {
   }
 
   void _showGameDetails(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -152,7 +154,7 @@ class GameHistoryCard extends StatelessWidget {
                 label: 'Résultat',
                 value: game.resultText,
                 icon: game.isDraw ? Icons.handshake : Icons.emoji_events,
-                color: game.isDraw ? Colors.orange : Colors.amber,
+                color: game.isDraw ? colorScheme.tertiary : colorScheme.primary,
               ),
               const SizedBox(height: 8),
               _DetailRow(
@@ -165,7 +167,7 @@ class GameHistoryCard extends StatelessWidget {
                 label: game.player1Name,
                 value: '${game.player1FinalScore} pts',
                 icon: Icons.person,
-                color: Colors.blue,
+                color: colorScheme.primary,
               ),
               if (game.player1DeckColors.isNotEmpty) ...[
                 const SizedBox(height: 4),
@@ -175,7 +177,7 @@ class GameHistoryCard extends StatelessWidget {
                     'Deck: ${game.player1DeckColors.join(', ')}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[600],
+                      color: colorScheme.onSurfaceVariant,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -186,7 +188,7 @@ class GameHistoryCard extends StatelessWidget {
                 label: game.player2Name,
                 value: '${game.player2FinalScore} pts',
                 icon: Icons.person,
-                color: Colors.purple,
+                color: colorScheme.secondary,
               ),
               if (game.player2DeckColors.isNotEmpty) ...[
                 const SizedBox(height: 4),
@@ -196,7 +198,7 @@ class GameHistoryCard extends StatelessWidget {
                     'Deck: ${game.player2DeckColors.join(', ')}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[600],
+                      color: colorScheme.onSurfaceVariant,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
