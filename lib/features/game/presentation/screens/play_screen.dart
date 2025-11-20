@@ -275,6 +275,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       builder: (context) => VictoryNotesDialog(
         winnerName: winner.name,
         loserName: loser.name,
+        winnerColor: winner.color,
         previousPlayer1DeckColors: gameState.player1DeckColors,
         previousPlayer2DeckColors: gameState.player2DeckColors,
         isPlayer1Winner: isPlayer1Winner,

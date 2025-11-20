@@ -9,6 +9,7 @@ class VictoryNotesDialog extends StatefulWidget {
   const VictoryNotesDialog({
     required this.winnerName,
     required this.loserName,
+    required this.winnerColor,
     this.previousPlayer1DeckColors = const [],
     this.previousPlayer2DeckColors = const [],
     this.isPlayer1Winner = true,
@@ -17,6 +18,7 @@ class VictoryNotesDialog extends StatefulWidget {
 
   final String winnerName;
   final String loserName;
+  final Color winnerColor;
   final List<String> previousPlayer1DeckColors;
   final List<String> previousPlayer2DeckColors;
   final bool isPlayer1Winner;
@@ -80,9 +82,7 @@ class _VictoryNotesDialogState extends State<VictoryNotesDialog>
   Widget build(BuildContext context) {
     return buildAnimatedDialog(
       child: AnimatedDialogWrapper(
-        accentColor: widget.isPlayer1Winner
-            ? AppTheme.player1Color
-            : AppTheme.player2Color,
+        accentColor: widget.winnerColor,
         maxWidth: 500,
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -95,9 +95,7 @@ class _VictoryNotesDialogState extends State<VictoryNotesDialog>
                 'Informations de la partie',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: widget.isPlayer1Winner
-                          ? AppTheme.player1Color
-                          : AppTheme.player2Color,
+                      color: widget.winnerColor,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -163,9 +161,7 @@ class _VictoryNotesDialogState extends State<VictoryNotesDialog>
                     });
                   },
                   style: FilledButton.styleFrom(
-                    backgroundColor: widget.isPlayer1Winner
-                        ? AppTheme.player1Color
-                        : AppTheme.player2Color,
+                    backgroundColor: widget.winnerColor,
                     foregroundColor: AppTheme.pureWhite,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
