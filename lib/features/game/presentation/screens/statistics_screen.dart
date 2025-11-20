@@ -36,6 +36,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final allGames = statisticsService.getAllGames();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           'Statistiques',
