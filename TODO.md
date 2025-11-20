@@ -77,6 +77,24 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Charger la dernière partie au démarrage
 - [ ] Persister l'état même après fermeture de l'app
 
+### 2. Page d'accueil de l'application
+- [ ] Créer une page d'accueil pour l'application
+- [ ] Bouton "Continuer Partie"
+  - [ ] Afficher un résumé de la partie en cours (joueurs, scores)
+  - [ ] L'usager doit confirmer s'il veut reprendre cette partie
+- [ ] Bouton "Nouveau Round"
+  - [ ] Si une partie est en cours, avertir que celle-ci sera effacée
+  - [ ] Dialog de confirmation avant d'effacer la partie en cours
+- [ ] Bouton "Statistiques"
+  - [ ] Navigation vers l'écran de statistiques existant
+- [ ] Bouton "Paramètres"
+  - [ ] Navigation vers l'écran de paramètres (à créer)
+- [ ] Afficher la version de l'appli en bas à gauche en petit
+- [ ] Utiliser le look et le style des autres fenêtres pour la créer
+  - [ ] Reprendre les dégradés colorés
+  - [ ] Coins arrondis cohérents avec le reste de l'app
+  - [ ] Typographie et espacement similaires
+
 ### 3. Restart rapide (One-tap) ✅
 - [x] Ajouter dialog de confirmation avec animation
 - [x] Implémenter reset des scores seulement (garder joueurs)
