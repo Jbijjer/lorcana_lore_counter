@@ -96,7 +96,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               value: prefs.highContrastMode,
               onChanged: (value) {
                 HapticUtils.light();
-                ref.read(accessibilityNotifierProvider.notifier).setHighContrastMode(value);
+                ref.read(accessibilityNotifierProvider.notifier).setHighContrast(value);
               },
               secondary: Container(
                 padding: const EdgeInsets.all(8),
