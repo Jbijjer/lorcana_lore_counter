@@ -156,9 +156,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             fit: BoxFit.contain,
                           ),
                         ),
-
-                        const SizedBox(height: 4),
-
+                        
                         // Portrait du joueur
                         Stack(
                           alignment: Alignment.center,
