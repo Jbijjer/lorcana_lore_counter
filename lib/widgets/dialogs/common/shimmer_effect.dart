@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// Effet shimmer horizontal réutilisable
 ///
@@ -58,9 +59,9 @@ class ShimmerEffect extends StatelessWidget {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                       colors: [
-                        Colors.transparent,
-                        Colors.white.withValues(alpha: opacity),
-                        Colors.transparent,
+                        AppTheme.transparentColor,
+                        AppTheme.pureWhite.withValues(alpha: opacity),
+                        AppTheme.transparentColor,
                       ],
                       stops: const [0.0, 0.5, 1.0],
                     ),
@@ -140,9 +141,9 @@ class SimpleShimmerEffect extends StatelessWidget {
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
-                    Colors.transparent,
-                    Colors.white.withValues(alpha: alpha),
-                    Colors.transparent,
+                    AppTheme.transparentColor,
+                    AppTheme.pureWhite.withValues(alpha: alpha),
+                    AppTheme.transparentColor,
                   ],
                 ),
               ),

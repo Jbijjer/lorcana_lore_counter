@@ -236,7 +236,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                           ? widget.playerColor.withValues(alpha: 0.2)
                           : widget.playerColor.withValues(alpha: 0.1),
                       border: Border.all(
-                        color: Colors.black,
+                        color: AppTheme.pureBlack,
                         width: isCurrentPlayer ? 3 : 2,
                       ),
                       boxShadow: isCurrentPlayer

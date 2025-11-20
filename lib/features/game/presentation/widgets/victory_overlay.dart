@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Overlay de victoire qui apparaît quand un joueur atteint 20 points
 class VictoryOverlay extends StatefulWidget {
@@ -121,7 +122,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
         // Fond semi-transparent
         Positioned.fill(
           child: Container(
-            color: Colors.black.withValues(alpha: 0.7),
+            color: AppTheme.pureBlack.withValues(alpha: 0.7),
           ),
         ),
 
@@ -138,13 +139,13 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                   _buildMenuButton(
                     label: 'Oui',
                     angle: widget.isPlayer1 ? math.pi / 2 : -math.pi / 2,
-                    color: Colors.green,
+                    color: AppTheme.successColor,
                     onTap: _handleConfirm,
                   ),
                   _buildMenuButton(
                     label: 'Non',
                     angle: widget.isPlayer1 ? -math.pi / 2 : math.pi / 2,
-                    color: Colors.red,
+                    color: AppTheme.errorColor,
                     onTap: _handleDecline,
                   ),
                 ],
@@ -192,7 +193,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: AppTheme.pureBlack.withValues(alpha: 0.5),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -223,7 +224,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.amber.withValues(alpha: 0.6),
+                color: AppTheme.secondaryColor.withValues(alpha: 0.6),
                 blurRadius: 30,
                 spreadRadius: 10,
               ),
@@ -246,17 +247,17 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                 'Victoire?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppTheme.pureWhite,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   shadows: [
                     Shadow(
-                      color: Colors.black.withValues(alpha: 0.8),
+                      color: AppTheme.pureBlack.withValues(alpha: 0.8),
                       offset: const Offset(0, 2),
                       blurRadius: 4,
                     ),
                     Shadow(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: AppTheme.pureBlack.withValues(alpha: 0.5),
                       offset: const Offset(0, 0),
                       blurRadius: 8,
                     ),
@@ -309,7 +310,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.4),
+                          color: AppTheme.pureBlack.withValues(alpha: 0.4),
                           blurRadius: 12,
                           spreadRadius: 2,
                         ),
@@ -331,17 +332,17 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                         Text(
                           label,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppTheme.pureWhite,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withValues(alpha: 0.8),
+                                color: AppTheme.pureBlack.withValues(alpha: 0.8),
                                 offset: const Offset(0, 2),
                                 blurRadius: 4,
                               ),
                               Shadow(
-                                color: Colors.black.withValues(alpha: 0.5),
+                                color: AppTheme.pureBlack.withValues(alpha: 0.5),
                                 offset: const Offset(0, 0),
                                 blurRadius: 8,
                               ),

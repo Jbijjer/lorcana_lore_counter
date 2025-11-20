@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// En-tête stylisé réutilisable pour les dialogues
 ///
@@ -76,7 +77,7 @@ class DialogHeader extends StatelessWidget {
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
+                        color: AppTheme.pureWhite,
                         fontWeight: FontWeight.bold,
                       ),
                 ),

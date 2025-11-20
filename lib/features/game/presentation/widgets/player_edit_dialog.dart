@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/constants/player_icons.dart';
+import '../../../../core/theme/app_theme.dart';
 import 'color_picker_dialog.dart';
 import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
 import '../../../../widgets/dialogs/common/dialog_header.dart';
@@ -107,7 +108,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                 maxLength: 15,
                 onChanged: (_) => setState(() {}),
                 style: const TextStyle(
-                  color: Colors.black,
+                  color: AppTheme.pureBlack,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
@@ -263,7 +264,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                             foreground: Paint()
                               ..style = PaintingStyle.stroke
                               ..strokeWidth = 3
-                              ..color = Colors.black,
+                              ..color = AppTheme.pureBlack,
                           ),
                         ),
                         // Texte avec gradient
@@ -271,8 +272,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                           shaderCallback: (bounds) {
                             return LinearGradient(
                               colors: [
-                                Colors.white,
-                                Colors.white.withValues(alpha: 0.9),
+                                AppTheme.pureWhite,
+                                AppTheme.pureWhite.withValues(alpha: 0.9),
                               ],
                             ).createShader(bounds);
                           },
@@ -283,7 +284,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                              color: AppTheme.pureWhite,
                             ),
                           ),
                         ),
@@ -309,9 +310,9 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          Colors.transparent,
-                          Colors.white.withValues(alpha: 0.3),
-                          Colors.transparent,
+                          AppTheme.transparentColor,
+                          AppTheme.pureWhite.withValues(alpha: 0.3),
+                          AppTheme.transparentColor,
                         ],
                       ),
                     ),
@@ -348,7 +349,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.black,
+              color: AppTheme.pureBlack,
               width: 3,
             ),
           ),
@@ -507,19 +508,19 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
       child: ElevatedButton(
         onPressed: _handleSave,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
+          backgroundColor: AppTheme.transparentColor,
+          shadowColor: AppTheme.transparentColor,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
         child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.save, color: Colors.white),
+            Icon(Icons.save, color: AppTheme.pureWhite),
             SizedBox(width: 8),
             Text(
               'Enregistrer',
               style: TextStyle(
-                color: Colors.white,
+                color: AppTheme.pureWhite,
                 fontWeight: FontWeight.bold,
               ),
             ),
