@@ -6,10 +6,10 @@ import '../../../../core/utils/haptic_utils.dart';
 /// Dialog pour modifier manuellement le score d'un joueur
 class ScoreEditDialog extends StatefulWidget {
   const ScoreEditDialog({
-    super.key,
     required this.currentScore,
     required this.playerName,
     required this.playerColor,
+    super.key,
   });
 
   final int currentScore;

@@ -69,7 +69,7 @@ class LorcanaScoreKeeperApp extends ConsumerWidget {
           ),
         ),
       ),
-      error: (_, __) => MaterialApp(
+      error: (_, __) => const MaterialApp(
         home: Scaffold(
           body: Center(
             child: Text('Erreur de chargement des préférences'),
