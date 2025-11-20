@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,6 +24,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   String _appVersion = '';
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  late AnimationController _flipController;
+  late Animation<double> _flipAnimation;
+  Timer? _flipTimer;
 
   @override
   void initState() {
@@ -38,11 +43,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       curve: Curves.easeIn,
     );
     _fadeController.forward();
+
+    // Animation de flip pour le logo
+    _flipController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _flipAnimation = Tween<double>(
+      begin: 0,
+      end: math.pi * 2, // 2 tours complets
+    ).animate(CurvedAnimation(
+      parent: _flipController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Démarrer le timer pour le flip périodique
+    _startFlipTimer();
+  }
+
+  void _startFlipTimer() {
+    // Premier flip après 3 secondes
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        _performFlip();
+      }
+    });
+
+    // Puis tous les 8-12 secondes aléatoirement
+    _flipTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (mounted) {
+        // Ajouter un délai aléatoire de 0-4 secondes
+        final randomDelay = math.Random().nextInt(4);
+        Future.delayed(Duration(seconds: randomDelay), () {
+          if (mounted) {
+            _performFlip();
+          }
+        });
+      }
+    });
+  }
+
+  void _performFlip() {
+    _flipController.forward(from: 0);
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
+    _flipController.dispose();
+    _flipTimer?.cancel();
     super.dispose();
   }
 
@@ -80,7 +129,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 children: [
                   // Logo et titre
                   _buildHeader(),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
 
                   // Boutons principaux
                   _buildMainButtons(hasOngoingGame),
@@ -108,23 +157,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget _buildHeader() {
     return Column(
       children: [
-        // Logo ou icône
-        Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppTheme.primaryColor.withValues(alpha: 0.2),
-                AppTheme.secondaryColor.withValues(alpha: 0.2),
-              ],
-            ),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.auto_awesome,
-            size: 64,
-            color: AppTheme.primaryColor,
-          ),
+        // Logo Lorcana avec animation de flip
+        AnimatedBuilder(
+          animation: _flipAnimation,
+          builder: (context, child) {
+            // Calculer la rotation
+            final angle = _flipAnimation.value;
+
+            // Déterminer si on doit afficher l'arrière (quand l'angle fait qu'on voit l'envers)
+            final showBack = (angle % (2 * math.pi)) > math.pi / 2 &&
+                             (angle % (2 * math.pi)) < 3 * math.pi / 2;
+
+            return Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.001) // Perspective
+                ..rotateY(angle),
+              child: SizedBox(
+                width: 120,
+                height: 120,
+                child: showBack
+                    ? Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()..rotateY(math.pi),
+                        child: Image.asset(
+                          'assets/images/lorcana_logo.png',
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/images/lorcana_logo.png',
+                        fit: BoxFit.contain,
+                      ),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 24),
 
@@ -143,9 +210,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppTheme.pureWhite,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
             textAlign: TextAlign.center,
           ),
+        ),
+        const SizedBox(height: 8),
+
+        // Sous-titre
+        Text(
+          'Compteur de Lore',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -164,7 +243,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             onTap: _handleContinueGame,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
         ],
 
         // Bouton Nouveau Round
@@ -179,7 +258,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           onTap: () => _handleNewRound(hasOngoingGame),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Bouton Statistiques
         _buildMenuButton(
@@ -190,7 +269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           onTap: _handleStatistics,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Bouton Paramètres
         _buildMenuButton(
@@ -235,28 +314,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: AppTheme.pureWhite.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     icon,
                     color: AppTheme.pureWhite,
-                    size: 28,
+                    size: 24,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     label,
                     style: const TextStyle(
                       color: AppTheme.pureWhite,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -264,7 +343,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 Icon(
                   Icons.arrow_forward_ios,
                   color: AppTheme.pureWhite.withValues(alpha: 0.7),
-                  size: 20,
+                  size: 18,
                 ),
               ],
             ),
