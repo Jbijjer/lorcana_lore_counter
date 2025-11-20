@@ -38,7 +38,7 @@ dev_dependencies:
   riverpod_generator: ^2.4.0
   freezed: ^2.4.7
   json_serializable: ^6.7.1
-  hive_ce_generator: ^1.10.0
+  hive_ce_generator: ^1.6.0
 
   # Testing
   mocktail: ^1.0.3
