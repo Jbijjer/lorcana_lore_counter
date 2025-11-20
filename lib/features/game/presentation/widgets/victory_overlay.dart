@@ -21,8 +21,10 @@ class VictoryOverlay extends StatefulWidget {
 
 class _VictoryOverlayState extends State<VictoryOverlay>
     with TickerProviderStateMixin {
+  late AnimationController _growController;
   late AnimationController _flipController;
   late AnimationController _menuController;
+  late Animation<double> _growAnimation;
   late Animation<double> _flipAnimation;
   late Animation<double> _scaleAnimation;
   bool _showMenu = false;
@@ -30,6 +32,20 @@ class _VictoryOverlayState extends State<VictoryOverlay>
   @override
   void initState() {
     super.initState();
+
+    // Animation de grandissement du logo
+    _growController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _growAnimation = Tween<double>(
+      begin: 88.0,
+      end: 120.0,
+    ).animate(CurvedAnimation(
+      parent: _growController,
+      curve: Curves.easeOut,
+    ));
 
     // Animation de flip du logo
     _flipController = AnimationController(
@@ -56,20 +72,25 @@ class _VictoryOverlayState extends State<VictoryOverlay>
       curve: Curves.easeOut,
     );
 
-    // Démarrer l'animation de flip
-    _flipController.forward().then((_) {
-      // Afficher immédiatement les boutons après le flip
+    // Séquence d'animations : grow -> flip -> menu
+    _growController.forward().then((_) {
       if (mounted) {
-        setState(() {
-          _showMenu = true;
+        _flipController.forward().then((_) {
+          // Afficher immédiatement les boutons après le flip
+          if (mounted) {
+            setState(() {
+              _showMenu = true;
+            });
+            _menuController.forward();
+          }
         });
-        _menuController.forward();
       }
     });
   }
 
   @override
   void dispose() {
+    _growController.dispose();
     _flipController.dispose();
     _menuController.dispose();
     super.dispose();
@@ -160,27 +181,33 @@ class _VictoryOverlayState extends State<VictoryOverlay>
   }
 
   Widget _buildLogo() {
-    return Container(
-      width: 88,
-      height: 88,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 20,
-            spreadRadius: 5,
+    return AnimatedBuilder(
+      animation: _growAnimation,
+      builder: (context, child) {
+        final size = _growAnimation.value;
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 20,
+                spreadRadius: 5,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipOval(
-        child: Image.asset(
-          'assets/images/lorcana_logo.png',
-          width: 88,
-          height: 88,
-          fit: BoxFit.cover,
-        ),
-      ),
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/lorcana_logo.png',
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
     );
   }
 
