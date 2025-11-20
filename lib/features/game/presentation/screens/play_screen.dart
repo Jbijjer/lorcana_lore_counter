@@ -20,7 +20,10 @@ import '../../../../core/theme/app_theme.dart';
 
 /// Écran principal du jeu
 class PlayScreen extends ConsumerStatefulWidget {
-  const PlayScreen({super.key});
+  const PlayScreen({super.key, this.shouldCheckForOngoingGame = true});
+
+  /// Si true, vérifie automatiquement s'il y a une partie en cours au démarrage
+  final bool shouldCheckForOngoingGame;
 
   @override
   ConsumerState<PlayScreen> createState() => _PlayScreenState();
@@ -37,10 +40,17 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       DeviceOrientation.portraitUp,
     ]);
 
-    // Vérifier s'il y a une partie en cours ou démarrer une nouvelle
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkForOngoingGame();
-    });
+    // Vérifier s'il y a une partie en cours ou démarrer une nouvelle (seulement si demandé)
+    if (widget.shouldCheckForOngoingGame) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkForOngoingGame();
+      });
+    } else {
+      // Si on ne vérifie pas automatiquement, afficher directement le dialog de setup
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showGameSetupDialog();
+      });
+    }
   }
 
   /// Vérifie s'il y a une partie en cours et la charge, sinon affiche le dialog de sélection

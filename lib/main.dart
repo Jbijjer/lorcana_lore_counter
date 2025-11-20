@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'core/theme/app_theme.dart';
 import 'core/models/accessibility_preferences.dart';
 import 'core/providers/accessibility_provider.dart';
-import 'features/game/presentation/screens/play_screen.dart';
+import 'features/game/presentation/screens/home_screen.dart';
 import 'features/game/data/player_history_service.dart';
 import 'features/game/data/game_persistence_service.dart';
 import 'features/game/data/game_statistics_service.dart';
@@ -67,7 +67,7 @@ class LorcanaScoreKeeperApp extends ConsumerWidget {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: ThemeMode.system,
-          home: const PlayScreen(),
+          home: const HomeScreen(),
         );
       },
       loading: () => const MaterialApp(

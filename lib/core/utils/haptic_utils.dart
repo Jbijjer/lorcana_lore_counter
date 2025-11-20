@@ -19,6 +19,13 @@ class HapticUtils {
     }
   }
 
+  /// Feedback fort pour les actions très importantes
+  static Future<void> heavy() async {
+    if (AppConstants.enableHapticFeedback) {
+      await HapticFeedback.heavyImpact();
+    }
+  }
+
   /// Feedback pour les vibrations (succès)
   static Future<void> success() async {
     if (AppConstants.enableHapticFeedback) {
