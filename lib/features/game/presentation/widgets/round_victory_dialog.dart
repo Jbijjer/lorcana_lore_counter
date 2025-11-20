@@ -251,7 +251,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                   ),
                             ),
                             Text(
-                              '${widget.loserName}: ${widget.loserWins}',
+                              '${widget.loser.name}: ${widget.loserWins}',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
