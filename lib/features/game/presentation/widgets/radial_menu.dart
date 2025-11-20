@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -35,39 +36,39 @@ class _RadialMenuState extends State<RadialMenu>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
       vsync: this,
     );
 
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
     );
 
     _rotationAnimation = Tween<double>(
       begin: 0,
-      end: math.pi, // Rotation de 180° pour le logo
+      end: math.pi * 2, // Rotation complète de 360° pour un effet plus dynamique
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOut,
+      curve: Curves.easeInOutCubic,
     ));
 
-    // Animation de soulèvement (scale) - monte progressivement avec bounce
+    // Animation de soulèvement plus légère et fluide
     _liftAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.25,
+      end: 1.15,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.elasticOut,
+      curve: Curves.easeOutBack,
     ));
 
-    // Animation de l'ombre - s'intensifie progressivement
+    // Animation de l'ombre plus subtile
     _shadowAnimation = Tween<double>(
       begin: 1.0,
-      end: 2.5,
+      end: 2.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
     ));
   }
 
@@ -166,24 +167,35 @@ class _RadialMenuState extends State<RadialMenu>
                   child: GestureDetector(
                     onTap: _toggleMenu,
                     child: Container(
-                      width: 88,
-                      height: 88,
+                      width: 95,
+                      height: 95,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            Colors.white,
+                            Colors.grey.shade100,
+                          ],
+                          stops: const [0.7, 1.0],
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
-                            blurRadius: 12 * _shadowAnimation.value,
+                            color: Colors.black.withValues(alpha: 0.2 * _shadowAnimation.value),
+                            blurRadius: 10 * _shadowAnimation.value,
+                            spreadRadius: 1 * _shadowAnimation.value,
+                          ),
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withValues(alpha: 0.15 * _shadowAnimation.value),
+                            blurRadius: 15 * _shadowAnimation.value,
                             spreadRadius: 2 * _shadowAnimation.value,
                           ),
                         ],
                       ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/lorcana_logo.png',
-                          width: 88,
-                          height: 88,
-                          fit: BoxFit.cover,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: SvgPicture.asset(
+                          'assets/images/lorcana_logo.svg',
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -204,8 +216,8 @@ class _RadialMenuState extends State<RadialMenu>
     required String label,
     VoidCallback? onTap,
   }) {
-    // Distance du centre (rayon)
-    const radius = 100.0;
+    // Distance du centre (rayon) légèrement augmentée pour plus d'espace
+    const radius = 105.0;
 
     // Calculer la position x, y à partir de l'angle
     final x = radius * math.cos(angle);
@@ -218,12 +230,15 @@ class _RadialMenuState extends State<RadialMenu>
         final offsetX = x * scale;
         final offsetY = y * scale;
 
+        // Animation d'opacité plus progressive
+        final opacity = (scale * 1.2).clamp(0.0, 1.0);
+
         return Transform.translate(
           offset: Offset(offsetX, offsetY),
           child: Transform.scale(
             scale: scale,
             child: Opacity(
-              opacity: scale.clamp(0.0, 1.0),
+              opacity: opacity,
               child: _MenuButton(
                 icon: icon,
                 color: color,
@@ -239,7 +254,7 @@ class _RadialMenuState extends State<RadialMenu>
 }
 
 /// Bouton individuel du menu radial
-class _MenuButton extends StatelessWidget {
+class _MenuButton extends StatefulWidget {
   const _MenuButton({
     required this.icon,
     required this.color,
@@ -253,57 +268,146 @@ class _MenuButton extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final isEnabled = onTap != null;
+  State<_MenuButton> createState() => _MenuButtonState();
+}
 
-    return GestureDetector(
-      onTap: () {
-        if (isEnabled) {
-          HapticUtils.light();
-          onTap?.call();
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: isEnabled ? color : Colors.grey,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  spreadRadius: 1,
+class _MenuButtonState extends State<_MenuButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _hoverController;
+  late Animation<double> _scaleAnimation;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _hoverController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(
+      parent: _hoverController,
+      curve: Curves.easeOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _hoverController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isEnabled = widget.onTap != null;
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: GestureDetector(
+            onTapDown: (_) {
+              if (isEnabled) {
+                setState(() => _isPressed = true);
+                _hoverController.forward();
+              }
+            },
+            onTapUp: (_) {
+              if (isEnabled) {
+                setState(() => _isPressed = false);
+                _hoverController.reverse();
+              }
+            },
+            onTapCancel: () {
+              if (isEnabled) {
+                setState(() => _isPressed = false);
+                _hoverController.reverse();
+              }
+            },
+            onTap: () {
+              if (isEnabled) {
+                HapticUtils.light();
+                widget.onTap?.call();
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    gradient: isEnabled
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              widget.color,
+                              widget.color.withValues(alpha: 0.8),
+                            ],
+                          )
+                        : LinearGradient(
+                            colors: [Colors.grey.shade400, Colors.grey.shade500],
+                          ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                      if (isEnabled && _isPressed)
+                        BoxShadow(
+                          color: widget.color.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                    ],
+                  ),
+                  child: Icon(
+                    widget.icon,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withValues(alpha: 0.75),
+                        Colors.black.withValues(alpha: 0.85),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    widget.label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
                 ),
               ],
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 28,
-            ),
           ),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
