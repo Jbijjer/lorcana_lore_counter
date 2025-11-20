@@ -457,7 +457,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
 
   Widget _buildSparkles() {
     return SparklesOverlay(
-      animationValue: shimmerController.value,
+      controller: shimmerController,
       color: widget.playerColor,
     );
   }
