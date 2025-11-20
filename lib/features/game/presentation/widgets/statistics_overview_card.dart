@@ -27,13 +27,13 @@ class StatisticsOverviewCard extends StatelessWidget {
               Icon(
                 Icons.analytics_outlined,
                 size: 64,
-                color: Colors.grey[400],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: 16),
               Text(
                 'Aucune partie jouée',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -42,7 +42,7 @@ class StatisticsOverviewCard extends StatelessWidget {
                 'Jouez votre première partie pour voir vos statistiques !',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
             ],
@@ -67,12 +67,12 @@ class StatisticsOverviewCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.bar_chart,
-                    color: Colors.blue,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 32,
                   ),
                 ),
@@ -91,7 +91,7 @@ class StatisticsOverviewCard extends StatelessWidget {
                       Text(
                         '$totalGames partie${totalGames > 1 ? 's' : ''} jouée${totalGames > 1 ? 's' : ''}',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                       ),
                     ],
@@ -157,13 +157,13 @@ class _PlayerStatsRow extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: _getWinrateColor(stats.winrate).withValues(alpha: 0.15),
+                  color: _getWinrateColor(stats.winrate, context).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   '${stats.winrate.toStringAsFixed(1)}%',
                   style: TextStyle(
-                    color: _getWinrateColor(stats.winrate),
+                    color: _getWinrateColor(stats.winrate, context),
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -179,9 +179,9 @@ class _PlayerStatsRow extends StatelessWidget {
             child: LinearProgressIndicator(
               value: stats.winrate / 100,
               minHeight: 8,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
               valueColor: AlwaysStoppedAnimation<Color>(
-                _getWinrateColor(stats.winrate),
+                _getWinrateColor(stats.winrate, context),
               ),
             ),
           ),
@@ -215,10 +215,11 @@ class _PlayerStatsRow extends StatelessWidget {
     );
   }
 
-  Color _getWinrateColor(double winrate) {
-    if (winrate >= 60) return Colors.green;
-    if (winrate >= 40) return Colors.orange;
-    return Colors.red;
+  Color _getWinrateColor(double winrate, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (winrate >= 60) return colorScheme.primary; // Bon taux (utilise la couleur primaire)
+    if (winrate >= 40) return colorScheme.tertiary; // Taux moyen
+    return colorScheme.error; // Faible taux
   }
 }
 

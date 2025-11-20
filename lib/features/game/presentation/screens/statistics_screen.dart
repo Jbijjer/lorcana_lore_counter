@@ -55,7 +55,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
           controller: _tabController,
           indicatorColor: Theme.of(context).colorScheme.primary,
           labelColor: Theme.of(context).colorScheme.primary,
-          unselectedLabelColor: Colors.grey,
+          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
           tabs: const [
             Tab(
               icon: Icon(Icons.bar_chart),
@@ -106,7 +106,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                       children: [
                         Icon(
                           Icons.info_outline,
-                          color: Colors.blue[700],
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -154,13 +154,13 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               Icon(
                 Icons.history,
                 size: 80,
-                color: Colors.grey[400],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: 16),
               Text(
                 'Aucune partie dans l\'historique',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -169,7 +169,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 'Vos parties terminées apparaîtront ici',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
             ],
@@ -196,16 +196,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     service.deleteGame(gameId).then((_) {
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Partie supprimée'),
+              Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: 8),
+              const Text('Partie supprimée'),
             ],
           ),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          duration: const Duration(seconds: 2),
         ),
       );
     });
@@ -231,7 +231,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               _deleteAllGames();
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
+              foregroundColor: Theme.of(context).colorScheme.error,
             ),
             child: const Text('Tout supprimer'),
           ),
@@ -246,16 +246,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     service.deleteAllGames().then((_) {
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Tout l\'historique a été supprimé'),
+              Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: 8),
+              const Text('Tout l\'historique a été supprimé'),
             ],
           ),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          duration: const Duration(seconds: 2),
         ),
       );
     });
@@ -278,13 +278,13 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.grey[600]),
+        Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[700],
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
         ),
