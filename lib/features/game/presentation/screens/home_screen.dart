@@ -84,8 +84,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   void _performFlip() {
-    // Rétablir la durée par défaut pour les flips automatiques
+    // Rétablir la durée et le nombre de tours par défaut pour les flips automatiques
     _flipController.duration = const Duration(milliseconds: 1200);
+    _flipAnimation = Tween<double>(
+      begin: 0,
+      end: math.pi * 2 * 2, // 2 tours complets
+    ).animate(CurvedAnimation(
+      parent: _flipController,
+      curve: Curves.easeInOut,
+    ));
     _flipController.forward(from: 0);
   }
 
@@ -165,22 +172,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             // Calculer la vitesse du geste (en pixels par seconde)
             final velocity = details.primaryVelocity?.abs() ?? 0;
 
-            // Ajuster la durée du flip en fonction de la vitesse
-            // Plus le geste est rapide, plus le flip est rapide
-            final duration = velocity > 500
-                ? const Duration(milliseconds: 600)  // Geste rapide
-                : velocity > 200
-                    ? const Duration(milliseconds: 900)  // Geste moyen
-                    : const Duration(milliseconds: 1200); // Geste lent
+            // Déterminer le nombre de tours et la durée en fonction de la vitesse
+            final int spins;
+            final Duration duration;
 
-            // Mettre à jour la durée de l'animation
+            if (velocity > 1000) {
+              // Geste très rapide: 4-5 tours
+              spins = 4 + math.Random().nextInt(2);
+              duration = const Duration(milliseconds: 800);
+            } else if (velocity > 500) {
+              // Geste rapide: 3 tours
+              spins = 3;
+              duration = const Duration(milliseconds: 900);
+            } else if (velocity > 200) {
+              // Geste moyen: 2 tours
+              spins = 2;
+              duration = const Duration(milliseconds: 1000);
+            } else {
+              // Geste lent: 1 tour
+              spins = 1;
+              duration = const Duration(milliseconds: 1200);
+            }
+
+            // Recréer l'animation avec le bon nombre de tours
             _flipController.duration = duration;
+            _flipAnimation = Tween<double>(
+              begin: 0,
+              end: math.pi * 2 * spins,
+            ).animate(CurvedAnimation(
+              parent: _flipController,
+              curve: Curves.easeInOut,
+            ));
 
             // Faire flipper le logo
             _flipController.forward(from: 0);
 
-            // Feedback haptique
-            HapticUtils.light();
+            // Feedback haptique en fonction de la vitesse
+            if (velocity > 1000) {
+              HapticUtils.heavy();
+            } else if (velocity > 500) {
+              HapticUtils.medium();
+            } else {
+              HapticUtils.light();
+            }
           },
           child: AnimatedBuilder(
             animation: _flipAnimation,
