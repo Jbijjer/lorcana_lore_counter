@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -148,7 +146,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.sports_esports,
                             color: AppTheme.amberColor,
                             size: 28,
@@ -161,7 +159,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                             children: [
                               ShaderMask(
                                 shaderCallback: (bounds) {
-                                  return LinearGradient(
+                                  return const LinearGradient(
                                     colors: [
                                       AppTheme.amberColor,
                                       AppTheme.sapphireColor,
@@ -508,7 +506,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
       children: [
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.sports_score,
               color: AppTheme.amberColor,
               size: 20,

@@ -311,7 +311,7 @@ class Game extends _$Game {
     if (state == null) return;
 
     bool needsUpdate = false;
-    Map<String, dynamic> updates = {};
+    final Map<String, dynamic> updates = {};
 
     // Vérifier le joueur 1
     if (state!.player1VictoryDeclined) {

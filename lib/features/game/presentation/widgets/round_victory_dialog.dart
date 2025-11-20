@@ -6,12 +6,12 @@ import '../../domain/player.dart';
 /// Dialog de victoire de manche avec portrait du joueur
 class RoundVictoryDialog extends StatefulWidget {
   const RoundVictoryDialog({
-    super.key,
     required this.winner,
     required this.isMatchComplete,
     required this.winnerWins,
     required this.loserWins,
     required this.loserName,
+    super.key,
   });
 
   final Player winner;

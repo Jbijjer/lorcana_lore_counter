@@ -5,10 +5,10 @@ import '../../../../core/utils/haptic_utils.dart';
 /// Overlay de victoire qui apparaît quand un joueur atteint 20 points
 class VictoryOverlay extends StatefulWidget {
   const VictoryOverlay({
-    super.key,
     required this.isPlayer1,
     required this.onConfirm,
     required this.onDecline,
+    super.key,
   });
 
   final bool isPlayer1;
@@ -100,7 +100,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
         // Fond semi-transparent
         Positioned.fill(
           child: Container(
-            color: Colors.black.withOpacity(0.7),
+            color: Colors.black.withValues(alpha: 0.7),
           ),
         ),
 
@@ -167,7 +167,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 20,
             spreadRadius: 5,
           ),
@@ -206,7 +206,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.amber.withOpacity(0.6),
+                color: Colors.amber.withValues(alpha: 0.6),
                 blurRadius: 30,
                 spreadRadius: 10,
               ),
@@ -222,7 +222,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     offset: const Offset(0, 2),
                     blurRadius: 4,
                   ),
@@ -274,7 +274,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
+                          color: Colors.black.withValues(alpha: 0.4),
                           blurRadius: 12,
                           spreadRadius: 2,
                         ),

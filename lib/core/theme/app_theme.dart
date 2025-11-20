@@ -139,16 +139,16 @@ class AppTheme {
     const primaryColor = Color(0xFF0000FF); // Bleu vif
     const onPrimaryColor = Color(0xFFFFFFFF); // Blanc pur
 
-    final colorScheme = ColorScheme.light(
+    const colorScheme = ColorScheme.light(
       surface: surfaceColor,
       onSurface: onSurfaceColor,
       primary: primaryColor,
       onPrimary: onPrimaryColor,
-      secondary: const Color(0xFFFFD700), // Or vif
+      secondary: Color(0xFFFFD700), // Or vif
       onSecondary: onSurfaceColor,
-      error: const Color(0xFFFF0000), // Rouge vif
+      error: Color(0xFFFF0000), // Rouge vif
       onError: onPrimaryColor,
-      surfaceContainerHighest: const Color(0xFFE0E0E0), // Gris très clair
+      surfaceContainerHighest: Color(0xFFE0E0E0), // Gris très clair
     );
 
     return ThemeData(
@@ -159,7 +159,7 @@ class AppTheme {
         displayColor: onSurfaceColor,
       ),
 
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
         backgroundColor: surfaceColor,
@@ -200,16 +200,16 @@ class AppTheme {
     const primaryColor = Color(0xFF00FFFF); // Cyan vif
     const onPrimaryColor = Color(0xFF000000); // Noir pur
 
-    final colorScheme = ColorScheme.dark(
+    const colorScheme = ColorScheme.dark(
       surface: surfaceColor,
       onSurface: onSurfaceColor,
       primary: primaryColor,
       onPrimary: onPrimaryColor,
-      secondary: const Color(0xFFFFFF00), // Jaune vif
+      secondary: Color(0xFFFFFF00), // Jaune vif
       onSecondary: onPrimaryColor,
-      error: const Color(0xFFFF0000), // Rouge vif
+      error: Color(0xFFFF0000), // Rouge vif
       onError: onSurfaceColor,
-      surfaceContainerHighest: const Color(0xFF1A1A1A), // Gris très sombre
+      surfaceContainerHighest: Color(0xFF1A1A1A), // Gris très sombre
     );
 
     return ThemeData(
@@ -220,7 +220,7 @@ class AppTheme {
         displayColor: onSurfaceColor,
       ),
 
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
         backgroundColor: surfaceColor,
