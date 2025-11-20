@@ -5,6 +5,11 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
 import 'player_selection_dialog.dart';
+import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
+import '../../../../widgets/dialogs/common/dialog_header.dart';
+import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
+import '../../../../widgets/dialogs/common/shimmer_effect.dart';
+import '../../../../widgets/dialogs/common/sparkles_painter.dart';
 
 /// Dialog pour configurer une nouvelle partie en sélectionnant les deux joueurs
 class GameSetupDialog extends ConsumerStatefulWidget {
@@ -15,57 +20,20 @@ class GameSetupDialog extends ConsumerStatefulWidget {
 }
 
 class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, DialogAnimationsMixin {
   Player? _player1;
   Player? _player2;
   MatchFormat _selectedFormat = MatchFormat.bestOf3;
-  late AnimationController _dialogAnimationController;
-  late AnimationController _shimmerController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotationAnimation;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-
-    // Animation d'entrée du dialog
-    _dialogAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.elasticOut,
-    );
-
-    _rotationAnimation = Tween<double>(
-      begin: -0.1,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeOutBack,
-    ));
-
-    _fadeAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeIn,
-    );
-
-    // Animation shimmer
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-
-    _dialogAnimationController.forward();
+    initDialogAnimations();
   }
 
   @override
   void dispose() {
-    _dialogAnimationController.dispose();
-    _shimmerController.dispose();
+    disposeDialogAnimations();
     super.dispose();
   }
 
@@ -106,126 +74,98 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
         _player2 != null &&
         _player1!.name != _player2!.name;
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: RotationTransition(
-          turns: _rotationAnimation,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 450),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.amberColor.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // En-tête avec icône
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppTheme.amberColor.withValues(alpha: 0.2),
-                                AppTheme.sapphireColor.withValues(alpha: 0.2),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.sports_esports,
-                            color: AppTheme.amberColor,
-                            size: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ShaderMask(
-                                shaderCallback: (bounds) {
-                                  return const LinearGradient(
-                                    colors: [
-                                      AppTheme.amberColor,
-                                      AppTheme.sapphireColor,
-                                    ],
-                                  ).createShader(bounds);
-                                },
-                                child: Text(
-                                  'Nouvelle partie',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Sélectionnez les joueurs',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
+    return buildAnimatedDialog(
+      child: AnimatedDialogWrapper(
+        accentColor: AppTheme.amberColor,
+        maxWidth: 450,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // En-tête avec icône
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.amberColor.withValues(alpha: 0.2),
+                        AppTheme.sapphireColor.withValues(alpha: 0.2),
                       ],
                     ),
-                    const SizedBox(height: 24),
-
-                    // Sélection Joueur 1
-                    _buildPlayerSelector(
-                      context,
-                      playerNumber: 1,
-                      player: _player1,
-                      label: 'Joueur 1',
-                      onTap: () => _selectPlayer(1),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Sélection Joueur 2
-                    _buildPlayerSelector(
-                      context,
-                      playerNumber: 2,
-                      player: _player2,
-                      label: 'Joueur 2',
-                      onTap: () => _selectPlayer(2),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Sélection du format de match
-                    _buildMatchFormatSelector(),
-                    const SizedBox(height: 24),
-
-                    // Bouton démarrer
-                    _buildStartButton(canStart),
-                  ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.sports_esports,
+                    color: AppTheme.amberColor,
+                    size: 28,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (bounds) {
+                          return const LinearGradient(
+                            colors: [
+                              AppTheme.amberColor,
+                              AppTheme.sapphireColor,
+                            ],
+                          ).createShader(bounds);
+                        },
+                        child: Text(
+                          'Nouvelle partie',
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Sélectionnez les joueurs',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
+            const SizedBox(height: 24),
+
+            // Sélection Joueur 1
+            _buildPlayerSelector(
+              context,
+              playerNumber: 1,
+              player: _player1,
+              label: 'Joueur 1',
+              onTap: () => _selectPlayer(1),
+            ),
+            const SizedBox(height: 16),
+
+            // Sélection Joueur 2
+            _buildPlayerSelector(
+              context,
+              playerNumber: 2,
+              player: _player2,
+              label: 'Joueur 2',
+              onTap: () => _selectPlayer(2),
+            ),
+            const SizedBox(height: 24),
+
+            // Sélection du format de match
+            _buildMatchFormatSelector(),
+            const SizedBox(height: 24),
+
+            // Bouton démarrer
+            _buildStartButton(canStart),
+          ],
         ),
       ),
     );
@@ -395,36 +335,9 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
           // Effet shimmer sur tout le bouton
           if (isSelected)
             Positioned.fill(
-              child: IgnorePointer(
-                child: AnimatedBuilder(
-                  animation: _shimmerController,
-                  builder: (context, child) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Transform.translate(
-                        offset: Offset(
-                          (MediaQuery.of(context).size.width *
-                              _shimmerController.value) -
-                              (MediaQuery.of(context).size.width * 0.5),
-                          0,
-                        ),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                Colors.white.withValues(alpha: 0.3),
-                                Colors.transparent,
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+              child: SimpleShimmerEffect(
+                animationValue: shimmerController.value,
+                borderRadius: 16,
               ),
             ),
         ],

@@ -5,6 +5,11 @@ import '../../data/player_history_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/constants/player_icons.dart';
 import 'color_picker_dialog.dart';
+import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
+import '../../../../widgets/dialogs/common/dialog_header.dart';
+import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
+import '../../../../widgets/dialogs/common/shimmer_effect.dart';
+import '../../../../widgets/dialogs/common/sparkles_painter.dart';
 
 /// Dialogue pour éditer un joueur existant
 class PlayerEditDialog extends ConsumerStatefulWidget {
@@ -37,281 +42,182 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
 }
 
 class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, DialogAnimationsMixin {
   late TextEditingController _nameController;
   late Color _backgroundColorStart;
   late Color _backgroundColorEnd;
   late String _selectedIconAssetPath;
-  late AnimationController _dialogAnimationController;
-  late AnimationController _shimmerController;
   late AnimationController _portraitChangeController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotationAnimation;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    initDialogAnimations();
+
     _nameController = TextEditingController(text: widget.playerName);
     _backgroundColorStart = widget.backgroundColorStart;
     _backgroundColorEnd = widget.backgroundColorEnd;
     _selectedIconAssetPath = widget.iconAssetPath;
-
-    // Animation d'entrée du dialog
-    _dialogAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.elasticOut,
-    );
-
-    _rotationAnimation = Tween<double>(
-      begin: -0.1,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeOutBack,
-    ));
-
-    _fadeAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeIn,
-    );
-
-    // Animation shimmer pour l'aperçu
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
 
     // Animation pour le changement de portrait
     _portraitChangeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-
-    _dialogAnimationController.forward();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _dialogAnimationController.dispose();
-    _shimmerController.dispose();
     _portraitChangeController.dispose();
+    disposeDialogAnimations();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: RotationTransition(
-          turns: _rotationAnimation,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 700, maxWidth: 550),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.playerColor.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
+    return buildAnimatedDialog(
+      child: AnimatedDialogWrapper(
+        accentColor: widget.playerColor,
+        maxWidth: 550,
+        maxHeight: 700,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // En-tête
+              DialogHeader(
+                icon: Icons.edit,
+                title: 'Éditer le joueur',
+                accentColor: widget.playerColor,
+                onClose: () => Navigator.of(context).pop(),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Aperçu du joueur avec shimmer
+              _buildPlayerPreview(),
+
+              const SizedBox(height: 24),
+
+              // Champ de saisie du nom
+              TextField(
+                controller: _nameController,
+                maxLength: 15,
+                onChanged: (_) => setState(() {}),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'Nom du joueur',
+                  labelStyle: TextStyle(
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  counterStyle: TextStyle(
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.person,
+                    color: Colors.grey[800],
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: widget.playerColor,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 19),
+
+              // Sélection de l'icône
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        color: widget.playerColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Portrait',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.swipe_vertical,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Glissez pour voir plus',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                              fontStyle: FontStyle.italic,
+                            ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              padding: const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // En-tête avec effet de brillance
-                    _buildHeader(),
+              const SizedBox(height: 12),
+              _buildIconSelector(),
 
-                    const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-                    // Aperçu du joueur avec shimmer
-                    _buildPlayerPreview(),
+              // Bouton pour changer les couleurs de fond
+              _buildColorButton(),
 
-                    const SizedBox(height: 24),
+              const SizedBox(height: 12),
 
-                    // Champ de saisie du nom
-                    TextField(
-                      controller: _nameController,
-                      maxLength: 15,
-                      onChanged: (_) => setState(() {}),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Nom du joueur',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w500,
-                        ),
-                        counterStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w500,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Colors.grey[800],
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: widget.playerColor,
-                            width: 2,
-                          ),
-                        ),
+              // Boutons d'action
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Annuler',
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-
-                    const SizedBox(height: 19),
-
-                    // Sélection de l'icône
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.auto_awesome,
-                              color: widget.playerColor,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Portrait',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.swipe_vertical,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Glissez pour voir plus',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: Colors.grey[600],
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _buildIconSelector(),
-
-                    const SizedBox(height: 24),
-
-                    // Bouton pour changer les couleurs de fond
-                    _buildColorButton(),
-
-                    const SizedBox(height: 12),
-
-                    // Boutons d'action
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Annuler',
-                            style: TextStyle(
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        _buildSaveButton(),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildSaveButton(),
+                ],
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: widget.playerColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            Icons.edit,
-            color: widget.playerColor,
-            size: 28,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ShaderMask(
-            shaderCallback: (bounds) {
-              return LinearGradient(
-                colors: [
-                  widget.playerColor,
-                  widget.playerColor.withValues(alpha: 0.6),
-                ],
-              ).createShader(bounds);
-            },
-            child: Text(
-              'Éditer le joueur',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPlayerPreview() {
     return AnimatedBuilder(
-      animation: _shimmerController,
+      animation: shimmerController,
       builder: (context, child) {
         return Stack(
           children: [
@@ -393,7 +299,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                 borderRadius: BorderRadius.circular(16),
                 child: Transform.translate(
                   offset: Offset(
-                    -200 + (_shimmerController.value * 400),
+                    -200 + (shimmerController.value * 400),
                     0,
                   ),
                   child: Container(
@@ -550,16 +456,9 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
   }
 
   Widget _buildSparkles() {
-    return AnimatedBuilder(
-      animation: _shimmerController,
-      builder: (context, child) {
-        return CustomPaint(
-          painter: _SparklesPainter(
-            animationValue: _shimmerController.value,
-            color: widget.playerColor,
-          ),
-        );
-      },
+    return SparklesOverlay(
+      controller: shimmerController,
+      color: widget.playerColor,
     );
   }
 
@@ -694,40 +593,4 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
       Navigator.of(context).pop();
     }
   }
-}
-
-/// Painter pour les effets scintillants
-class _SparklesPainter extends CustomPainter {
-  final double animationValue;
-  final Color color;
-
-  _SparklesPainter({
-    required this.animationValue,
-    required this.color,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.6)
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-
-    // Dessiner quelques étoiles scintillantes
-    final random = math.Random(42); // Seed fixe pour cohérence
-    for (int i = 0; i < 3; i++) {
-      final x = size.width * random.nextDouble();
-      final y = size.height * random.nextDouble();
-      final sparklePhase = (animationValue + (i * 0.3)) % 1.0;
-      final opacity = (math.sin(sparklePhase * math.pi * 2) + 1) / 2;
-
-      paint.color = color.withValues(alpha: opacity * 0.8);
-
-      // Dessiner une petite étoile
-      canvas.drawCircle(Offset(x, y), 2, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_SparklesPainter oldDelegate) => true;
 }
