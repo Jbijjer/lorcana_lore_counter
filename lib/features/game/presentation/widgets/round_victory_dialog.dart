@@ -395,7 +395,7 @@ class _ConfettiPainter extends CustomPainter {
     for (int i = 0; i < 25; i++) {
       final offsetX = size.width * random.nextDouble();
       final startY = -50 - (random.nextDouble() * 150);
-      final currentY = startY + (size.height + 300) * animationValue;
+      final currentY = startY + (size.height + 700) * animationValue;
 
       // Calculer l'opacité avec fade out progressif vers le bas
       double opacity = 0.8;
