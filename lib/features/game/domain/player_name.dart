@@ -1,4 +1,4 @@
-import 'package:hive_ce/hive.dart';
+import 'package:hive/hive.dart';
 
 part 'player_name.g.dart';
 
