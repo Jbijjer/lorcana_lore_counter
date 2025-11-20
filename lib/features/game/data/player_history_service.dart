@@ -136,7 +136,7 @@ class PlayerHistoryService {
       0xFF9FA8B4: 0xFFB0BEC5, // Steel
     };
 
-    final oldValue = oldColor.value;
+    final oldValue = oldColor.toARGB32();
     if (colorMigrationMap.containsKey(oldValue)) {
       return Color(colorMigrationMap[oldValue]!);
     }
@@ -292,7 +292,7 @@ class PlayerHistoryService {
     final existingNames = getAllPlayerNames().map((n) => n.toLowerCase()).toList();
 
     // Choisir un nom aléatoire de la liste
-    String baseName = DisneyNames.availableNames[random.nextInt(DisneyNames.availableNames.length)];
+    final String baseName = DisneyNames.availableNames[random.nextInt(DisneyNames.availableNames.length)];
 
     // Si le nom n'est pas pris, le retourner
     if (!existingNames.contains(baseName.toLowerCase())) {

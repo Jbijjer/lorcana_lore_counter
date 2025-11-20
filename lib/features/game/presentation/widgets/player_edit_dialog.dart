@@ -9,7 +9,6 @@ import 'color_picker_dialog.dart';
 /// Dialogue pour éditer un joueur existant
 class PlayerEditDialog extends ConsumerStatefulWidget {
   const PlayerEditDialog({
-    super.key,
     required this.playerId,
     required this.playerName,
     required this.playerColor,
@@ -17,6 +16,7 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
     required this.backgroundColorEnd,
     required this.iconAssetPath,
     required this.onPlayerUpdated,
+    super.key,
   });
 
   final String playerId;
@@ -612,12 +612,12 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
           shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.save, color: Colors.white),
-            const SizedBox(width: 8),
-            const Text(
+            Icon(Icons.save, color: Colors.white),
+            SizedBox(width: 8),
+            Text(
               'Enregistrer',
               style: TextStyle(
                 color: Colors.white,

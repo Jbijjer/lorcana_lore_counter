@@ -6,10 +6,10 @@ import '../../../../core/utils/haptic_utils.dart';
 /// Dialogue pour sélectionner les couleurs de fond d'un joueur
 class ColorPickerDialog extends StatefulWidget {
   const ColorPickerDialog({
-    super.key,
     required this.currentColorStart,
     required this.currentColorEnd,
     required this.playerColor,
+    super.key,
   });
 
   final Color currentColorStart;
@@ -548,9 +548,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
           shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(Icons.check, color: Colors.white),
             SizedBox(width: 8),
             Text(

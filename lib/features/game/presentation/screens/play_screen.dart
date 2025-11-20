@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/player_zone.dart';
 import '../widgets/player_name_dialog.dart';
 import '../widgets/score_edit_dialog.dart';
@@ -15,7 +14,6 @@ import '../../domain/player.dart';
 import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// Écran principal du jeu
@@ -581,12 +579,12 @@ class _ResetFlashAnimationState extends State<_ResetFlashAnimation>
       animation: _animation,
       builder: (context, child) {
         return Container(
-          color: Colors.white.withOpacity(_animation.value),
+          color: Colors.white.withValues(alpha: _animation.value),
           child: Center(
             child: Icon(
               Icons.restart_alt,
               size: 80,
-              color: Colors.black.withOpacity(_animation.value * 0.5),
+              color: Colors.black.withValues(alpha: _animation.value * 0.5),
             ),
           ),
         );

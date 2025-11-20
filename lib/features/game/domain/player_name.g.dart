@@ -20,19 +20,34 @@ class PlayerNameAdapter extends TypeAdapter<PlayerName> {
       name: fields[0] as String,
       lastUsed: fields[1] as DateTime,
       usageCount: fields[2] as int,
+      backgroundColorStartValue: fields[3] as int?,
+      backgroundColorEndValue: fields[4] as int?,
+      iconCodePoint: fields[5] as int?,
+      id: fields[6] as String?,
+      iconAssetPath: fields[7] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlayerName obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.lastUsed)
       ..writeByte(2)
-      ..write(obj.usageCount);
+      ..write(obj.usageCount)
+      ..writeByte(3)
+      ..write(obj.backgroundColorStartValue)
+      ..writeByte(4)
+      ..write(obj.backgroundColorEndValue)
+      ..writeByte(5)
+      ..write(obj.iconCodePoint)
+      ..writeByte(6)
+      ..write(obj.id)
+      ..writeByte(7)
+      ..write(obj.iconAssetPath);
   }
 
   @override

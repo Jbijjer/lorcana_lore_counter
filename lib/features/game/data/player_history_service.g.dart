@@ -7,7 +7,7 @@ part of 'player_history_service.dart';
 // **************************************************************************
 
 String _$playerHistoryServiceHash() =>
-    r'f8c3e5b2d1a4c9e7f6d8b3a5c2e1f4d9';
+    r'19da17f85c9e12a6c065b16d1026839f1644acac';
 
 /// Provider pour le service d'historique des joueurs
 ///
@@ -23,9 +23,8 @@ final playerHistoryServiceProvider = Provider<PlayerHistoryService>.internal(
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
 typedef PlayerHistoryServiceRef = ProviderRef<PlayerHistoryService>;
-String _$playerNamesHash() => r'a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7';
+String _$playerNamesHash() => r'cedc1efc51012f2237038d98977b6343f807e41a';
 
 /// Provider pour la liste des noms de joueurs
 ///

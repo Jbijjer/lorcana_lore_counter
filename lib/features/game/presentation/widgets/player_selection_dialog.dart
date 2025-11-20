@@ -11,10 +11,10 @@ import 'player_edit_dialog.dart';
 /// Dialog simplifié pour sélectionner un joueur et retourner un objet Player complet
 class PlayerSelectionDialog extends ConsumerStatefulWidget {
   const PlayerSelectionDialog({
-    super.key,
     required this.title,
     required this.defaultColor,
     this.excludedPlayerName,
+    super.key,
   });
 
   final String title;

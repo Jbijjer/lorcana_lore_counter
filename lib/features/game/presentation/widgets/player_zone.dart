@@ -7,7 +7,6 @@ import '../../../../core/utils/haptic_utils.dart';
 /// Widget représentant la zone d'un joueur
 class PlayerZone extends StatefulWidget {
   const PlayerZone({
-    super.key,
     required this.player,
     required this.score,
     required this.isRotated,
@@ -17,6 +16,7 @@ class PlayerZone extends StatefulWidget {
     this.onScoreLongPress,
     this.wins = 0,
     this.winsNeeded = 1,
+    super.key,
   });
 
   final Player player;
@@ -233,9 +233,9 @@ class _PlayerZoneState extends State<PlayerZone> {
 /// Widget animé pour afficher le score avec bounce et shake
 class _AnimatedScoreDisplay extends StatefulWidget {
   const _AnimatedScoreDisplay({
-    super.key,
     required this.score,
     this.onScoreLongPress,
+    super.key,
   });
 
   final int score;

@@ -10,7 +10,6 @@ import 'player_edit_dialog.dart';
 /// Dialogue pour sélectionner ou créer un nom de joueur
 class PlayerNameDialog extends ConsumerStatefulWidget {
   const PlayerNameDialog({
-    super.key,
     required this.currentName,
     required this.playerColor,
     required this.backgroundColorStart,
@@ -19,6 +18,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
     this.onIconChanged,
     this.onNameChanged,
     this.excludedPlayerName,
+    super.key,
   });
 
   final String currentName;
