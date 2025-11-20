@@ -185,7 +185,7 @@ class _PlayerStatsRow extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Détails (victoires/défaites/nuls/moyenne)
+          // Détails (victoires/défaites/nuls)
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -207,11 +207,6 @@ class _PlayerStatsRow extends StatelessWidget {
                   label: '${stats.draws}N',
                   color: Colors.orange,
                 ),
-              _StatChip(
-                icon: Icons.trending_up,
-                label: '${stats.averageScore.toStringAsFixed(1)} pts',
-                color: Colors.blue,
-              ),
             ],
           ),
         ],
