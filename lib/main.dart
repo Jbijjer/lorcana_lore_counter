@@ -23,9 +23,6 @@ void main() async {
   if (!Hive.isAdapterRegistered(2)) {
     Hive.registerAdapter(GameHistoryAdapter());
   }
-  if (!Hive.isAdapterRegistered(3)) {
-    Hive.registerAdapter(RoundResultAdapter());
-  }
 
   // Créer le container de providers
   final container = ProviderContainer();
