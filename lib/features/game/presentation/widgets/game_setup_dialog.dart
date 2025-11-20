@@ -163,8 +163,56 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
             _buildMatchFormatSelector(),
             const SizedBox(height: 24),
 
-            // Bouton démarrer
-            _buildStartButton(canStart),
+            // Boutons annuler et démarrer
+            Row(
+              children: [
+                // Bouton Annuler
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      HapticUtils.light();
+                      Navigator.of(context).pop(null);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(
+                        color: Colors.grey.shade400,
+                        width: 2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.arrow_back,
+                          size: 20,
+                          color: Colors.grey.shade700,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Annuler',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Bouton Démarrer
+                Expanded(
+                  flex: 2,
+                  child: _buildStartButton(canStart),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -348,7 +396,6 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
   Widget _buildStartButton(bool canStart) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: canStart

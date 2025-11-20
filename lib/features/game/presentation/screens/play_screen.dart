@@ -15,6 +15,7 @@ import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
 import 'statistics_screen.dart';
+import 'home_screen.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -71,7 +72,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
   Future<void> _showGameSetupDialog() async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => const GameSetupDialog(),
     );
 
@@ -90,6 +91,13 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       final historyService = ref.read(playerHistoryServiceProvider);
       await historyService.addOrUpdatePlayerName(player1.name);
       await historyService.addOrUpdatePlayerName(player2.name);
+    } else if (mounted) {
+      // L'utilisateur a annulé, retourner à l'écran d'accueil
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
     }
   }
 
