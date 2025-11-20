@@ -163,55 +163,47 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
             _buildMatchFormatSelector(),
             const SizedBox(height: 24),
 
-            // Boutons annuler et démarrer
-            Row(
-              children: [
-                // Bouton Annuler
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      HapticUtils.light();
-                      Navigator.of(context).pop(null);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      side: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                          color: Colors.grey.shade700,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Annuler',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      ],
+            // Bouton démarrer
+            _buildStartButton(canStart),
+            const SizedBox(height: 12),
+
+            // Bouton annuler
+            OutlinedButton(
+              onPressed: () {
+                HapticUtils.light();
+                Navigator.of(context).pop(null);
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                minimumSize: const Size(double.infinity, 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: BorderSide(
+                  color: Colors.grey.shade400,
+                  width: 2,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.arrow_back,
+                    size: 18,
+                    color: Colors.grey.shade700,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Annuler',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-
-                // Bouton Démarrer
-                Expanded(
-                  flex: 2,
-                  child: _buildStartButton(canStart),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -433,6 +425,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
           foregroundColor: canStart ? AppTheme.pureBlack : Colors.grey.shade600,
           shadowColor: AppTheme.transparentColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
+          minimumSize: const Size(double.infinity, 0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
