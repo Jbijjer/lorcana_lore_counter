@@ -129,7 +129,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 children: [
                   // Logo et titre
                   _buildHeader(),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
 
                   // Boutons principaux
                   _buildMainButtons(hasOngoingGame),
@@ -174,8 +174,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ..setEntry(3, 2, 0.001) // Perspective
                 ..rotateY(angle),
               child: SizedBox(
-                width: 140,
-                height: 140,
+                width: 120,
+                height: 120,
                 child: showBack
                     ? Transform(
                         alignment: Alignment.center,
@@ -193,7 +193,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             );
           },
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
 
         // Titre avec gradient
         ShaderMask(
@@ -243,7 +243,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             onTap: _handleContinueGame,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
         ],
 
         // Bouton Nouveau Round
@@ -258,7 +258,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           onTap: () => _handleNewRound(hasOngoingGame),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Bouton Statistiques
         _buildMenuButton(
@@ -269,7 +269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           onTap: _handleStatistics,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Bouton Paramètres
         _buildMenuButton(
@@ -314,28 +314,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: AppTheme.pureWhite.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     icon,
                     color: AppTheme.pureWhite,
-                    size: 28,
+                    size: 24,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     label,
                     style: const TextStyle(
                       color: AppTheme.pureWhite,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -343,7 +343,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 Icon(
                   Icons.arrow_forward_ios,
                   color: AppTheme.pureWhite.withValues(alpha: 0.7),
-                  size: 20,
+                  size: 18,
                 ),
               ],
             ),
