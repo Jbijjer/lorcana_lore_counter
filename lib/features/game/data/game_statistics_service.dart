@@ -161,6 +161,7 @@ class GameStatisticsService {
     required String? winnerName,
     required List<String> player1DeckColors,
     required List<String> player2DeckColors,
+    String? note,
   }) async {
     final gameHistory = GameHistory(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -172,6 +173,7 @@ class GameStatisticsService {
       timestamp: DateTime.now(),
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      note: note,
     );
 
     await saveGame(gameHistory);

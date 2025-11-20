@@ -9,6 +9,7 @@ import '../widgets/radial_menu.dart';
 import '../widgets/reset_confirmation_dialog.dart';
 import '../widgets/victory_overlay.dart';
 import '../widgets/round_victory_dialog.dart';
+import '../widgets/victory_notes_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -253,7 +254,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     }
   }
 
-  void _checkWinner() {
+  Future<void> _checkWinner() async {
     final gameState = ref.read(gameProvider);
     if (gameState == null || !gameState.isFinished) return;
 
@@ -264,19 +265,48 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         gameState.player1HasReachedThreshold &&
         !gameState.player1VictoryDeclined;
 
-    // Ajouter une victoire au gagnant de la manche
+    final winner = isPlayer1Winner ? gameState.player1 : gameState.player2;
+    final loser = isPlayer1Winner ? gameState.player2 : gameState.player1;
+
+    // Afficher d'abord le dialog pour saisir la note et les couleurs de deck
+    final notesResult = await showDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => VictoryNotesDialog(
+        winnerName: winner.name,
+        loserName: loser.name,
+        previousPlayer1DeckColors: gameState.player1DeckColors,
+        previousPlayer2DeckColors: gameState.player2DeckColors,
+        isPlayer1Winner: isPlayer1Winner,
+      ),
+    );
+
+    // Si l'utilisateur a annulé (ne devrait pas arriver car barrierDismissible = false)
+    if (notesResult == null) return;
+
+    final note = notesResult['note'] as String?;
+    final player1DeckColors = notesResult['player1DeckColors'] as List<String>;
+    final player2DeckColors = notesResult['player2DeckColors'] as List<String>;
+
+    // Ajouter une victoire au gagnant de la manche avec les informations saisies
     if (isPlayer1Winner) {
-      ref.read(gameProvider.notifier).addPlayer1Win();
+      ref.read(gameProvider.notifier).addPlayer1Win(
+        note: note,
+        player1DeckColors: player1DeckColors,
+        player2DeckColors: player2DeckColors,
+      );
     } else {
-      ref.read(gameProvider.notifier).addPlayer2Win();
+      ref.read(gameProvider.notifier).addPlayer2Win(
+        note: note,
+        player1DeckColors: player1DeckColors,
+        player2DeckColors: player2DeckColors,
+      );
     }
 
     // Récupérer l'état mis à jour après l'ajout de la victoire
     final updatedState = ref.read(gameProvider);
     if (updatedState == null) return;
 
-    final winner = isPlayer1Winner ? updatedState.player1 : updatedState.player2;
-    final loser = isPlayer1Winner ? updatedState.player2 : updatedState.player1;
     final winnerWins = isPlayer1Winner ? updatedState.player1Wins : updatedState.player2Wins;
     final loserWins = isPlayer1Winner ? updatedState.player2Wins : updatedState.player1Wins;
     final winsNeeded = updatedState.matchFormat.winsNeeded;
@@ -289,7 +319,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       ref.read(gameProvider.notifier).finishGame();
     }
 
-    showDialog(
+    // Afficher le dialog de victoire de la manche
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => RoundVictoryDialog(
@@ -299,14 +330,14 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         loserWins: loserWins,
         loserName: loser.name,
       ),
-    ).then((_) async {
-      if (isMatchComplete && mounted) {
-        // Après la fermeture du dialog de victoire du match
-        ref.read(gameProvider.notifier).resetGame();
-        // Afficher le dialog de sélection des joueurs pour une nouvelle partie
-        await _showGameSetupDialog();
-      }
-    });
+    );
+
+    if (isMatchComplete && mounted) {
+      // Après la fermeture du dialog de victoire du match
+      ref.read(gameProvider.notifier).resetGame();
+      // Afficher le dialog de sélection des joueurs pour une nouvelle partie
+      await _showGameSetupDialog();
+    }
   }
 
   void _handleVictoryConfirm() {

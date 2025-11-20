@@ -20,6 +20,7 @@ class GameHistory with _$GameHistory {
     @HiveField(6) required DateTime timestamp, // Quand la partie s'est terminée
     @HiveField(7) @Default([]) List<String> player1DeckColors, // Les 2 couleurs du deck du joueur 1
     @HiveField(8) @Default([]) List<String> player2DeckColors, // Les 2 couleurs du deck du joueur 2
+    @HiveField(9) String? note, // Note sur la partie (optionnel)
   }) = _GameHistory;
 
   const GameHistory._();

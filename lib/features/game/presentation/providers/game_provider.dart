@@ -24,12 +24,18 @@ class Game extends _$Game {
   }
 
   /// Sauvegarde la partie terminée dans les statistiques
-  void _savePartieToStatistics({required String? winnerName}) {
+  void _savePartieToStatistics({
+    required String? winnerName,
+    String? note,
+    List<String>? player1DeckColors,
+    List<String>? player2DeckColors,
+  }) {
     if (state == null) return;
 
     print('📊 Sauvegarde de la partie dans les statistiques');
     print('  - ${state!.player1.name} ${state!.player1Score} - ${state!.player2Score} ${state!.player2.name}');
     print('  - Gagnant: ${winnerName ?? "Match nul"}');
+    if (note != null) print('  - Note: $note');
 
     final statisticsService = ref.read(gameStatisticsServiceProvider);
     statisticsService.savePartie(
@@ -38,8 +44,9 @@ class Game extends _$Game {
       player1Score: state!.player1Score,
       player2Score: state!.player2Score,
       winnerName: winnerName,
-      player1DeckColors: state!.player1DeckColors,
-      player2DeckColors: state!.player2DeckColors,
+      player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
+      player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
+      note: note,
     );
   }
 
@@ -265,11 +272,20 @@ class Game extends _$Game {
   }
 
   /// Ajoute une victoire au joueur 1 et réinitialise les scores pour la manche suivante
-  void addPlayer1Win() {
+  void addPlayer1Win({
+    String? note,
+    List<String>? player1DeckColors,
+    List<String>? player2DeckColors,
+  }) {
     if (state == null) return;
 
     // 💾 Sauvegarder la partie AVANT de remettre les scores à 0
-    _savePartieToStatistics(winnerName: state!.player1.name);
+    _savePartieToStatistics(
+      winnerName: state!.player1.name,
+      note: note,
+      player1DeckColors: player1DeckColors,
+      player2DeckColors: player2DeckColors,
+    );
 
     state = state!.copyWith(
       player1Wins: state!.player1Wins + 1,
@@ -280,16 +296,28 @@ class Game extends _$Game {
       player2VictoryThreshold: 20,
       player1VictoryDeclined: false,
       player2VictoryDeclined: false,
+      // Mettre à jour les couleurs de deck si fournies
+      player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
+      player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
     );
     _saveState();
   }
 
   /// Ajoute une victoire au joueur 2 et réinitialise les scores pour la manche suivante
-  void addPlayer2Win() {
+  void addPlayer2Win({
+    String? note,
+    List<String>? player1DeckColors,
+    List<String>? player2DeckColors,
+  }) {
     if (state == null) return;
 
     // 💾 Sauvegarder la partie AVANT de remettre les scores à 0
-    _savePartieToStatistics(winnerName: state!.player2.name);
+    _savePartieToStatistics(
+      winnerName: state!.player2.name,
+      note: note,
+      player1DeckColors: player1DeckColors,
+      player2DeckColors: player2DeckColors,
+    );
 
     state = state!.copyWith(
       player2Wins: state!.player2Wins + 1,
@@ -300,6 +328,9 @@ class Game extends _$Game {
       player2VictoryThreshold: 20,
       player1VictoryDeclined: false,
       player2VictoryDeclined: false,
+      // Mettre à jour les couleurs de deck si fournies
+      player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
+      player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
     );
     _saveState();
   }
