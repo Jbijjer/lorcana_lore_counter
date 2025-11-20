@@ -40,13 +40,13 @@ class GameHistoryCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_today,
                     size: 14,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     _formatDate(game.timestamp),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -108,7 +108,7 @@ class GameHistoryCard extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: IconButton(
                   icon: const Icon(Icons.delete_outline, size: 20),
-                  color: Colors.red[400],
+                  color: Theme.of(context).colorScheme.error,
                   onPressed: () {
                     HapticUtils.medium();
                     _showDeleteConfirmation(context);
@@ -238,7 +238,7 @@ class GameHistoryCard extends StatelessWidget {
               onDelete();
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
+              foregroundColor: Theme.of(context).colorScheme.error,
             ),
             child: const Text('Supprimer'),
           ),
@@ -266,9 +266,10 @@ class _PlayerScoreColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final displayColor = isDraw
-        ? Colors.orange
-        : (isWinner ? Colors.amber : Colors.grey);
+        ? colorScheme.tertiary
+        : (isWinner ? colorScheme.primary : colorScheme.surfaceContainerHighest);
 
     return Column(
       children: [
@@ -277,12 +278,12 @@ class _PlayerScoreColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (isWinner && !isDraw)
-              const Padding(
-                padding: EdgeInsets.only(right: 4),
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
                 child: Icon(
                   Icons.emoji_events,
                   size: 16,
-                  color: Colors.amber,
+                  color: colorScheme.primary,
                 ),
               ),
             Flexible(
@@ -292,8 +293,8 @@ class _PlayerScoreColumn extends StatelessWidget {
                   fontWeight: isWinner || isDraw ? FontWeight.bold : FontWeight.w500,
                   fontSize: 14,
                   color: isDraw
-                      ? Colors.orange[700]
-                      : (isWinner ? Colors.amber[700] : Colors.black87),
+                      ? colorScheme.tertiary
+                      : (isWinner ? colorScheme.primary : colorScheme.onSurface),
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -352,8 +353,8 @@ class _PlayerScoreColumn extends StatelessWidget {
               fontSize: 24,
               fontWeight: FontWeight.w900,
               color: isDraw
-                  ? Colors.orange[700]
-                  : (isWinner ? Colors.amber[700] : Colors.black87),
+                  ? colorScheme.tertiary
+                  : (isWinner ? colorScheme.primary : colorScheme.onSurface),
             ),
           ),
         ),
