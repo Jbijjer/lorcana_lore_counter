@@ -9,7 +9,6 @@ import '../widgets/radial_menu.dart';
 import '../widgets/reset_confirmation_dialog.dart';
 import '../widgets/victory_overlay.dart';
 import '../widgets/round_victory_dialog.dart';
-import '../widgets/victory_notes_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -267,15 +266,23 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     final winner = isPlayer1Winner ? gameState.player1 : gameState.player2;
     final loser = isPlayer1Winner ? gameState.player2 : gameState.player1;
+    final winnerWins = isPlayer1Winner ? gameState.player1Wins + 1 : gameState.player2Wins + 1;
+    final loserWins = isPlayer1Winner ? gameState.player2Wins : gameState.player1Wins;
+    final winsNeeded = gameState.matchFormat.winsNeeded;
 
-    // Afficher d'abord le dialog pour saisir la note et les couleurs de deck
-    final notesResult = await showDialog<Map<String, dynamic>>(
+    // Vérifier si le joueur a gagné le match complet
+    final isMatchComplete = winnerWins >= winsNeeded;
+
+    // Afficher le dialog de victoire avec saisie de note et couleurs
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => VictoryNotesDialog(
-        winnerName: winner.name,
-        loserName: loser.name,
-        winnerColor: winner.color,
+      builder: (context) => RoundVictoryDialog(
+        winner: winner,
+        loser: loser,
+        isMatchComplete: isMatchComplete,
+        winnerWins: winnerWins,
+        loserWins: loserWins,
         previousPlayer1DeckColors: gameState.player1DeckColors,
         previousPlayer2DeckColors: gameState.player2DeckColors,
         isPlayer1Winner: isPlayer1Winner,
@@ -283,11 +290,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     );
 
     // Si l'utilisateur a annulé (ne devrait pas arriver car barrierDismissible = false)
-    if (notesResult == null) return;
+    if (result == null) return;
 
-    final note = notesResult['note'] as String?;
-    final player1DeckColors = notesResult['player1DeckColors'] as List<String>;
-    final player2DeckColors = notesResult['player2DeckColors'] as List<String>;
+    final note = result['note'] as String?;
+    final player1DeckColors = result['player1DeckColors'] as List<String>;
+    final player2DeckColors = result['player2DeckColors'] as List<String>;
 
     // Ajouter une victoire au gagnant de la manche avec les informations saisies
     if (isPlayer1Winner) {
@@ -304,40 +311,15 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       );
     }
 
-    // Récupérer l'état mis à jour après l'ajout de la victoire
-    final updatedState = ref.read(gameProvider);
-    if (updatedState == null) return;
-
-    final winnerWins = isPlayer1Winner ? updatedState.player1Wins : updatedState.player2Wins;
-    final loserWins = isPlayer1Winner ? updatedState.player2Wins : updatedState.player1Wins;
-    final winsNeeded = updatedState.matchFormat.winsNeeded;
-
-    // Vérifier si le joueur a gagné le match complet
-    final isMatchComplete = winnerWins >= winsNeeded;
-
     if (isMatchComplete) {
       // Match terminé
       ref.read(gameProvider.notifier).finishGame();
-    }
 
-    // Afficher le dialog de victoire de la manche
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => RoundVictoryDialog(
-        winner: winner,
-        isMatchComplete: isMatchComplete,
-        winnerWins: winnerWins,
-        loserWins: loserWins,
-        loserName: loser.name,
-      ),
-    );
-
-    if (isMatchComplete && mounted) {
-      // Après la fermeture du dialog de victoire du match
-      ref.read(gameProvider.notifier).resetGame();
-      // Afficher le dialog de sélection des joueurs pour une nouvelle partie
-      await _showGameSetupDialog();
+      if (mounted) {
+        // Afficher le dialog de sélection des joueurs pour une nouvelle partie
+        ref.read(gameProvider.notifier).resetGame();
+        await _showGameSetupDialog();
+      }
     }
   }
 
