@@ -126,7 +126,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           children: [
             // Contenu principal
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -209,61 +209,42 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
 
                   // Score du match
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 2,
+                  Column(
+                    children: [
+                      Text(
+                        widget.isMatchComplete
+                            ? 'Score Final'
+                            : 'Score du Match',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.isMatchComplete
-                              ? 'Score Final'
-                              : 'Score du Match',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${widget.winner.name}: ${widget.winnerWins}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${widget.winner.name}: ${widget.winnerWins}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                            Text(
-                              '${widget.loser.name}: ${widget.loserWins}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
+                      ),
+                      Text(
+                        '${widget.loser.name}: ${widget.loserWins}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 16),
