@@ -201,12 +201,11 @@ class _PlayerStatsRow extends StatelessWidget {
                 label: '${stats.losses}D',
                 color: Colors.red,
               ),
-              if (stats.draws > 0)
-                _StatChip(
-                  icon: Icons.handshake,
-                  label: '${stats.draws}N',
-                  color: Colors.orange,
-                ),
+              _StatChip(
+                icon: Icons.handshake,
+                label: '${stats.draws}N',
+                color: Colors.orange,
+              ),
             ],
           ),
         ],
