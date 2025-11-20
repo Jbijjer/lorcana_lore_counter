@@ -7,6 +7,11 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/constants/player_icons.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'player_edit_dialog.dart';
+import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
+import '../../../../widgets/dialogs/common/dialog_header.dart';
+import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
+import '../../../../widgets/dialogs/common/shimmer_effect.dart';
+import '../../../../widgets/dialogs/common/sparkles_painter.dart';
 
 /// Dialog simplifié pour sélectionner un joueur et retourner un objet Player complet
 class PlayerSelectionDialog extends ConsumerStatefulWidget {
@@ -27,54 +32,17 @@ class PlayerSelectionDialog extends ConsumerStatefulWidget {
 }
 
 class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
-    with TickerProviderStateMixin {
-  late AnimationController _dialogAnimationController;
-  late AnimationController _shimmerController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotationAnimation;
-  late Animation<double> _fadeAnimation;
+    with TickerProviderStateMixin, DialogAnimationsMixin {
 
   @override
   void initState() {
     super.initState();
-
-    // Animation d'entrée du dialog
-    _dialogAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.elasticOut,
-    );
-
-    _rotationAnimation = Tween<double>(
-      begin: -0.1,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeOutBack,
-    ));
-
-    _fadeAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeIn,
-    );
-
-    // Animation shimmer
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-
-    _dialogAnimationController.forward();
+    initDialogAnimations();
   }
 
   @override
   void dispose() {
-    _dialogAnimationController.dispose();
-    _shimmerController.dispose();
+    disposeDialogAnimations();
     super.dispose();
   }
 
@@ -85,154 +53,94 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
     final sortedPlayerNames = List<String>.from(playerNames)
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: RotationTransition(
-          turns: _rotationAnimation,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 600, maxWidth: 450),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.defaultColor.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
+    return buildAnimatedDialog(
+      child: AnimatedDialogWrapper(
+        accentColor: widget.defaultColor,
+        maxWidth: 450,
+        maxHeight: 600,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // En-tête
+            DialogHeader(
+              icon: Icons.person_search,
+              title: widget.title,
+              accentColor: widget.defaultColor,
+              onClose: () => Navigator.of(context).pop(),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Liste des joueurs existants
+            if (sortedPlayerNames.isNotEmpty)
+              Row(
+                children: [
+                  Icon(
+                    Icons.people,
+                    size: 16,
+                    color: Colors.grey[700],
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Joueurs existants',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+
+            if (sortedPlayerNames.isNotEmpty) const SizedBox(height: 12),
+
+            // Liste scrollable
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
                 children: [
-                  // En-tête stylisé
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: widget.defaultColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.person_search,
-                          color: widget.defaultColor,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ShaderMask(
-                          shaderCallback: (bounds) {
-                            return LinearGradient(
-                              colors: [
-                                widget.defaultColor,
-                                widget.defaultColor.withValues(alpha: 0.6),
-                              ],
-                            ).createShader(bounds);
-                          },
-                          child: Text(
-                            widget.title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
+                  // Joueurs existants
+                  ...sortedPlayerNames.map((name) => _buildPlayerNameTile(name)),
 
-                  const SizedBox(height: 20),
-
-                  // Liste des joueurs existants
+                  // Divider
                   if (sortedPlayerNames.isNotEmpty)
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.people,
-                          size: 16,
-                          color: Colors.grey[700],
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Joueurs existants',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[700],
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      ],
-                    ),
-
-                  if (sortedPlayerNames.isNotEmpty) const SizedBox(height: 12),
-
-                  // Liste scrollable
-                  Flexible(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        // Joueurs existants
-                        ...sortedPlayerNames
-                            .map((name) => _buildPlayerNameTile(name)),
-
-                        // Divider
-                        if (sortedPlayerNames.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey[300],
-                                    thickness: 1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 12),
-                                  child: Text(
-                                    'ou',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey[300],
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
                             ),
                           ),
-
-                        // Option "Nouveau joueur"
-                        _buildNewPlayerTile(),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'ou',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+
+                  // Option "Nouveau joueur"
+                  _buildNewPlayerTile(),
                 ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -340,36 +248,10 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                 // Effet shimmer sur tout le bouton
                 if (!isExcluded)
                   Positioned.fill(
-                    child: IgnorePointer(
-                      child: AnimatedBuilder(
-                        animation: _shimmerController,
-                        builder: (context, child) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Transform.translate(
-                              offset: Offset(
-                                (MediaQuery.of(context).size.width *
-                                    _shimmerController.value) -
-                                    (MediaQuery.of(context).size.width * 0.5),
-                                0,
-                              ),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.transparent,
-                                      Colors.white.withValues(alpha: 0.2),
-                                      Colors.transparent,
-                                    ],
-                                    stops: const [0.0, 0.5, 1.0],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                    child: SimpleShimmerEffect(
+                      animationValue: shimmerController.value,
+                      borderRadius: 12,
+                      alpha: 0.2,
                     ),
                   ),
               ],
@@ -451,36 +333,9 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
             ),
             // Effet shimmer sur tout le bouton
             Positioned.fill(
-              child: IgnorePointer(
-                child: AnimatedBuilder(
-                  animation: _shimmerController,
-                  builder: (context, child) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Transform.translate(
-                        offset: Offset(
-                          (MediaQuery.of(context).size.width *
-                              _shimmerController.value) -
-                              (MediaQuery.of(context).size.width * 0.5),
-                          0,
-                        ),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                Colors.white.withValues(alpha: 0.3),
-                                Colors.transparent,
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+              child: SimpleShimmerEffect(
+                animationValue: shimmerController.value,
+                borderRadius: 12,
               ),
             ),
           ],

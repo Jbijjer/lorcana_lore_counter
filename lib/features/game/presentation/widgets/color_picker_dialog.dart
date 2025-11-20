@@ -2,6 +2,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
+import '../../../../widgets/dialogs/common/dialog_header.dart';
+import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
+import '../../../../widgets/dialogs/common/shimmer_effect.dart';
+import '../../../../widgets/dialogs/common/sparkles_painter.dart';
 
 /// Dialogue pour sélectionner les couleurs de fond d'un joueur
 class ColorPickerDialog extends StatefulWidget {
@@ -21,18 +26,15 @@ class ColorPickerDialog extends StatefulWidget {
 }
 
 class _ColorPickerDialogState extends State<ColorPickerDialog>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, DialogAnimationsMixin {
   List<Color> _selectedColors = [];
-  late AnimationController _dialogAnimationController;
-  late AnimationController _shimmerController;
   late AnimationController _colorSelectController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotationAnimation;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    initDialogAnimations();
+
     // Initialiser avec les couleurs actuelles
     if (widget.currentColorStart == widget.currentColorEnd) {
       // Une seule couleur
@@ -42,50 +44,17 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
       _selectedColors = [widget.currentColorStart, widget.currentColorEnd];
     }
 
-    // Animation d'entrée du dialog
-    _dialogAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.elasticOut,
-    );
-
-    _rotationAnimation = Tween<double>(
-      begin: -0.1,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeOutBack,
-    ));
-
-    _fadeAnimation = CurvedAnimation(
-      parent: _dialogAnimationController,
-      curve: Curves.easeIn,
-    );
-
-    // Animation shimmer pour l'aperçu
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-
     // Animation pour la sélection de couleur
     _colorSelectController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-
-    _dialogAnimationController.forward();
   }
 
   @override
   void dispose() {
-    _dialogAnimationController.dispose();
-    _shimmerController.dispose();
     _colorSelectController.dispose();
+    disposeDialogAnimations();
     super.dispose();
   }
 
@@ -109,7 +78,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
 
   Widget _buildPreview() {
     return AnimatedBuilder(
-      animation: _shimmerController,
+      animation: shimmerController,
       builder: (context, child) {
         return Stack(
           children: [
@@ -241,7 +210,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                   borderRadius: BorderRadius.circular(16),
                   child: Transform.translate(
                     offset: Offset(
-                      -200 + (_shimmerController.value * 400),
+                      -200 + (shimmerController.value * 400),
                       0,
                     ),
                     child: Container(
@@ -269,213 +238,158 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: RotationTransition(
-          turns: _rotationAnimation,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 600),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.playerColor.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // En-tête avec effet
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: widget.playerColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.palette,
-                          color: widget.playerColor,
-                          size: 28,
-                        ),
+    return buildAnimatedDialog(
+      child: AnimatedDialogWrapper(
+        accentColor: widget.playerColor,
+        maxWidth: 600,
+        maxHeight: 600,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // En-tête
+            DialogHeader(
+              icon: Icons.palette,
+              title: 'Couleur de fond',
+              accentColor: widget.playerColor,
+              onClose: () => Navigator.of(context).pop(),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Aperçu avec shimmer
+            _buildPreview(),
+
+            const SizedBox(height: 16),
+
+            // Info sur la sélection
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: Colors.grey[700],
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ShaderMask(
-                          shaderCallback: (bounds) {
-                            return LinearGradient(
-                              colors: [
-                                widget.playerColor,
-                                widget.playerColor.withValues(alpha: 0.6),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // Grille de couleurs avec rectangles
+            Flexible(
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.2,
+                ),
+                itemCount: AppTheme.lorcanaColors.length,
+                itemBuilder: (context, index) {
+                  final color = AppTheme.lorcanaColors[index];
+                  final isSelected = _selectedColors.contains(color);
+
+                  return InkWell(
+                    onTap: () {
+                      HapticUtils.light();
+                      _toggleColor(color);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.black.withValues(alpha: 0.2),
+                          width: isSelected ? 4 : 2,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  blurRadius: 12,
+                                  spreadRadius: 3,
+                                ),
+                              ]
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
                               ],
-                            ).createShader(bounds);
-                          },
-                          child: Text(
-                            'Couleur de fond',
-                            style:
-                                Theme.of(context).textTheme.titleMedium?.copyWith(
+                      ),
+                      child: isSelected
+                          ? Stack(
+                              children: [
+                                // Checkmark
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: const BoxDecoration(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                      shape: BoxShape.circle,
                                     ),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Aperçu avec shimmer
-                  _buildPreview(),
-
-                  const SizedBox(height: 16),
-
-                  // Info sur la sélection
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 16,
-                        color: Colors.grey[700],
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Grille de couleurs avec rectangles
-                  Flexible(
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 1.2,
-                      ),
-                      itemCount: AppTheme.lorcanaColors.length,
-                      itemBuilder: (context, index) {
-                        final color = AppTheme.lorcanaColors[index];
-                        final isSelected = _selectedColors.contains(color);
-
-                        return InkWell(
-                          onTap: () {
-                            HapticUtils.light();
-                            _toggleColor(color);
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              color: color,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isSelected
-                                    ? Colors.white
-                                    : Colors.black.withValues(alpha: 0.2),
-                                width: isSelected ? 4 : 2,
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: Colors.white.withValues(alpha: 0.6),
-                                        blurRadius: 12,
-                                        spreadRadius: 3,
-                                      ),
-                                    ]
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.1),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                            ),
-                            child: isSelected
-                                ? Stack(
-                                    children: [
-                                      // Checkmark
-                                      Positioned(
-                                        top: 4,
-                                        right: 4,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            Icons.check,
-                                            size: 16,
-                                            color: color,
-                                          ),
-                                        ),
-                                      ),
-                                      // Particules scintillantes
-                                      Positioned.fill(
-                                        child: _buildColorSparkles(color),
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                          ),
-                        );
-                      },
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 16,
+                                      color: color,
+                                    ),
+                                  ),
+                                ),
+                                // Particules scintillantes
+                                Positioned.fill(
+                                  child: _buildColorSparkles(color),
+                                ),
+                              ],
+                            )
+                          : null,
                     ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Boutons d'action
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          HapticUtils.light();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          'Annuler',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildConfirmButton(),
-                    ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
-          ),
+
+            const SizedBox(height: 16),
+
+            // Boutons d'action
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    HapticUtils.light();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Annuler',
+                    style: TextStyle(
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _buildConfirmButton(),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -483,11 +397,11 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
 
   Widget _buildColorSparkles(Color color) {
     return AnimatedBuilder(
-      animation: _shimmerController,
+      animation: shimmerController,
       builder: (context, child) {
         return CustomPaint(
-          painter: _ColorSparklesPainter(
-            animationValue: _shimmerController.value,
+          painter: ContrastSparklesPainter(
+            animationValue: shimmerController.value,
             baseColor: color,
           ),
         );
@@ -565,44 +479,4 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
       ),
     );
   }
-}
-
-/// Painter pour les particules scintillantes sur les couleurs sélectionnées
-class _ColorSparklesPainter extends CustomPainter {
-  final double animationValue;
-  final Color baseColor;
-
-  _ColorSparklesPainter({
-    required this.animationValue,
-    required this.baseColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Calculer une couleur contrastante pour les particules
-    final brightness = baseColor.computeLuminance();
-    final sparkleColor = brightness > 0.5 ? Colors.black : Colors.white;
-
-    final paint = Paint()
-      ..color = sparkleColor.withValues(alpha: 0.6)
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-
-    // Dessiner quelques étoiles scintillantes
-    final random = math.Random(42); // Seed fixe pour cohérence
-    for (int i = 0; i < 3; i++) {
-      final x = size.width * random.nextDouble();
-      final y = size.height * random.nextDouble();
-      final sparklePhase = (animationValue + (i * 0.3)) % 1.0;
-      final opacity = (math.sin(sparklePhase * math.pi * 2) + 1) / 2;
-
-      paint.color = sparkleColor.withValues(alpha: opacity * 0.8);
-
-      // Dessiner une petite étoile
-      canvas.drawCircle(Offset(x, y), 2, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_ColorSparklesPainter oldDelegate) => true;
 }
