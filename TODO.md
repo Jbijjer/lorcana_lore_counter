@@ -56,13 +56,13 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - Cela génère les fichiers `.freezed.dart` et `.g.dart` nécessaires
 
 **🔨 Intégration restante :**
-- [ ] Créer le widget de menu radial pour le bouton central
-  - [ ] Animation d'expansion/contraction
+- [x] Créer le widget de menu radial pour le bouton central
+  - [x] Animation d'expansion/contraction
   - [ ] Bouton "Statistiques" dans le menu
-  - [ ] Bouton "Reset" dans le menu
+  - [x] Bouton "Reset" dans le menu
   - [ ] Bouton "Timer" dans le menu (si implémenté)
   - [ ] Bouton "Historique des rounds" dans le menu
-- [ ] Modifier `_CenterDivider` dans `play_screen.dart` pour utiliser le menu radial
+- [x] Modifier `_CenterDivider` dans `play_screen.dart` pour utiliser le menu radial
 - [ ] Ajouter la navigation vers `StatisticsScreen` depuis le menu radial
 - [ ] Tester la sauvegarde et l'affichage des statistiques
 
@@ -87,17 +87,17 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 - [x] Encore plus de contraste dans les thèmes
 - [x] Des contours noirs
-- [ ] Des couleurs flagrantes
-- [ ] Les dégradés ne fonctionnent pas
+- [x] Des couleurs flagrantes
+- [x] Les dégradés ne fonctionnent pas
 
 ## 📊 Moyenne Priorité
 
 ### 6. Match Tracking (Best of X)
 - [x] Ajouter sélection mode: Best of 1/2/3/5 ✅ (Commit 9d92e7b)
-- [ ] Compteur de victoires par joueur
-- [ ] Afficher "Match X of Y"
-- [ ] Détecter fin de match complet
-- [ ] Résumé final du match
+- [x] Compteur de victoires par joueur
+- [x] Afficher "Match X of Y"
+- [x] Détecter fin de match complet
+- [x] Résumé final du match
 
 ### 7. Historique des parties
 - [ ] Sauvegarder les 15 dernières parties complètes
@@ -133,10 +133,10 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [ ] Alerte visuelle quand le compteur atteint 0
   - [ ] Fin de partie automatique à 0 (partie nulle)
   - [ ] Possibilité de réinitialiser le compteur
-- [ ] Bouton "Reset" : remise à zéro rapide
-  - [ ] Remet les scores à 0 pour les deux joueurs
-  - [ ] Dialog de confirmation
-  - [ ] Animation de transition
+- [x] Bouton "Reset" : remise à zéro rapide
+  - [x] Remet les scores à 0 pour les deux joueurs
+  - [x] Dialog de confirmation
+  - [x] Animation de transition
 - [ ] Autres boutons potentiels :
   - [ ] Bouton historique des rounds
   - [ ] Bouton paramètres rapides
@@ -172,16 +172,16 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [ ] Garder les informations du tournoi en cours
 
 **Système Best of 3 par round :**
-- [ ] Chaque round de tournoi est un Best of 3 (match de 3 parties)
-- [ ] Afficher des indicateurs visuels (2 ronds ou étoiles) pour suivre les victoires
-  - [ ] 2 indicateurs gris par défaut
-  - [ ] Deviennent blancs (ou colorés) quand on remporte une partie
-  - [ ] Premier joueur à 2 victoires remporte le round
+- [x] Chaque round de tournoi est un Best of 3 (match de 3 parties)
+- [x] Afficher des indicateurs visuels (2 ronds ou étoiles) pour suivre les victoires
+  - [x] 2 indicateurs gris par défaut
+  - [x] Deviennent blancs (ou colorés) quand on remporte une partie
+  - [x] Premier joueur à 2 victoires remporte le round
 - [ ] À la fin d'un round (Best of 3), proposer automatiquement "Nouveau round"
 - [ ] Sauvegarder les résultats de chaque partie du round
 
 **Dialog de fin de partie (après victoire) :**
-- [ ] Afficher le gagnant et les scores finaux
+- [x] Afficher le gagnant et les scores finaux
 - [ ] Formulaire pour capturer les informations :
   - [ ] Deck de l'adversaire (2 couleurs)
   - [ ] Position de départ (Play/Draw)
@@ -198,16 +198,16 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Export en CSV/JSON
 
 ### 14. Animations et polish
-- [ ] Animation sur changement de score (scale, bounce)
+- [x] Animation sur changement de score (scale, bounce)
 - [x] Particules de victoire (confetti, étoiles) ✅ (Commits 61e3bd7, 440411c, 42af3e9, 584b7b3, 8197c08, 50f3ddc, a42a34c, 23b1625 - confettis Mickey)
-- [ ] Transitions de page fluides
-- [ ] Animations de gradient
+- [x] Transitions de page fluides
+- [x] Animations de gradient
 - [ ] Effets visuels amusants (Lottie/Rive pour animations vectorielles)
 - [x] Animation de célébration à 20 points (feux d'artifice, particules) ✅ (confettis Mickey)
 - [x] Feedback visuel sur les interactions (ripple effects, micro-animations) ✅ (Commits 4b07c92, 0849033 - shimmer effects)
-- [ ] Animations de transition entre les scores (counter animation)
-- [ ] Shake animation quand le score descend
-- [ ] Glow effect autour du bouton central
+- [x] Animations de transition entre les scores (counter animation)
+- [x] Shake animation quand le score descend
+- [x] Glow effect autour du bouton central
 
 ### 16. Support multi-langues
 - [ ] Français
