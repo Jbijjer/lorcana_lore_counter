@@ -110,7 +110,9 @@ class StatisticsOverviewCard extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 16),
-              ...statistics.playerStats.values.map(
+              ...(statistics.playerStats.values.toList()
+                ..sort((a, b) => a.playerName.compareTo(b.playerName)))
+                .map(
                 (playerStats) => _PlayerStatsRow(
                   stats: playerStats,
                 ),
