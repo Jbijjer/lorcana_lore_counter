@@ -510,7 +510,11 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.transparentColor,
           shadowColor: AppTheme.transparentColor,
+          elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
         child: const Row(
           mainAxisSize: MainAxisSize.min,
