@@ -23,13 +23,20 @@ mixin _$GameState {
   String get id => throw _privateConstructorUsedError;
   Player get player1 => throw _privateConstructorUsedError;
   Player get player2 => throw _privateConstructorUsedError;
+  DateTime get startTime => throw _privateConstructorUsedError;
+  DateTime? get endTime => throw _privateConstructorUsedError;
   int get player1Score => throw _privateConstructorUsedError;
   int get player2Score => throw _privateConstructorUsedError;
   int get currentRound => throw _privateConstructorUsedError;
   List<RoundScore> get rounds => throw _privateConstructorUsedError;
-  DateTime get startTime => throw _privateConstructorUsedError;
-  DateTime? get endTime => throw _privateConstructorUsedError;
   GameStatus get status => throw _privateConstructorUsedError;
+  MatchFormat get matchFormat => throw _privateConstructorUsedError;
+  int get player1Wins => throw _privateConstructorUsedError;
+  int get player2Wins => throw _privateConstructorUsedError;
+  bool get player1VictoryDeclined => throw _privateConstructorUsedError;
+  bool get player2VictoryDeclined => throw _privateConstructorUsedError;
+  int get player1VictoryThreshold => throw _privateConstructorUsedError;
+  int get player2VictoryThreshold => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -46,13 +53,20 @@ abstract class $GameStateCopyWith<$Res> {
       {String id,
       Player player1,
       Player player2,
+      DateTime startTime,
+      DateTime? endTime,
       int player1Score,
       int player2Score,
       int currentRound,
       List<RoundScore> rounds,
-      DateTime startTime,
-      DateTime? endTime,
-      GameStatus status});
+      GameStatus status,
+      MatchFormat matchFormat,
+      int player1Wins,
+      int player2Wins,
+      bool player1VictoryDeclined,
+      bool player2VictoryDeclined,
+      int player1VictoryThreshold,
+      int player2VictoryThreshold});
 
   $PlayerCopyWith<$Res> get player1;
   $PlayerCopyWith<$Res> get player2;
@@ -74,13 +88,20 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
     Object? id = null,
     Object? player1 = null,
     Object? player2 = null,
+    Object? startTime = null,
+    Object? endTime = freezed,
     Object? player1Score = null,
     Object? player2Score = null,
     Object? currentRound = null,
     Object? rounds = null,
-    Object? startTime = null,
-    Object? endTime = freezed,
     Object? status = null,
+    Object? matchFormat = null,
+    Object? player1Wins = null,
+    Object? player2Wins = null,
+    Object? player1VictoryDeclined = null,
+    Object? player2VictoryDeclined = null,
+    Object? player1VictoryThreshold = null,
+    Object? player2VictoryThreshold = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -95,6 +116,14 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.player2
           : player2 // ignore: cast_nullable_to_non_nullable
               as Player,
+      startTime: null == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       player1Score: null == player1Score
           ? _value.player1Score
           : player1Score // ignore: cast_nullable_to_non_nullable
@@ -111,18 +140,38 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.rounds
           : rounds // ignore: cast_nullable_to_non_nullable
               as List<RoundScore>,
-      startTime: null == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      endTime: freezed == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as GameStatus,
+      matchFormat: null == matchFormat
+          ? _value.matchFormat
+          : matchFormat // ignore: cast_nullable_to_non_nullable
+              as MatchFormat,
+      player1Wins: null == player1Wins
+          ? _value.player1Wins
+          : player1Wins // ignore: cast_nullable_to_non_nullable
+              as int,
+      player2Wins: null == player2Wins
+          ? _value.player2Wins
+          : player2Wins // ignore: cast_nullable_to_non_nullable
+              as int,
+      player1VictoryDeclined: null == player1VictoryDeclined
+          ? _value.player1VictoryDeclined
+          : player1VictoryDeclined // ignore: cast_nullable_to_non_nullable
+              as bool,
+      player2VictoryDeclined: null == player2VictoryDeclined
+          ? _value.player2VictoryDeclined
+          : player2VictoryDeclined // ignore: cast_nullable_to_non_nullable
+              as bool,
+      player1VictoryThreshold: null == player1VictoryThreshold
+          ? _value.player1VictoryThreshold
+          : player1VictoryThreshold // ignore: cast_nullable_to_non_nullable
+              as int,
+      player2VictoryThreshold: null == player2VictoryThreshold
+          ? _value.player2VictoryThreshold
+          : player2VictoryThreshold // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 
@@ -155,13 +204,20 @@ abstract class _$$GameStateImplCopyWith<$Res>
       {String id,
       Player player1,
       Player player2,
+      DateTime startTime,
+      DateTime? endTime,
       int player1Score,
       int player2Score,
       int currentRound,
       List<RoundScore> rounds,
-      DateTime startTime,
-      DateTime? endTime,
-      GameStatus status});
+      GameStatus status,
+      MatchFormat matchFormat,
+      int player1Wins,
+      int player2Wins,
+      bool player1VictoryDeclined,
+      bool player2VictoryDeclined,
+      int player1VictoryThreshold,
+      int player2VictoryThreshold});
 
   @override
   $PlayerCopyWith<$Res> get player1;
@@ -183,13 +239,20 @@ class __$$GameStateImplCopyWithImpl<$Res>
     Object? id = null,
     Object? player1 = null,
     Object? player2 = null,
+    Object? startTime = null,
+    Object? endTime = freezed,
     Object? player1Score = null,
     Object? player2Score = null,
     Object? currentRound = null,
     Object? rounds = null,
-    Object? startTime = null,
-    Object? endTime = freezed,
     Object? status = null,
+    Object? matchFormat = null,
+    Object? player1Wins = null,
+    Object? player2Wins = null,
+    Object? player1VictoryDeclined = null,
+    Object? player2VictoryDeclined = null,
+    Object? player1VictoryThreshold = null,
+    Object? player2VictoryThreshold = null,
   }) {
     return _then(_$GameStateImpl(
       id: null == id
@@ -204,6 +267,14 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value.player2
           : player2 // ignore: cast_nullable_to_non_nullable
               as Player,
+      startTime: null == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       player1Score: null == player1Score
           ? _value.player1Score
           : player1Score // ignore: cast_nullable_to_non_nullable
@@ -220,18 +291,38 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value._rounds
           : rounds // ignore: cast_nullable_to_non_nullable
               as List<RoundScore>,
-      startTime: null == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      endTime: freezed == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as GameStatus,
+      matchFormat: null == matchFormat
+          ? _value.matchFormat
+          : matchFormat // ignore: cast_nullable_to_non_nullable
+              as MatchFormat,
+      player1Wins: null == player1Wins
+          ? _value.player1Wins
+          : player1Wins // ignore: cast_nullable_to_non_nullable
+              as int,
+      player2Wins: null == player2Wins
+          ? _value.player2Wins
+          : player2Wins // ignore: cast_nullable_to_non_nullable
+              as int,
+      player1VictoryDeclined: null == player1VictoryDeclined
+          ? _value.player1VictoryDeclined
+          : player1VictoryDeclined // ignore: cast_nullable_to_non_nullable
+              as bool,
+      player2VictoryDeclined: null == player2VictoryDeclined
+          ? _value.player2VictoryDeclined
+          : player2VictoryDeclined // ignore: cast_nullable_to_non_nullable
+              as bool,
+      player1VictoryThreshold: null == player1VictoryThreshold
+          ? _value.player1VictoryThreshold
+          : player1VictoryThreshold // ignore: cast_nullable_to_non_nullable
+              as int,
+      player2VictoryThreshold: null == player2VictoryThreshold
+          ? _value.player2VictoryThreshold
+          : player2VictoryThreshold // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -243,13 +334,20 @@ class _$GameStateImpl extends _GameState {
       {required this.id,
       required this.player1,
       required this.player2,
+      required this.startTime,
+      this.endTime,
       this.player1Score = 0,
       this.player2Score = 0,
       this.currentRound = 1,
       final List<RoundScore> rounds = const [],
-      required this.startTime,
-      this.endTime,
-      this.status = GameStatus.inProgress})
+      this.status = GameStatus.inProgress,
+      this.matchFormat = MatchFormat.bestOf3,
+      this.player1Wins = 0,
+      this.player2Wins = 0,
+      this.player1VictoryDeclined = false,
+      this.player2VictoryDeclined = false,
+      this.player1VictoryThreshold = 20,
+      this.player2VictoryThreshold = 20})
       : _rounds = rounds,
         super._();
 
@@ -262,6 +360,10 @@ class _$GameStateImpl extends _GameState {
   final Player player1;
   @override
   final Player player2;
+  @override
+  final DateTime startTime;
+  @override
+  final DateTime? endTime;
   @override
   @JsonKey()
   final int player1Score;
@@ -281,16 +383,33 @@ class _$GameStateImpl extends _GameState {
   }
 
   @override
-  final DateTime startTime;
-  @override
-  final DateTime? endTime;
-  @override
   @JsonKey()
   final GameStatus status;
+  @override
+  @JsonKey()
+  final MatchFormat matchFormat;
+  @override
+  @JsonKey()
+  final int player1Wins;
+  @override
+  @JsonKey()
+  final int player2Wins;
+  @override
+  @JsonKey()
+  final bool player1VictoryDeclined;
+  @override
+  @JsonKey()
+  final bool player2VictoryDeclined;
+  @override
+  @JsonKey()
+  final int player1VictoryThreshold;
+  @override
+  @JsonKey()
+  final int player2VictoryThreshold;
 
   @override
   String toString() {
-    return 'GameState(id: $id, player1: $player1, player2: $player2, player1Score: $player1Score, player2Score: $player2Score, currentRound: $currentRound, rounds: $rounds, startTime: $startTime, endTime: $endTime, status: $status)';
+    return 'GameState(id: $id, player1: $player1, player2: $player2, startTime: $startTime, endTime: $endTime, player1Score: $player1Score, player2Score: $player2Score, currentRound: $currentRound, rounds: $rounds, status: $status, matchFormat: $matchFormat, player1Wins: $player1Wins, player2Wins: $player2Wins, player1VictoryDeclined: $player1VictoryDeclined, player2VictoryDeclined: $player2VictoryDeclined, player1VictoryThreshold: $player1VictoryThreshold, player2VictoryThreshold: $player2VictoryThreshold)';
   }
 
   @override
@@ -301,6 +420,9 @@ class _$GameStateImpl extends _GameState {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.player1, player1) || other.player1 == player1) &&
             (identical(other.player2, player2) || other.player2 == player2) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
             (identical(other.player1Score, player1Score) ||
                 other.player1Score == player1Score) &&
             (identical(other.player2Score, player2Score) ||
@@ -308,10 +430,23 @@ class _$GameStateImpl extends _GameState {
             (identical(other.currentRound, currentRound) ||
                 other.currentRound == currentRound) &&
             const DeepCollectionEquality().equals(other._rounds, _rounds) &&
-            (identical(other.startTime, startTime) ||
-                other.startTime == startTime) &&
-            (identical(other.endTime, endTime) || other.endTime == endTime) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.matchFormat, matchFormat) ||
+                other.matchFormat == matchFormat) &&
+            (identical(other.player1Wins, player1Wins) ||
+                other.player1Wins == player1Wins) &&
+            (identical(other.player2Wins, player2Wins) ||
+                other.player2Wins == player2Wins) &&
+            (identical(other.player1VictoryDeclined, player1VictoryDeclined) ||
+                other.player1VictoryDeclined == player1VictoryDeclined) &&
+            (identical(other.player2VictoryDeclined, player2VictoryDeclined) ||
+                other.player2VictoryDeclined == player2VictoryDeclined) &&
+            (identical(
+                    other.player1VictoryThreshold, player1VictoryThreshold) ||
+                other.player1VictoryThreshold == player1VictoryThreshold) &&
+            (identical(
+                    other.player2VictoryThreshold, player2VictoryThreshold) ||
+                other.player2VictoryThreshold == player2VictoryThreshold));
   }
 
   @JsonKey(ignore: true)
@@ -321,13 +456,20 @@ class _$GameStateImpl extends _GameState {
       id,
       player1,
       player2,
+      startTime,
+      endTime,
       player1Score,
       player2Score,
       currentRound,
       const DeepCollectionEquality().hash(_rounds),
-      startTime,
-      endTime,
-      status);
+      status,
+      matchFormat,
+      player1Wins,
+      player2Wins,
+      player1VictoryDeclined,
+      player2VictoryDeclined,
+      player1VictoryThreshold,
+      player2VictoryThreshold);
 
   @JsonKey(ignore: true)
   @override
@@ -348,13 +490,20 @@ abstract class _GameState extends GameState {
       {required final String id,
       required final Player player1,
       required final Player player2,
+      required final DateTime startTime,
+      final DateTime? endTime,
       final int player1Score,
       final int player2Score,
       final int currentRound,
       final List<RoundScore> rounds,
-      required final DateTime startTime,
-      final DateTime? endTime,
-      final GameStatus status}) = _$GameStateImpl;
+      final GameStatus status,
+      final MatchFormat matchFormat,
+      final int player1Wins,
+      final int player2Wins,
+      final bool player1VictoryDeclined,
+      final bool player2VictoryDeclined,
+      final int player1VictoryThreshold,
+      final int player2VictoryThreshold}) = _$GameStateImpl;
   const _GameState._() : super._();
 
   factory _GameState.fromJson(Map<String, dynamic> json) =
@@ -367,6 +516,10 @@ abstract class _GameState extends GameState {
   @override
   Player get player2;
   @override
+  DateTime get startTime;
+  @override
+  DateTime? get endTime;
+  @override
   int get player1Score;
   @override
   int get player2Score;
@@ -375,11 +528,21 @@ abstract class _GameState extends GameState {
   @override
   List<RoundScore> get rounds;
   @override
-  DateTime get startTime;
-  @override
-  DateTime? get endTime;
-  @override
   GameStatus get status;
+  @override
+  MatchFormat get matchFormat;
+  @override
+  int get player1Wins;
+  @override
+  int get player2Wins;
+  @override
+  bool get player1VictoryDeclined;
+  @override
+  bool get player2VictoryDeclined;
+  @override
+  int get player1VictoryThreshold;
+  @override
+  int get player2VictoryThreshold;
   @override
   @JsonKey(ignore: true)
   _$$GameStateImplCopyWith<_$GameStateImpl> get copyWith =>

@@ -28,7 +28,7 @@ mixin _$Player {
   Color get backgroundColorStart => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
   Color get backgroundColorEnd => throw _privateConstructorUsedError;
-  int get iconCodePoint => throw _privateConstructorUsedError;
+  String get iconAssetPath => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -48,7 +48,7 @@ abstract class $PlayerCopyWith<$Res> {
       Color backgroundColorStart,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
       Color backgroundColorEnd,
-      int iconCodePoint});
+      String iconAssetPath});
 }
 
 /// @nodoc
@@ -69,7 +69,7 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
     Object? color = null,
     Object? backgroundColorStart = null,
     Object? backgroundColorEnd = null,
-    Object? iconCodePoint = null,
+    Object? iconAssetPath = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -92,10 +92,10 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
           ? _value.backgroundColorEnd
           : backgroundColorEnd // ignore: cast_nullable_to_non_nullable
               as Color,
-      iconCodePoint: null == iconCodePoint
-          ? _value.iconCodePoint
-          : iconCodePoint // ignore: cast_nullable_to_non_nullable
-              as int,
+      iconAssetPath: null == iconAssetPath
+          ? _value.iconAssetPath
+          : iconAssetPath // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -115,7 +115,7 @@ abstract class _$$PlayerImplCopyWith<$Res> implements $PlayerCopyWith<$Res> {
       Color backgroundColorStart,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
       Color backgroundColorEnd,
-      int iconCodePoint});
+      String iconAssetPath});
 }
 
 /// @nodoc
@@ -134,7 +134,7 @@ class __$$PlayerImplCopyWithImpl<$Res>
     Object? color = null,
     Object? backgroundColorStart = null,
     Object? backgroundColorEnd = null,
-    Object? iconCodePoint = null,
+    Object? iconAssetPath = null,
   }) {
     return _then(_$PlayerImpl(
       id: null == id
@@ -157,10 +157,10 @@ class __$$PlayerImplCopyWithImpl<$Res>
           ? _value.backgroundColorEnd
           : backgroundColorEnd // ignore: cast_nullable_to_non_nullable
               as Color,
-      iconCodePoint: null == iconCodePoint
-          ? _value.iconCodePoint
-          : iconCodePoint // ignore: cast_nullable_to_non_nullable
-              as int,
+      iconAssetPath: null == iconAssetPath
+          ? _value.iconAssetPath
+          : iconAssetPath // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -177,7 +177,7 @@ class _$PlayerImpl implements _Player {
       required this.backgroundColorStart,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
       required this.backgroundColorEnd,
-      this.iconCodePoint = 0xe491});
+      this.iconAssetPath = 'assets/images/player_icons/mickey_icon.png'});
 
   factory _$PlayerImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlayerImplFromJson(json);
@@ -197,11 +197,11 @@ class _$PlayerImpl implements _Player {
   final Color backgroundColorEnd;
   @override
   @JsonKey()
-  final int iconCodePoint;
+  final String iconAssetPath;
 
   @override
   String toString() {
-    return 'Player(id: $id, name: $name, color: $color, backgroundColorStart: $backgroundColorStart, backgroundColorEnd: $backgroundColorEnd, iconCodePoint: $iconCodePoint)';
+    return 'Player(id: $id, name: $name, color: $color, backgroundColorStart: $backgroundColorStart, backgroundColorEnd: $backgroundColorEnd, iconAssetPath: $iconAssetPath)';
   }
 
   @override
@@ -216,14 +216,14 @@ class _$PlayerImpl implements _Player {
                 other.backgroundColorStart == backgroundColorStart) &&
             (identical(other.backgroundColorEnd, backgroundColorEnd) ||
                 other.backgroundColorEnd == backgroundColorEnd) &&
-            (identical(other.iconCodePoint, iconCodePoint) ||
-                other.iconCodePoint == iconCodePoint));
+            (identical(other.iconAssetPath, iconAssetPath) ||
+                other.iconAssetPath == iconAssetPath));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, color,
-      backgroundColorStart, backgroundColorEnd, iconCodePoint);
+      backgroundColorStart, backgroundColorEnd, iconAssetPath);
 
   @JsonKey(ignore: true)
   @override
@@ -249,7 +249,7 @@ abstract class _Player implements Player {
       required final Color backgroundColorStart,
       @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
       required final Color backgroundColorEnd,
-      final int iconCodePoint}) = _$PlayerImpl;
+      final String iconAssetPath}) = _$PlayerImpl;
 
   factory _Player.fromJson(Map<String, dynamic> json) = _$PlayerImpl.fromJson;
 
@@ -267,7 +267,7 @@ abstract class _Player implements Player {
   @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
   Color get backgroundColorEnd;
   @override
-  int get iconCodePoint;
+  String get iconAssetPath;
   @override
   @JsonKey(ignore: true)
   _$$PlayerImplCopyWith<_$PlayerImpl> get copyWith =>
