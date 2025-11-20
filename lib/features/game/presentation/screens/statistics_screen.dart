@@ -44,14 +44,6 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         ),
         centerTitle: true,
         elevation: 0,
-        actions: [
-          if (allGames.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.delete_sweep),
-              tooltip: 'Tout supprimer',
-              onPressed: () => _showDeleteAllConfirmation(context),
-            ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Theme.of(context).colorScheme.primary,
@@ -203,56 +195,6 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onPrimary),
               const SizedBox(width: 8),
               const Text('Partie supprimée'),
-            ],
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    });
-  }
-
-  void _showDeleteAllConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Supprimer tout l\'historique ?'),
-        content: const Text(
-          'Cette action supprimera TOUTES les parties et statistiques. '
-          'Cette action est irréversible.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _deleteAllGames();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: const Text('Tout supprimer'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _deleteAllGames() {
-    HapticUtils.medium();
-    final service = ref.read(gameStatisticsServiceProvider);
-    service.deleteAllGames().then((_) {
-      setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onPrimary),
-              const SizedBox(width: 8),
-              const Text('Tout l\'historique a été supprimé'),
             ],
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,

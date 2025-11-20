@@ -162,8 +162,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 color: AppTheme.errorColor,
               ),
             ),
-            title: const Text('Effacer toutes les données'),
-            subtitle: const Text('Supprime l\'historique et les statistiques'),
+            title: const Text('Effacer l\'historique'),
+            subtitle: const Text('Supprime l\'historique des parties et statistiques'),
             onTap: _showDeleteAllDataConfirmation,
           ),
         ],
@@ -310,8 +310,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
         content: const Text(
-          'Êtes-vous VRAIMENT sûr de vouloir supprimer TOUTES les données ? '
-          'Cela inclut l\'historique des parties, les statistiques et la partie en cours. '
+          'Êtes-vous VRAIMENT sûr de vouloir effacer tout l\'historique ? '
+          'Cela supprimera l\'historique des parties, les statistiques et la partie en cours. '
+          'Les joueurs seront conservés. '
           'Cette action est IRRÉVERSIBLE.',
         ),
         actions: [
@@ -324,7 +325,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.errorColor,
             ),
-            child: const Text('Tout supprimer'),
+            child: const Text('Effacer l\'historique'),
           ),
         ],
       ),
@@ -347,7 +348,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               Icon(Icons.check_circle, color: AppTheme.pureWhite),
               SizedBox(width: 8),
-              Text('Toutes les données ont été supprimées'),
+              Text('L\'historique a été effacé'),
             ],
           ),
           backgroundColor: AppTheme.errorColor,
