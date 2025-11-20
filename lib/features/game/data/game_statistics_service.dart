@@ -162,8 +162,8 @@ class GameStatisticsService {
       player1Wins: gameState.player1Wins,
       player2Wins: gameState.player2Wins,
       rounds: rounds,
-      player1DeckColors: gameState.player1.deckColors,
-      player2DeckColors: gameState.player2.deckColors,
+      player1DeckColors: gameState.player1DeckColors,
+      player2DeckColors: gameState.player2DeckColors,
     );
   }
 

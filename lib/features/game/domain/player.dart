@@ -15,7 +15,6 @@ class Player with _$Player {
     @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorStart,
     @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorEnd,
     @Default('assets/images/player_icons/mickey_icon.png') String iconAssetPath,
-    @Default([]) List<String> deckColors, // Les 2 couleurs du deck (Amber, Amethyst, Emerald, Ruby, Sapphire, Steel)
   }) = _Player;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);

@@ -25,6 +25,8 @@ class GameState with _$GameState {
     @Default(false) bool player2VictoryDeclined,
     @Default(20) int player1VictoryThreshold,
     @Default(20) int player2VictoryThreshold,
+    @Default([]) List<String> player1DeckColors, // Les 2 couleurs du deck du joueur 1 pour cette partie
+    @Default([]) List<String> player2DeckColors, // Les 2 couleurs du deck du joueur 2 pour cette partie
   }) = _GameState;
 
   const GameState._();
