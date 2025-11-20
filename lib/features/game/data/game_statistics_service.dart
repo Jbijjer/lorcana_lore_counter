@@ -5,8 +5,8 @@ import '../domain/game_state.dart';
 
 part 'game_statistics_service.g.dart';
 
-/// Provider pour le service de statistiques
-@riverpod
+/// Provider pour le service de statistiques (singleton)
+@Riverpod(keepAlive: true)
 GameStatisticsService gameStatisticsService(GameStatisticsServiceRef ref) {
   return GameStatisticsService();
 }
