@@ -280,6 +280,11 @@ class _VictoryOverlayState extends State<VictoryOverlay>
     final x = radius * math.cos(angle);
     final y = radius * math.sin(angle);
 
+    // Déterminer l'image à utiliser selon le label
+    final imageAsset = label == 'Oui'
+        ? 'assets/images/jeton_vert.png'
+        : 'assets/images/jeton_rouge.png';
+
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -301,12 +306,7 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                     width: 70,
                     height: 70,
                     decoration: BoxDecoration(
-                      color: color,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 3,
-                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.4),
@@ -315,15 +315,40 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        label,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Image du jeton (vert ou rouge)
+                        ClipOval(
+                          child: Image.asset(
+                            imageAsset,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
+                        // Texte par-dessus
+                        Text(
+                          label,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.8),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                offset: const Offset(0, 0),
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
