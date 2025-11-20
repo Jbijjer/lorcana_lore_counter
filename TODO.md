@@ -2,6 +2,30 @@
 
 Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pour compteurs de score.
 
+## 🎉 Travaux récents (derniers commits)
+
+**Refactorisation et améliorations des dialogues:**
+- ♻️ Refactorisation complète des dialogues avec widgets atomiques réutilisables (Commit 859fd8f)
+- 🐛 Corrections multiples des dialogues (scroll, taille boutons, SparklesOverlay)
+- ✨ Bouton 'Nouveau joueur' toujours visible dans les dialogues
+
+**Animations et effets visuels:**
+- 🎨 Confettis Mickey avec animations améliorées (disparition progressive, échelonnement)
+- ✨ Animation de flip avec grandissement préalable
+- ✨ Effets shimmer sur tous les boutons de sélection de joueurs
+- ⚡ Optimisation de la vitesse des confettis
+
+**Menu radial et victoire:**
+- ✨ Utilisation des jetons vert et rouge pour le menu radial de victoire (Commit 61532d5)
+- ✨ Point d'interrogation après "Victoire"
+- ✨ Jeton multicolor pour l'affichage de victoire
+- ✨ Clic sur logo = Non quand menu radial ouvert
+
+**Corrections techniques:**
+- 🔄 Migration vers Hive CE puis revert vers Hive standard
+- 🔧 Génération du code avec build_runner
+- ✨ Correction complète des warnings Flutter
+
 ## ✅ Complété
 
 - [x] Interface épurée avec dégradés colorés
@@ -69,7 +93,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 ## 📊 Moyenne Priorité
 
 ### 6. Match Tracking (Best of X)
-- [ ] Ajouter sélection mode: Best of 1/2/3/5
+- [x] Ajouter sélection mode: Best of 1/2/3/5 ✅ (Commit 9d92e7b)
 - [ ] Compteur de victoires par joueur
 - [ ] Afficher "Match X of Y"
 - [ ] Détecter fin de match complet
@@ -91,17 +115,17 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Bouton "Effacer toutes les données"
 
 ### 10. Bouton central dynamique et interactif
-- [ ] Animation flip (pièce de monnaie) lors d'événements clés
-- [ ] Transformation du bouton selon l'état de la partie :
-  - [ ] État normal : logo Lorcana (menu radial)
-  - [ ] État victoire : "Win!" (quand un joueur atteint 20 points)
-- [ ] Bouton "Win!" pour confirmer la victoire
-  - [ ] S'affiche avec animation flip quand un joueur atteint 20
-  - [ ] Retour à l'état normal si le score descend sous 20
-  - [ ] Clic confirme la victoire et affiche le dialog
-- [ ] Menu radial du bouton central (état normal)
-  - [ ] Bouton central qui fait apparaître d'autres boutons autour (menu expandable)
-  - [ ] Animation d'expansion/contraction du menu radial
+- [x] Animation flip (pièce de monnaie) lors d'événements clés ✅ (Commit 293edbf, cd0d27c)
+- [x] Transformation du bouton selon l'état de la partie : ✅
+  - [x] État normal : logo Lorcana (menu radial) ✅
+  - [x] État victoire : "Win!" (quand un joueur atteint 20 points) ✅
+- [x] Bouton "Win!" pour confirmer la victoire ✅
+  - [x] S'affiche avec animation flip quand un joueur atteint 20 ✅ (Commit 293edbf)
+  - [x] Retour à l'état normal si le score descend sous 20 ✅
+  - [x] Clic confirme la victoire et affiche le dialog ✅ (Commit 3b7fbe9)
+- [x] Menu radial du bouton central (état normal) ✅
+  - [x] Bouton central qui fait apparaître d'autres boutons autour (menu expandable) ✅
+  - [x] Animation d'expansion/contraction du menu radial ✅ (Commit 61532d5 - jetons vert/rouge)
 - [ ] Bouton "Time" : compteur manuel de tours
   - [ ] Affichage d'un compteur à droite du bouton central
   - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
@@ -118,10 +142,10 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [ ] Bouton paramètres rapides
 
 ### 11. Écran de configuration pré-partie
-- [x] Sélection des noms de joueurs
-- [x] Sélection des couleurs
-- [ ] Choix du mode (Best of X)
-- [x] Bouton "Démarrer la partie"
+- [x] Sélection des noms de joueurs ✅ (Commit e0b6458 - transformation magique)
+- [x] Sélection des couleurs ✅
+- [x] Choix du mode (Best of X) ✅ (Commit 9d92e7b)
+- [x] Bouton "Démarrer la partie" ✅
 
 ### 12. Système de Tournoi et Rounds
 **Informations à capturer par partie :**
@@ -175,12 +199,12 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ### 14. Animations et polish
 - [ ] Animation sur changement de score (scale, bounce)
-- [ ] Particules de victoire (confetti, étoiles)
+- [x] Particules de victoire (confetti, étoiles) ✅ (Commits 61e3bd7, 440411c, 42af3e9, 584b7b3, 8197c08, 50f3ddc, a42a34c, 23b1625 - confettis Mickey)
 - [ ] Transitions de page fluides
 - [ ] Animations de gradient
 - [ ] Effets visuels amusants (Lottie/Rive pour animations vectorielles)
-- [ ] Animation de célébration à 20 points (feux d'artifice, particules)
-- [ ] Feedback visuel sur les interactions (ripple effects, micro-animations)
+- [x] Animation de célébration à 20 points (feux d'artifice, particules) ✅ (confettis Mickey)
+- [x] Feedback visuel sur les interactions (ripple effects, micro-animations) ✅ (Commits 4b07c92, 0849033 - shimmer effects)
 - [ ] Animations de transition entre les scores (counter animation)
 - [ ] Shake animation quand le score descend
 - [ ] Glow effect autour du bouton central
