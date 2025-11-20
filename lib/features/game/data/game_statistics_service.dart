@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hive/hive.dart';
 import '../domain/game_history.dart';
 import '../domain/game_state.dart';
@@ -7,7 +7,7 @@ part 'game_statistics_service.g.dart';
 
 /// Provider pour le service de statistiques
 @riverpod
-GameStatisticsService gameStatisticsService(Ref ref) {
+GameStatisticsService gameStatisticsService(GameStatisticsServiceRef ref) {
   return GameStatisticsService();
 }
 
