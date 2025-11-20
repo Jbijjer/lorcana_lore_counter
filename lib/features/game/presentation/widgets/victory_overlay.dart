@@ -214,9 +214,9 @@ class _VictoryOverlayState extends State<VictoryOverlay>
                   fit: BoxFit.cover,
                 ),
               ),
-              // Texte "Victoire" par-dessus
+              // Texte "Victoire?" par-dessus
               Text(
-                'Victoire',
+                'Victoire?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
