@@ -263,16 +263,30 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                     ),
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                '${widget.winner.name}: ${widget.winnerWins}  -  ${widget.loserName}: ${widget.loserWins}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                textAlign: TextAlign.center,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${widget.winner.name}: ${widget.winnerWins}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                  ),
+                                  Text(
+                                    '${widget.loserName}: ${widget.loserWins}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
