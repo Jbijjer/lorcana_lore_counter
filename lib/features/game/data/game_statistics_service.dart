@@ -18,20 +18,40 @@ class GameStatisticsService {
 
   /// Initialise le service en ouvrant la box Hive
   Future<void> init() async {
+    print('📦 GameStatisticsService: Initialisation de la box Hive "$_boxName"');
     _box = await Hive.openBox<GameHistory>(_boxName);
+    print('✅ Box Hive ouverte: ${_box!.length} partie(s) existante(s)');
   }
 
   /// Sauvegarde une partie terminée
   Future<void> saveGame(GameHistory game) async {
-    if (_box == null) await init();
+    print('💾 saveGame: Début de la sauvegarde');
+    if (_box == null) {
+      print('⚠️  Box null, initialisation...');
+      await init();
+    }
+
+    print('📝 Sauvegarde de la partie: ${game.id}');
+    print('  - ${game.player1Name} vs ${game.player2Name}');
+    print('  - Gagnant: ${game.winnerName ?? "Match nul"}');
+
     await _box!.put(game.id, game);
+
+    print('✅ Partie sauvegardée ! Total: ${_box!.length} partie(s)');
   }
 
   /// Récupère toutes les parties
   List<GameHistory> getAllGames() {
-    if (_box == null) return [];
-    return _box!.values.toList()
+    if (_box == null) {
+      print('⚠️  getAllGames: Box null, retour liste vide');
+      return [];
+    }
+
+    final games = _box!.values.toList()
       ..sort((a, b) => b.endTime.compareTo(a.endTime)); // Plus récent en premier
+
+    print('📊 getAllGames: ${games.length} partie(s) récupérée(s)');
+    return games;
   }
 
   /// Récupère une partie par son ID

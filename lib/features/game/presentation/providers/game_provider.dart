@@ -126,7 +126,15 @@ class Game extends _$Game {
 
   /// Termine la partie en cours
   void finishGame() {
-    if (state == null) return;
+    if (state == null) {
+      print('🔴 finishGame: state est null, abandon');
+      return;
+    }
+
+    print('🎮 finishGame: Début de la sauvegarde');
+    print('  - Joueur 1: ${state!.player1.name} (${state!.player1Wins} victoires)');
+    print('  - Joueur 2: ${state!.player2.name} (${state!.player2Wins} victoires)');
+    print('  - Gagnant: ${state!.winner?.name ?? "Match nul"}');
 
     state = state!.copyWith(
       status: GameStatus.finished,
@@ -134,12 +142,25 @@ class Game extends _$Game {
     );
 
     // Sauvegarder dans les statistiques
-    final statisticsService = ref.read(gameStatisticsServiceProvider);
-    final gameHistory = statisticsService.createHistoryFromGameState(state!);
-    statisticsService.saveGame(gameHistory);
+    try {
+      final statisticsService = ref.read(gameStatisticsServiceProvider);
+      final gameHistory = statisticsService.createHistoryFromGameState(state!);
+
+      print('📊 GameHistory créé:');
+      print('  - ID: ${gameHistory.id}');
+      print('  - Gagnant: ${gameHistory.winnerName ?? "Match nul"}');
+      print('  - Format: ${gameHistory.matchFormat}');
+
+      statisticsService.saveGame(gameHistory);
+      print('✅ Partie sauvegardée avec succès dans les statistiques');
+    } catch (e, stack) {
+      print('❌ ERREUR lors de la sauvegarde: $e');
+      print('Stack trace: $stack');
+    }
 
     // Supprimer la sauvegarde car la partie est terminée
     ref.read(gamePersistenceServiceProvider).clearGame();
+    print('🧹 Sauvegarde temporaire supprimée');
   }
 
   /// Réinitialise la partie
