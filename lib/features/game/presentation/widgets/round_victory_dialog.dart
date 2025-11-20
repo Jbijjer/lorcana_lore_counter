@@ -257,7 +257,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                               backgroundColor: _victoryColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
+                                horizontal: 16,
                                 vertical: 16,
                               ),
                               shape: RoundedRectangleBorder(
@@ -268,7 +268,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   widget.isMatchComplete
@@ -277,16 +276,13 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                   size: 22,
                                 ),
                                 const SizedBox(width: 10),
-                                Flexible(
-                                  child: Text(
-                                    widget.isMatchComplete
-                                        ? 'Nouvelle Partie'
-                                        : 'Manche Suivante',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                                Text(
+                                  widget.isMatchComplete
+                                      ? 'Nouvelle Partie'
+                                      : 'Manche Suivante',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
