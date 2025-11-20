@@ -173,41 +173,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               transform: Matrix4.identity()
                 ..setEntry(3, 2, 0.001) // Perspective
                 ..rotateY(angle),
-              child: Container(
+              child: SizedBox(
                 width: 140,
                 height: 140,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppTheme.primaryColor.withValues(alpha: 0.15),
-                      AppTheme.secondaryColor.withValues(alpha: 0.15),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16),
                 child: showBack
-                  ? Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()..rotateY(math.pi),
-                      child: Image.asset(
+                    ? Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()..rotateY(math.pi),
+                        child: Image.asset(
+                          'assets/images/lorcana_logo.png',
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : Image.asset(
                         'assets/images/lorcana_logo.png',
                         fit: BoxFit.contain,
                       ),
-                    )
-                  : Image.asset(
-                      'assets/images/lorcana_logo.png',
-                      fit: BoxFit.contain,
-                    ),
               ),
             );
           },
