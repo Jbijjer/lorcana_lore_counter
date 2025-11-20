@@ -15,8 +15,8 @@ dependencies:
   riverpod_annotation: ^2.3.5
   
   # Local Storage
-  hive_ce: 2.6.0
-  hive_ce_flutter: 2.1.0
+  hive_ce: ^2.8.0
+  hive_ce_flutter: ^2.1.0
   path_provider: ^2.1.2
   
   # Utilities
@@ -45,7 +45,7 @@ dev_dependencies:
 
   # Linting
   flutter_lints: ^3.0.1
-  analyzer: ^7.6.0
+  analyzer: ^6.7.0
 
 flutter:
   uses-material-design: true
