@@ -137,6 +137,21 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] About/Credits
 - [ ] Bouton "Effacer toutes les données"
 
+### 9. Section d'aide
+- [ ] Créer une section d'aide accessible depuis le menu principal ou les paramètres
+- [ ] Expliquer toutes les petites fonctionnalités de l'application :
+  - [ ] Fonctionnement du menu radial central
+  - [ ] Long press pour modifier manuellement un score
+  - [ ] Système de confirmation de victoire
+  - [ ] Modes de jeu (Best of 1/2/3/5)
+  - [ ] Statistiques et historique des parties
+  - [ ] Feedback haptique
+  - [ ] Animations et effets visuels
+  - [ ] Personnalisation des couleurs de deck
+  - [ ] Gestion des parties nulles
+- [ ] Utiliser un format accessible et facile à parcourir (accordéons, sections pliables, etc.)
+- [ ] Ajouter des captures d'écran ou des illustrations si pertinent
+
 ### 10. Bouton central dynamique et interactif
 - [x] Animation flip (pièce de monnaie) lors d'événements clés ✅ (Commit 293edbf, cd0d27c)
 - [x] Transformation du bouton selon l'état de la partie : ✅
