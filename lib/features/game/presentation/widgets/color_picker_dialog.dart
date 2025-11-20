@@ -147,13 +147,13 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: AppTheme.pureBlack.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Fond uni',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
+                            color: AppTheme.pureWhite,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -190,13 +190,13 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: AppTheme.pureBlack.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Dégradé',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
+                            color: AppTheme.pureWhite,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -220,9 +220,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            Colors.transparent,
-                            Colors.white.withValues(alpha: 0.3),
-                            Colors.transparent,
+                            AppTheme.transparentColor,
+                            AppTheme.pureWhite.withValues(alpha: 0.3),
+                            AppTheme.transparentColor,
                           ],
                         ),
                       ),
@@ -313,21 +313,21 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
-                              ? Colors.white
-                              : Colors.black.withValues(alpha: 0.2),
+                              ? AppTheme.pureWhite
+                              : AppTheme.pureBlack.withValues(alpha: 0.2),
                           width: isSelected ? 4 : 2,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: AppTheme.pureWhite.withValues(alpha: 0.6),
                                   blurRadius: 12,
                                   spreadRadius: 3,
                                 ),
                               ]
                             : [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
+                                  color: AppTheme.pureBlack.withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -343,7 +343,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                                   child: Container(
                                     padding: const EdgeInsets.all(2),
                                     decoration: const BoxDecoration(
-                                      color: Colors.white,
+                                      color: AppTheme.pureWhite,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -458,19 +458,19 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
           });
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
+          backgroundColor: AppTheme.transparentColor,
+          shadowColor: AppTheme.transparentColor,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
         child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check, color: Colors.white),
+            Icon(Icons.check, color: AppTheme.pureWhite),
             SizedBox(width: 8),
             Text(
               'Confirmer',
               style: TextStyle(
-                color: Colors.white,
+                color: AppTheme.pureWhite,
                 fontWeight: FontWeight.bold,
               ),
             ),

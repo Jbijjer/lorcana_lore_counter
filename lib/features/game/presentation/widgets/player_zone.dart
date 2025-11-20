@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/player.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Widget représentant la zone d'un joueur
 class PlayerZone extends StatefulWidget {
@@ -156,7 +157,7 @@ class _PlayerZoneState extends State<PlayerZone> {
                             foreground: Paint()
                               ..style = PaintingStyle.stroke
                               ..strokeWidth = 2
-                              ..color = Colors.black,
+                              ..color = AppTheme.pureBlack,
                           ),
                         ),
                         // Texte blanc
@@ -164,7 +165,7 @@ class _PlayerZoneState extends State<PlayerZone> {
                           widget.player.name,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.white,
+                            color: AppTheme.pureWhite,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -183,7 +184,7 @@ class _PlayerZoneState extends State<PlayerZone> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.black,
+                            color: AppTheme.pureBlack,
                             width: 3.6,
                           ),
                         ),
@@ -365,7 +366,7 @@ class _AnimatedScoreDisplayState extends State<_AnimatedScoreDisplay>
                         style: const TextStyle(
                           fontSize: 70.7,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black,
+                          color: AppTheme.pureBlack,
                           letterSpacing: -4,
                         ),
                       ),
@@ -443,7 +444,7 @@ class _ScoreActionButtonState extends State<_ScoreActionButton>
   @override
   Widget build(BuildContext context) {
     // Mélange de la couleur du joueur avec du blanc pour une teinte pastel
-    final buttonColor = Color.lerp(Colors.white, widget.playerColor, 0.15);
+    final buttonColor = Color.lerp(AppTheme.pureWhite, widget.playerColor, 0.15);
 
     return Semantics(
       button: true,
@@ -464,13 +465,13 @@ class _ScoreActionButtonState extends State<_ScoreActionButton>
                   color: buttonColor,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.black,
+                    color: AppTheme.pureBlack,
                     width: 2,
                   ),
                 ),
                 child: Icon(
                   widget.icon,
-                  color: Colors.black,
+                  color: AppTheme.pureBlack,
                   size: 32,
                 ),
               ),

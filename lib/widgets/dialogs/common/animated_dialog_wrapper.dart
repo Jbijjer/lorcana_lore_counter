@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// Wrapper réutilisable pour les dialogues avec structure et style standardisés
 ///
@@ -49,14 +50,14 @@ class AnimatedDialogWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparentColor,
       child: Container(
         constraints: BoxConstraints(
           maxWidth: maxWidth ?? double.infinity,
           maxHeight: maxHeight ?? double.infinity,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.pureWhite,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -104,14 +105,14 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparentColor,
       child: Container(
         constraints: BoxConstraints(
           maxWidth: maxWidth ?? double.infinity,
           maxHeight: maxHeight ?? double.infinity,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.pureWhite,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(

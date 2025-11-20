@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// CustomPainter pour dessiner des particules scintillantes
 ///
@@ -108,7 +109,7 @@ class ContrastSparklesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Calculer une couleur contrastante
     final brightness = baseColor.computeLuminance();
-    final sparkleColor = brightness > 0.5 ? Colors.black : Colors.white;
+    final sparkleColor = brightness > 0.5 ? AppTheme.pureBlack : AppTheme.pureWhite;
 
     final paint = Paint()
       ..color = sparkleColor.withValues(alpha: 0.6)

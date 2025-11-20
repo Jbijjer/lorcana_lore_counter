@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/game_history.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Widget affichant une carte d'historique de partie
 class GameHistoryCard extends StatelessWidget {
@@ -366,22 +367,7 @@ class _PlayerScoreColumn extends StatelessWidget {
 
   /// Retourne la couleur associée à une couleur de deck Lorcana
   Color _getDeckColor(String deckColor) {
-    switch (deckColor.toLowerCase()) {
-      case 'amber':
-        return Colors.amber[700]!;
-      case 'amethyst':
-        return Colors.purple[700]!;
-      case 'emerald':
-        return Colors.green[700]!;
-      case 'ruby':
-        return Colors.red[700]!;
-      case 'sapphire':
-        return Colors.blue[700]!;
-      case 'steel':
-        return Colors.grey[700]!;
-      default:
-        return Colors.grey[700]!;
-    }
+    return AppTheme.getLorcanaColorByName(deckColor);
   }
 }
 

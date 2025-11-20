@@ -119,7 +119,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                           'Nouvelle partie',
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.white,
+                                    color: AppTheme.pureWhite,
                                     fontWeight: FontWeight.bold,
                                   ),
                         ),
@@ -237,10 +237,10 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isSelected
-                        ? Colors.white.withValues(alpha: 0.2)
+                        ? AppTheme.pureWhite.withValues(alpha: 0.2)
                         : Colors.grey.shade300,
                     border: Border.all(
-                      color: Colors.black,
+                      color: AppTheme.pureBlack,
                       width: isSelected ? 3 : 2,
                     ),
                     boxShadow: isSelected
@@ -277,7 +277,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                         label,
                         style: TextStyle(
                           color: isSelected
-                              ? Colors.white.withValues(alpha: 0.8)
+                              ? AppTheme.pureWhite.withValues(alpha: 0.8)
                               : Colors.grey[600],
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -305,7 +305,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: AppTheme.pureWhite,
                               ),
                             ),
                           ],
@@ -382,9 +382,9 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              canStart ? Colors.transparent : Colors.grey.shade300,
-          foregroundColor: canStart ? Colors.black : Colors.grey.shade600,
-          shadowColor: Colors.transparent,
+              canStart ? AppTheme.transparentColor : Colors.grey.shade300,
+          foregroundColor: canStart ? AppTheme.pureBlack : Colors.grey.shade600,
+          shadowColor: AppTheme.transparentColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

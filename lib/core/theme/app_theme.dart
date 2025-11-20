@@ -15,6 +15,44 @@ class AppTheme {
   static const Color sapphireColor = Color(0xFF2196F3);
   static const Color steelColor = Color(0xFFB0BEC5);
 
+  // Couleurs du menu radial
+  static const Color menuStatsColor = Color(0xFF2196F3); // Bleu
+  static const Color menuResetColor = Color(0xFFFF9800); // Orange
+  static const Color menuTimerColor = Color(0xFF4CAF50); // Vert
+  static const Color menuHistoryColor = Color(0xFF9C27B0); // Violet
+
+  // Couleurs sémantiques
+  static const Color successColor = Color(0xFF4CAF50); // Vert
+  static const Color warningColor = Color(0xFFFF9800); // Orange
+  static const Color errorColor = Color(0xFFF44336); // Rouge
+  static const Color infoColor = Color(0xFF2196F3); // Bleu
+
+  // Couleurs de base (pour remplacer Colors.xxx)
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color pureBlack = Color(0xFF000000);
+  static const Color transparentColor = Color(0x00000000);
+
+  /// Obtient une couleur Lorcana par son nom
+  static Color getLorcanaColorByName(String colorName, {bool highContrast = false}) {
+    final colors = highContrast ? lorcanaHighContrastColors : lorcanaColors;
+    switch (colorName.toLowerCase()) {
+      case 'amber':
+        return colors[0];
+      case 'amethyst':
+        return colors[1];
+      case 'emerald':
+        return colors[2];
+      case 'ruby':
+        return colors[3];
+      case 'sapphire':
+        return colors[4];
+      case 'steel':
+        return colors[5];
+      default:
+        return colors[0]; // Amber par défaut
+    }
+  }
+
   /// Thème clair
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(

@@ -196,7 +196,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                           shape: BoxShape.circle,
                           color: widget.defaultColor.withValues(alpha: 0.1),
                           border: Border.all(
-                            color: Colors.black,
+                            color: AppTheme.pureBlack,
                             width: 2,
                           ),
                         ),

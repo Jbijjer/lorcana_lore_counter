@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/player.dart';
 import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
 import '../../../../widgets/dialogs/common/dialog_header.dart';
@@ -255,7 +256,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                             },
                             style: FilledButton.styleFrom(
                               backgroundColor: _victoryColor,
-                              foregroundColor: Colors.white,
+                              foregroundColor: AppTheme.pureWhite,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 16,

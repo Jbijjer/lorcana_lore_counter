@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
 import '../../../../widgets/dialogs/common/dialog_header.dart';
 import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';

@@ -16,6 +16,7 @@ import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
 import 'statistics_screen.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Écran principal du jeu
 class PlayScreen extends ConsumerStatefulWidget {
@@ -449,7 +450,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         const SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
+              Icon(Icons.check_circle, color: AppTheme.pureWhite),
               SizedBox(width: 8),
               Text('Scores remis à 0'),
             ],
@@ -469,7 +470,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         const SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
+              Icon(Icons.check_circle, color: AppTheme.pureWhite),
               SizedBox(width: 8),
               Text('Round réinitialisé'),
             ],
@@ -578,12 +579,12 @@ class _ResetFlashAnimationState extends State<_ResetFlashAnimation>
       animation: _animation,
       builder: (context, child) {
         return Container(
-          color: Colors.white.withValues(alpha: _animation.value),
+          color: AppTheme.pureWhite.withValues(alpha: _animation.value),
           child: Center(
             child: Icon(
               Icons.restart_alt,
               size: 80,
-              color: Colors.black.withValues(alpha: _animation.value * 0.5),
+              color: AppTheme.pureBlack.withValues(alpha: _animation.value * 0.5),
             ),
           ),
         );
@@ -604,7 +605,7 @@ class _CenterDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 10,
-      color: Colors.black,
+      color: AppTheme.pureBlack,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
 import '../../../../widgets/dialogs/common/dialog_header.dart';
 import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
@@ -159,7 +160,7 @@ class _ResetOptionCardState extends State<_ResetOptionCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Material(
-        color: Colors.transparent,
+        color: AppTheme.transparentColor,
         child: InkWell(
           onTap: widget.onTap,
           borderRadius: BorderRadius.circular(12),

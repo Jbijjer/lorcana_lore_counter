@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Menu radial qui s'étend autour du logo Lorcana central
 class RadialMenu extends StatefulWidget {
@@ -112,7 +113,7 @@ class _RadialMenuState extends State<RadialMenu>
               child: GestureDetector(
                 onTap: _toggleMenu,
                 behavior: HitTestBehavior.translucent,
-                child: Container(color: Colors.transparent),
+                child: Container(color: AppTheme.transparentColor),
               ),
             ),
 
@@ -120,7 +121,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.bar_chart,
             angle: -math.pi / 2, // Haut (90°)
-            color: Colors.blue,
+            color: AppTheme.menuStatsColor,
             label: 'Stats',
             onTap: widget.onStatisticsTap != null
                 ? () => _handleMenuItemTap(widget.onStatisticsTap)
@@ -129,7 +130,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.refresh,
             angle: 0, // Droite (0°)
-            color: Colors.orange,
+            color: AppTheme.menuResetColor,
             label: 'Reset',
             onTap: widget.onResetTap != null
                 ? () => _handleMenuItemTap(widget.onResetTap)
@@ -138,7 +139,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.timer,
             angle: math.pi / 2, // Bas (270°)
-            color: Colors.green,
+            color: AppTheme.menuTimerColor,
             label: 'Timer',
             onTap: widget.onTimerTap != null
                 ? () => _handleMenuItemTap(widget.onTimerTap)
@@ -147,7 +148,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.history,
             angle: math.pi, // Gauche (180°)
-            color: Colors.purple,
+            color: AppTheme.menuHistoryColor,
             label: 'Historique',
             onTap: widget.onHistoryTap != null
                 ? () => _handleMenuItemTap(widget.onHistoryTap)
