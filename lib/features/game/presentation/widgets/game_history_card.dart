@@ -15,7 +15,7 @@ class GameHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPlayer1Winner = game.winnerName == game.player1Name;
+    final isPlayer1Winner = !game.isDraw && game.winnerName == game.player1Name;
 
     return Card(
       elevation: 2,
@@ -85,10 +85,12 @@ class GameHistoryCard extends StatelessWidget {
                       score: game.player1FinalScore,
                       wins: game.player1Wins,
                       isWinner: isPlayer1Winner,
+                      isDraw: game.isDraw,
+                      deckColors: game.player1DeckColors,
                     ),
                   ),
 
-                  // VS
+                  // VS ou DRAW
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Container(
@@ -97,15 +99,15 @@ class GameHistoryCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: game.isDraw ? Colors.orange[100] : Colors.grey[200],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
-                        'VS',
+                      child: Text(
+                        game.isDraw ? 'NUL' : 'VS',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
-                          color: Colors.black54,
+                          color: game.isDraw ? Colors.orange[700] : Colors.black54,
                         ),
                       ),
                     ),
@@ -117,7 +119,9 @@ class GameHistoryCard extends StatelessWidget {
                       playerName: game.player2Name,
                       score: game.player2FinalScore,
                       wins: game.player2Wins,
-                      isWinner: !isPlayer1Winner,
+                      isWinner: !isPlayer1Winner && !game.isDraw,
+                      isDraw: game.isDraw,
+                      deckColors: game.player2DeckColors,
                     ),
                   ),
                 ],
@@ -187,49 +191,79 @@ class GameHistoryCard extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Détails de la partie'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DetailRow(
-              label: 'Gagnant',
-              value: game.winnerName,
-              icon: Icons.emoji_events,
-              color: Colors.amber,
-            ),
-            const SizedBox(height: 8),
-            _DetailRow(
-              label: 'Format',
-              value: game.matchFormat,
-              icon: Icons.gamepad,
-            ),
-            const SizedBox(height: 8),
-            _DetailRow(
-              label: 'Durée',
-              value: game.formattedDuration,
-              icon: Icons.timer,
-            ),
-            const SizedBox(height: 8),
-            _DetailRow(
-              label: 'Date',
-              value: _formatFullDate(game.endTime),
-              icon: Icons.calendar_today,
-            ),
-            const Divider(height: 24),
-            _DetailRow(
-              label: game.player1Name,
-              value: '${game.player1FinalScore} pts (${game.player1Wins} victoires)',
-              icon: Icons.person,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 8),
-            _DetailRow(
-              label: game.player2Name,
-              value: '${game.player2FinalScore} pts (${game.player2Wins} victoires)',
-              icon: Icons.person,
-              color: Colors.purple,
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DetailRow(
+                label: 'Résultat',
+                value: game.resultText,
+                icon: game.isDraw ? Icons.handshake : Icons.emoji_events,
+                color: game.isDraw ? Colors.orange : Colors.amber,
+              ),
+              const SizedBox(height: 8),
+              _DetailRow(
+                label: 'Format',
+                value: game.matchFormat,
+                icon: Icons.gamepad,
+              ),
+              const SizedBox(height: 8),
+              _DetailRow(
+                label: 'Durée',
+                value: game.formattedDuration,
+                icon: Icons.timer,
+              ),
+              const SizedBox(height: 8),
+              _DetailRow(
+                label: 'Date',
+                value: _formatFullDate(game.endTime),
+                icon: Icons.calendar_today,
+              ),
+              const Divider(height: 24),
+              _DetailRow(
+                label: game.player1Name,
+                value: '${game.player1FinalScore} pts (${game.player1Wins} victoires)',
+                icon: Icons.person,
+                color: Colors.blue,
+              ),
+              if (game.player1DeckColors.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 26),
+                  child: Text(
+                    'Deck: ${game.player1DeckColors.join(', ')}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 8),
+              _DetailRow(
+                label: game.player2Name,
+                value: '${game.player2FinalScore} pts (${game.player2Wins} victoires)',
+                icon: Icons.person,
+                color: Colors.purple,
+              ),
+              if (game.player2DeckColors.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 26),
+                  child: Text(
+                    'Deck: ${game.player2DeckColors.join(', ')}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -281,22 +315,30 @@ class _PlayerScoreColumn extends StatelessWidget {
     required this.score,
     required this.wins,
     required this.isWinner,
+    required this.isDraw,
+    required this.deckColors,
   });
 
   final String playerName;
   final int score;
   final int wins;
   final bool isWinner;
+  final bool isDraw;
+  final List<String> deckColors;
 
   @override
   Widget build(BuildContext context) {
+    final displayColor = isDraw
+        ? Colors.orange
+        : (isWinner ? Colors.amber : Colors.grey);
+
     return Column(
       children: [
         // Nom du joueur avec couronne si gagnant
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (isWinner)
+            if (isWinner && !isDraw)
               const Padding(
                 padding: EdgeInsets.only(right: 4),
                 child: Icon(
@@ -309,9 +351,11 @@ class _PlayerScoreColumn extends StatelessWidget {
               child: Text(
                 playerName,
                 style: TextStyle(
-                  fontWeight: isWinner ? FontWeight.bold : FontWeight.w500,
+                  fontWeight: isWinner || isDraw ? FontWeight.bold : FontWeight.w500,
                   fontSize: 14,
-                  color: isWinner ? Colors.amber[700] : Colors.black87,
+                  color: isDraw
+                      ? Colors.orange[700]
+                      : (isWinner ? Colors.amber[700] : Colors.black87),
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -319,20 +363,48 @@ class _PlayerScoreColumn extends StatelessWidget {
             ),
           ],
         ),
+
+        // Couleurs de deck
+        if (deckColors.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: deckColors.map((color) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: _getDeckColor(color).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _getDeckColor(color).withValues(alpha: 0.5),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    color,
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: _getDeckColor(color),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
         const SizedBox(height: 6),
 
         // Score
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: isWinner
-                ? Colors.amber.withValues(alpha: 0.15)
-                : Colors.grey.withValues(alpha: 0.1),
+            color: displayColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isWinner
-                  ? Colors.amber.withValues(alpha: 0.4)
-                  : Colors.grey.withValues(alpha: 0.3),
+              color: displayColor.withValues(alpha: 0.4),
               width: 2,
             ),
           ),
@@ -341,7 +413,9 @@ class _PlayerScoreColumn extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w900,
-              color: isWinner ? Colors.amber[700] : Colors.black87,
+              color: isDraw
+                  ? Colors.orange[700]
+                  : (isWinner ? Colors.amber[700] : Colors.black87),
             ),
           ),
         ),
@@ -357,6 +431,26 @@ class _PlayerScoreColumn extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// Retourne la couleur associée à une couleur de deck Lorcana
+  Color _getDeckColor(String deckColor) {
+    switch (deckColor.toLowerCase()) {
+      case 'amber':
+        return Colors.amber[700]!;
+      case 'amethyst':
+        return Colors.purple[700]!;
+      case 'emerald':
+        return Colors.green[700]!;
+      case 'ruby':
+        return Colors.red[700]!;
+      case 'sapphire':
+        return Colors.blue[700]!;
+      case 'steel':
+        return Colors.grey[700]!;
+      default:
+        return Colors.grey[700]!;
+    }
   }
 }
 

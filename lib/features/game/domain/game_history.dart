@@ -14,13 +14,15 @@ class GameHistory with _$GameHistory {
     @HiveField(2) required String player2Name,
     @HiveField(3) required int player1FinalScore,
     @HiveField(4) required int player2FinalScore,
-    @HiveField(5) required String winnerName,
+    @HiveField(5) String? winnerName, // Nullable pour les matchs nuls
     @HiveField(6) required DateTime startTime,
     @HiveField(7) required DateTime endTime,
     @HiveField(8) required String matchFormat,
     @HiveField(9) @Default(0) int player1Wins,
     @HiveField(10) @Default(0) int player2Wins,
     @HiveField(11) @Default([]) List<RoundResult> rounds,
+    @HiveField(12) @Default([]) List<String> player1DeckColors, // Les 2 couleurs du deck du joueur 1
+    @HiveField(13) @Default([]) List<String> player2DeckColors, // Les 2 couleurs du deck du joueur 2
   }) = _GameHistory;
 
   const GameHistory._();
@@ -40,6 +42,12 @@ class GameHistory with _$GameHistory {
     }
     return '${seconds}s';
   }
+
+  /// Vérifie si la partie s'est terminée en match nul
+  bool get isDraw => winnerName == null || winnerName!.isEmpty;
+
+  /// Retourne le texte du résultat (nom du gagnant ou "Match nul")
+  String get resultText => isDraw ? 'Match nul' : winnerName!;
 }
 
 /// Résultat d'un round

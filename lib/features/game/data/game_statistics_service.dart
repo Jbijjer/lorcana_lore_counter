@@ -63,19 +63,21 @@ class GameStatisticsService {
 
     int wins = 0;
     int losses = 0;
+    int draws = 0;
     int totalScore = 0;
 
     for (final game in games) {
-      if (game.player1Name == playerName) {
-        totalScore += game.player1FinalScore;
-        if (game.winnerName == playerName) {
-          wins++;
-        } else {
-          losses++;
-        }
-      } else if (game.player2Name == playerName) {
-        totalScore += game.player2FinalScore;
-        if (game.winnerName == playerName) {
+      final isPlayer1 = game.player1Name == playerName;
+      final isPlayer2 = game.player2Name == playerName;
+
+      if (isPlayer1 || isPlayer2) {
+        // Ajouter le score
+        totalScore += isPlayer1 ? game.player1FinalScore : game.player2FinalScore;
+
+        // Gérer les statistiques
+        if (game.isDraw) {
+          draws++;
+        } else if (game.winnerName == playerName) {
           wins++;
         } else {
           losses++;
@@ -83,7 +85,7 @@ class GameStatisticsService {
       }
     }
 
-    final totalGames = wins + losses;
+    final totalGames = wins + losses + draws;
     final winrate = totalGames > 0 ? (wins / totalGames) * 100 : 0.0;
     final averageScore = totalGames > 0 ? totalScore / totalGames : 0.0;
 
@@ -92,6 +94,7 @@ class GameStatisticsService {
       totalGames: totalGames,
       wins: wins,
       losses: losses,
+      draws: draws,
       winrate: winrate,
       averageScore: averageScore,
     );
@@ -152,13 +155,15 @@ class GameStatisticsService {
       player2Name: gameState.player2.name,
       player1FinalScore: gameState.player1Score,
       player2FinalScore: gameState.player2Score,
-      winnerName: gameState.winner?.name ?? '',
+      winnerName: gameState.winner?.name, // Null si match nul
       startTime: gameState.startTime,
       endTime: gameState.endTime ?? DateTime.now(),
       matchFormat: _formatToString(gameState.matchFormat),
       player1Wins: gameState.player1Wins,
       player2Wins: gameState.player2Wins,
       rounds: rounds,
+      player1DeckColors: gameState.player1.deckColors,
+      player2DeckColors: gameState.player2.deckColors,
     );
   }
 
@@ -180,6 +185,7 @@ class PlayerStatistics {
   final int totalGames;
   final int wins;
   final int losses;
+  final int draws;
   final double winrate;
   final double averageScore;
 
@@ -188,6 +194,7 @@ class PlayerStatistics {
     required this.totalGames,
     required this.wins,
     required this.losses,
+    required this.draws,
     required this.winrate,
     required this.averageScore,
   });

@@ -185,9 +185,11 @@ class _PlayerStatsRow extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Détails (victoires/défaites/moyenne)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Détails (victoires/défaites/nuls/moyenne)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.spaceBetween,
             children: [
               _StatChip(
                 icon: Icons.emoji_events,
@@ -199,6 +201,12 @@ class _PlayerStatsRow extends StatelessWidget {
                 label: '${stats.losses}D',
                 color: Colors.red,
               ),
+              if (stats.draws > 0)
+                _StatChip(
+                  icon: Icons.handshake,
+                  label: '${stats.draws}N',
+                  color: Colors.orange,
+                ),
               _StatChip(
                 icon: Icons.trending_up,
                 label: '${stats.averageScore.toStringAsFixed(1)} pts',
