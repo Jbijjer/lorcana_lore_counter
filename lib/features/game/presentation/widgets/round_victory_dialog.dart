@@ -41,9 +41,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late AnimationController _confettiController;
   late TextEditingController _noteController;
 
-  // Compteur de cycles pour varier la disposition des confettis
-  int _confettiCycleCount = 0;
-
   // Couleur et image de victoire aléatoires
   late String _victoryImageName;
   late Color _victoryColor;
@@ -90,20 +87,11 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
     _victoryColor = _colorMap[_victoryImageName]!;
 
-    // Animation des confettis
+    // Animation des confettis (une seule fois, plus lente)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
-
-    // Incrémenter le compteur de cycles à chaque répétition
-    _confettiController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          _confettiCycleCount++;
-        });
-      }
-    });
+      duration: const Duration(seconds: 10),
+    )..forward();
 
     HapticUtils.success();
   }
@@ -318,7 +306,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                       painter: _ConfettiPainter(
                         animationValue: _confettiController.value,
                         color: _victoryColor,
-                        cycleCount: _confettiCycleCount,
                       ),
                     );
                   },
@@ -501,12 +488,10 @@ class LorcanaDeckColor {
 class _ConfettiPainter extends CustomPainter {
   final double animationValue;
   final Color color;
-  final int cycleCount;
 
   _ConfettiPainter({
     required this.animationValue,
     required this.color,
-    required this.cycleCount,
   });
 
   @override
@@ -517,9 +502,8 @@ class _ConfettiPainter extends CustomPainter {
 
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
-      // Seed unique pour chaque confetti basée sur le cycle et l'index
-      // Utilisation d'une variation forte pour créer des patterns vraiment différents
-      final confettiRandom = math.Random(42 + cycleCount * 1234 + i * 789 + (cycleCount * i * 37));
+      // Seed unique pour chaque confetti
+      final confettiRandom = math.Random(42 + i * 789);
 
       final offsetX = size.width * confettiRandom.nextDouble();
 
@@ -532,10 +516,10 @@ class _ConfettiPainter extends CustomPainter {
       // Position de départ
       final startY = -50 - (confettiRandom.nextDouble() * 200);
 
-      // Vitesse différente pour chaque confetti (entre 1.1x et 1.6x)
-      final speedFactor = 1.1 + (confettiRandom.nextDouble() * 0.5);
-      // Distance totale augmentée pour garantir que tous les confettis sortent de l'écran
-      final currentY = startY + (size.height + 700) * effectiveAnimation * speedFactor;
+      // Vitesse plus lente pour chaque confetti (entre 0.7x et 1.0x)
+      final speedFactor = 0.7 + (confettiRandom.nextDouble() * 0.3);
+      // Distance totale pour garantir que tous les confettis sortent de l'écran
+      final currentY = startY + (size.height + 500) * effectiveAnimation * speedFactor;
 
       // Calculer l'opacité avec fade in au départ et fade out à la fin
       double opacity = 0.8;
