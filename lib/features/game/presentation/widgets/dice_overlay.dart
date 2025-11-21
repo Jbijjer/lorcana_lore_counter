@@ -217,8 +217,8 @@ class _DiceOverlayState extends State<DiceOverlay>
           child: Transform(
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001) // Perspective
-              ..rotateX(rotation + (index * 0.5))
-              ..rotateY(rotation * 0.8),
+              ..rotateX(rotation)
+              ..rotateY(rotation),
             alignment: Alignment.center,
             child: Container(
               width: 100,
