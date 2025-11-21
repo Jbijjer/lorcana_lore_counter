@@ -11,12 +11,14 @@ class RadialMenu extends StatefulWidget {
     this.onResetTap,
     this.onTimerTap,
     this.onSettingsTap,
+    this.onDiceTap,
   });
 
   final VoidCallback? onStatisticsTap;
   final VoidCallback? onResetTap;
   final VoidCallback? onTimerTap;
   final VoidCallback? onSettingsTap;
+  final VoidCallback? onDiceTap;
 
   @override
   State<RadialMenu> createState() => _RadialMenuState();
@@ -125,6 +127,15 @@ class _RadialMenuState extends State<RadialMenu>
             label: 'Stats',
             onTap: widget.onStatisticsTap != null
                 ? () => _handleMenuItemTap(widget.onStatisticsTap)
+                : null,
+          ),
+          _buildMenuItem(
+            icon: Icons.casino,
+            angle: -math.pi / 4, // Haut-droite (45°)
+            color: AppTheme.secondaryColor,
+            label: 'Dés',
+            onTap: widget.onDiceTap != null
+                ? () => _handleMenuItemTap(widget.onDiceTap)
                 : null,
           ),
           _buildMenuItem(

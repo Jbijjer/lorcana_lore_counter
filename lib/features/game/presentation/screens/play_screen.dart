@@ -9,6 +9,7 @@ import '../widgets/radial_menu.dart';
 import '../widgets/reset_confirmation_dialog.dart';
 import '../widgets/victory_overlay.dart';
 import '../widgets/round_victory_dialog.dart';
+import '../widgets/dice_overlay.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -207,6 +208,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onResetTap: _handleResetTap,
                     onTimerTap: _handleTimerTap,
                     onSettingsTap: _handleSettingsTap,
+                    onDiceTap: _handleDiceTap,
                   ),
                 ),
 
@@ -549,6 +551,18 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const SettingsScreen(fromActiveGame: true),
+      ),
+    );
+  }
+
+  /// Gère l'affichage de l'overlay de lancer de dés
+  void _handleDiceTap() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.transparent,
+      builder: (context) => DiceOverlay(
+        onClose: () => Navigator.of(context).pop(),
       ),
     );
   }
