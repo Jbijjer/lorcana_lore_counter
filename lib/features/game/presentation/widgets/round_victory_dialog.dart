@@ -49,6 +49,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late List<String> _player1DeckColors;
   late List<String> _player2DeckColors;
 
+  // Qui commence la prochaine partie (1 ou 2, null si non sélectionné)
+  int? _nextFirstToPlay;
+
   // Map des couleurs disponibles pour l'image de victoire
   static const Map<String, Color> _colorMap = {
     'bleu': Colors.blue,
@@ -224,6 +227,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                   // Sélection des couleurs de deck
                   _buildDeckColorsSelection(),
 
+                  // Sélection de qui commence la prochaine partie (si pas terminé)
+                  if (!widget.isMatchComplete) ...[
+                    const SizedBox(height: 16),
+                    _buildNextFirstToPlaySelector(),
+                  ],
+
                   const SizedBox(height: 20),
 
                   // Bouton principal avec effet shimmer
@@ -245,6 +254,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                     : _noteController.text.trim(),
                                 'player1DeckColors': _player1DeckColors,
                                 'player2DeckColors': _player2DeckColors,
+                                'nextFirstToPlay': _nextFirstToPlay,
                               });
                             },
                             style: FilledButton.styleFrom(
@@ -471,6 +481,146 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
         }
       });
     }
+  }
+
+  Widget _buildNextFirstToPlaySelector() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.flag,
+                size: 18,
+                color: _victoryColor,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Qui commence la prochaine partie ?',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildFirstToPlayButton(
+                  player: widget.isPlayer1Winner ? widget.winner : widget.loser,
+                  playerNumber: 1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildFirstToPlayButton(
+                  player: widget.isPlayer1Winner ? widget.loser : widget.winner,
+                  playerNumber: 2,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFirstToPlayButton({
+    required Player player,
+    required int playerNumber,
+  }) {
+    final isSelected = _nextFirstToPlay == playerNumber;
+    final accentColor = playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          if (_nextFirstToPlay == playerNumber) {
+            _nextFirstToPlay = null;
+          } else {
+            _nextFirstToPlay = playerNumber;
+          }
+        });
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    accentColor,
+                    accentColor.withValues(alpha: 0.8),
+                  ],
+                )
+              : null,
+          color: isSelected ? null : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? accentColor : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.3),
+                    blurRadius: 6,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? Colors.white : Colors.grey.shade400,
+                  width: 1.5,
+                ),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  player.iconAssetPath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                player.name,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected ? Colors.white : Colors.grey[700],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

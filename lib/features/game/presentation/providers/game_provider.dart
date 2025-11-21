@@ -288,6 +288,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? nextFirstToPlay,
   }) {
     if (state == null) return;
 
@@ -311,6 +312,8 @@ class Game extends _$Game {
       // Mettre à jour les couleurs de deck si fournies
       player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
       player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
+      // Mettre à jour qui commence la prochaine partie
+      firstToPlay: nextFirstToPlay,
     );
     _saveState();
   }
@@ -320,6 +323,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? nextFirstToPlay,
   }) {
     if (state == null) return;
 
@@ -343,6 +347,8 @@ class Game extends _$Game {
       // Mettre à jour les couleurs de deck si fournies
       player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
       player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
+      // Mettre à jour qui commence la prochaine partie
+      firstToPlay: nextFirstToPlay,
     );
     _saveState();
   }
