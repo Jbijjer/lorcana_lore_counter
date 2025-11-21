@@ -86,13 +86,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       final player1 = result['player1'] as Player;
       final player2 = result['player2'] as Player;
       final matchFormat = result['matchFormat'] as MatchFormat;
-      final firstToPlay = result['firstToPlay'] as int?;
 
       ref.read(gameProvider.notifier).startGame(
             player1: player1,
             player2: player2,
             matchFormat: matchFormat,
-            firstToPlay: firstToPlay,
           );
 
       // Sauvegarder l'utilisation des joueurs dans l'historique

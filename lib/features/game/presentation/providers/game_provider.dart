@@ -70,13 +70,11 @@ class Game extends _$Game {
     required Player player1,
     required Player player2,
     MatchFormat matchFormat = MatchFormat.bestOf3,
-    int? firstToPlay,
   }) {
     state = GameState.create(
       player1: player1,
       player2: player2,
       matchFormat: matchFormat,
-      firstToPlay: firstToPlay,
     );
     _saveState();
   }

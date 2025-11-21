@@ -42,7 +42,6 @@ class GameState with _$GameState {
     required Player player1,
     required Player player2,
     MatchFormat matchFormat = MatchFormat.bestOf3,
-    int? firstToPlay,
   }) {
     return GameState(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -50,7 +49,6 @@ class GameState with _$GameState {
       player2: player2,
       startTime: DateTime.now(),
       matchFormat: matchFormat,
-      firstToPlay: firstToPlay,
     );
   }
 
