@@ -212,6 +212,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onSettingsTap: _handleSettingsTap,
                     onDiceTap: _handleDiceTap,
                     onQuitAndSaveTap: _handleQuitAndSave,
+                    hideCenterLogo: gameState.isTimeMode,
                   ),
                 ),
 

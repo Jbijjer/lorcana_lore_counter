@@ -13,6 +13,7 @@ class RadialMenu extends StatefulWidget {
     this.onSettingsTap,
     this.onDiceTap,
     this.onQuitAndSaveTap,
+    this.hideCenterLogo = false,
   });
 
   final VoidCallback? onStatisticsTap;
@@ -21,6 +22,7 @@ class RadialMenu extends StatefulWidget {
   final VoidCallback? onSettingsTap;
   final VoidCallback? onDiceTap;
   final VoidCallback? onQuitAndSaveTap;
+  final bool hideCenterLogo;
 
   @override
   State<RadialMenu> createState() => _RadialMenuState();
@@ -178,42 +180,44 @@ class _RadialMenuState extends State<RadialMenu>
           ),
 
           // Logo Lorcana au centre (bouton principal)
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _liftAnimation.value,
-                child: Transform.rotate(
-                  angle: _rotationAnimation.value,
-                  child: GestureDetector(
-                    onTap: _toggleMenu,
-                    child: Container(
-                      width: 88,
-                      height: 88,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
-                            blurRadius: 12 * _shadowAnimation.value,
-                            spreadRadius: 2 * _shadowAnimation.value,
+          // Caché quand le mode Time est actif (le TimeOverlay affiche son propre logo)
+          if (!widget.hideCenterLogo)
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _liftAnimation.value,
+                  child: Transform.rotate(
+                    angle: _rotationAnimation.value,
+                    child: GestureDetector(
+                      onTap: _toggleMenu,
+                      child: Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
+                              blurRadius: 12 * _shadowAnimation.value,
+                              spreadRadius: 2 * _shadowAnimation.value,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/lorcana_logo.png',
+                            width: 88,
+                            height: 88,
+                            fit: BoxFit.cover,
                           ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/lorcana_logo.png',
-                          width: 88,
-                          height: 88,
-                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            ),
         ],
       ),
     );
