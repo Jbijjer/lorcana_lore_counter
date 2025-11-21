@@ -99,11 +99,23 @@ class _DiceOverlayState extends State<DiceOverlay>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Title
+                // Les deux dés
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildDice(_dice1Value, 0),
+                    const SizedBox(width: 32),
+                    _buildDice(_dice2Value, 1),
+                  ],
+                ),
+
+                const SizedBox(height: 48),
+
+                // Total
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
+                    horizontal: 32,
+                    vertical: 16,
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -121,49 +133,11 @@ class _DiceOverlayState extends State<DiceOverlay>
                       ),
                     ],
                   ),
-                  child: const Text(
-                    '🎲 Lancer de dés',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-
-                // Les deux dés
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildDice(_dice1Value, 0),
-                    const SizedBox(width: 32),
-                    _buildDice(_dice2Value, 1),
-                  ],
-                ),
-
-                const SizedBox(height: 48),
-
-                // Total
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                  ),
                   child: Text(
                     'Total: ${_dice1Value + _dice2Value}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
