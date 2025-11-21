@@ -259,10 +259,12 @@ class _ResetOptionCardState extends State<_ResetOptionCard> {
                   ),
                 // Particules scintillantes
                 if (_isHovered)
-                  SparklesOverlay(
-                    controller: widget.shimmerController,
-                    color: widget.color,
-                    sparkleCount: 4,
+                  Positioned.fill(
+                    child: SparklesOverlay(
+                      controller: widget.shimmerController,
+                      color: widget.color,
+                      sparkleCount: 4,
+                    ),
                   ),
               ],
             ),

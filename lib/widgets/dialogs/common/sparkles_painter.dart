@@ -152,25 +152,23 @@ class SparklesOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: useContrast
-                ? ContrastSparklesPainter(
-                    animationValue: controller.value,
-                    baseColor: color,
-                    sparkleCount: sparkleCount,
-                  )
-                : SparklesPainter(
-                    animationValue: controller.value,
-                    color: color,
-                    sparkleCount: sparkleCount,
-                  ),
-          );
-        },
-      ),
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: useContrast
+              ? ContrastSparklesPainter(
+                  animationValue: controller.value,
+                  baseColor: color,
+                  sparkleCount: sparkleCount,
+                )
+              : SparklesPainter(
+                  animationValue: controller.value,
+                  color: color,
+                  sparkleCount: sparkleCount,
+                ),
+        );
+      },
     );
   }
 }
