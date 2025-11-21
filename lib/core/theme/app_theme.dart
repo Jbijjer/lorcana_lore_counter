@@ -35,18 +35,26 @@ class AppTheme {
   /// Obtient une couleur Lorcana par son nom
   static Color getLorcanaColorByName(String colorName, {bool highContrast = false}) {
     final colors = highContrast ? lorcanaHighContrastColors : lorcanaColors;
-    switch (colorName.toLowerCase()) {
+    final normalizedName = colorName.toLowerCase().replaceAll('é', 'e');
+
+    switch (normalizedName) {
       case 'amber':
+      case 'ambre':
         return colors[0];
       case 'amethyst':
+      case 'amethyste':
         return colors[1];
       case 'emerald':
+      case 'emeraude':
         return colors[2];
       case 'ruby':
+      case 'rubis':
         return colors[3];
       case 'sapphire':
+      case 'saphir':
         return colors[4];
       case 'steel':
+      case 'acier':
         return colors[5];
       default:
         return colors[0]; // Amber par défaut
