@@ -35,6 +35,14 @@ _$GameStateImpl _$$GameStateImplFromJson(Map<String, dynamic> json) =>
           (json['player1VictoryThreshold'] as num?)?.toInt() ?? 20,
       player2VictoryThreshold:
           (json['player2VictoryThreshold'] as num?)?.toInt() ?? 20,
+      player1DeckColors: (json['player1DeckColors'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      player2DeckColors: (json['player2DeckColors'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
@@ -56,6 +64,8 @@ Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
       'player2VictoryDeclined': instance.player2VictoryDeclined,
       'player1VictoryThreshold': instance.player1VictoryThreshold,
       'player2VictoryThreshold': instance.player2VictoryThreshold,
+      'player1DeckColors': instance.player1DeckColors,
+      'player2DeckColors': instance.player2DeckColors,
     };
 
 const _$GameStatusEnumMap = {

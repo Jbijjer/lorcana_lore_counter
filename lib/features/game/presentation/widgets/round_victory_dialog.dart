@@ -371,7 +371,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Colors.grey[600]
               ),
             ),
           ),
