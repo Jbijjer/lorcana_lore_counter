@@ -36,6 +36,8 @@ class PlayScreen extends ConsumerStatefulWidget {
 
 class _PlayScreenState extends ConsumerState<PlayScreen> {
   bool _showVictoryOverlay = false;
+  bool _isRadialMenuOpen = false;
+  final GlobalKey<RadialMenuState> _radialMenuKey = GlobalKey<RadialMenuState>();
 
   @override
   void initState() {
@@ -203,9 +205,22 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                   ],
                 ),
 
+                // Overlay pour fermer le menu radial en cliquant ailleurs
+                if (_isRadialMenuOpen)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () {
+                        _radialMenuKey.currentState?.closeMenu();
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: Container(color: Colors.transparent),
+                    ),
+                  ),
+
                 // Menu radial au centre (au-dessus de tout)
                 Center(
                   child: RadialMenu(
+                    key: _radialMenuKey,
                     onStatisticsTap: _handleStatisticsTap,
                     onResetTap: _handleResetTap,
                     onTimerTap: _handleTimerTap,
@@ -213,6 +228,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onDiceTap: _handleDiceTap,
                     onQuitAndSaveTap: _handleQuitAndSave,
                     hideCenterLogo: gameState.isTimeMode || _showVictoryOverlay,
+                    onMenuOpenChanged: (isOpen) {
+                      setState(() {
+                        _isRadialMenuOpen = isOpen;
+                      });
+                    },
                   ),
                 ),
 
