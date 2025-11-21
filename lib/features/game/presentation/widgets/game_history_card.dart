@@ -26,8 +26,8 @@ class GameHistoryCard extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          HapticUtils.light();
+        onLongPress: () {
+          HapticUtils.medium();
           _showGameDetails(context);
         },
         child: Padding(
@@ -103,19 +103,6 @@ class GameHistoryCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              // Bouton supprimer
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: const Icon(Icons.delete_outline, size: 20),
-                  color: Theme.of(context).colorScheme.error,
-                  onPressed: () {
-                    HapticUtils.medium();
-                    _showDeleteConfirmation(context);
-                  },
-                  tooltip: 'Supprimer',
-                ),
               ),
             ],
           ),
@@ -212,6 +199,16 @@ class GameHistoryCard extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Fermer'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _showDeleteConfirmation(context);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Supprimer'),
           ),
         ],
       ),
@@ -315,22 +312,22 @@ class _PlayerScoreColumn extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    color: _getDeckColor(color).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    color: _getDeckColor(color),
+                    borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: _getDeckColor(color).withValues(alpha: 0.5),
-                      width: 1,
+                      color: Colors.white,
+                      width: 2,
                     ),
-                  ),
-                  child: Text(
-                    color,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                      color: _getDeckColor(color),
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
               );

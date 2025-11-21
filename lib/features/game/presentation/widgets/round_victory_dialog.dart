@@ -297,11 +297,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                         ),
 
                         // Effet shimmer sur le bouton
-                        Positioned.fill(
-                          child: SimpleShimmerEffect(
-                            animationValue: shimmerController.value,
-                            borderRadius: 16,
-                          ),
+                        SimpleShimmerEffect(
+                          animationValue: shimmerController.value,
+                          borderRadius: 16,
                         ),
                       ],
                     ),
@@ -370,9 +368,10 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           Expanded(
             child: Text(
               playerName,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
+                color: Colors.grey[600]
               ),
             ),
           ),

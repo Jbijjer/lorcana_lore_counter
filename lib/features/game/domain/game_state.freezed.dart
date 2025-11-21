@@ -37,6 +37,9 @@ mixin _$GameState {
   bool get player2VictoryDeclined => throw _privateConstructorUsedError;
   int get player1VictoryThreshold => throw _privateConstructorUsedError;
   int get player2VictoryThreshold => throw _privateConstructorUsedError;
+  List<String> get player1DeckColors =>
+      throw _privateConstructorUsedError; // Les 2 couleurs du deck du joueur 1 pour cette partie
+  List<String> get player2DeckColors => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -66,7 +69,9 @@ abstract class $GameStateCopyWith<$Res> {
       bool player1VictoryDeclined,
       bool player2VictoryDeclined,
       int player1VictoryThreshold,
-      int player2VictoryThreshold});
+      int player2VictoryThreshold,
+      List<String> player1DeckColors,
+      List<String> player2DeckColors});
 
   $PlayerCopyWith<$Res> get player1;
   $PlayerCopyWith<$Res> get player2;
@@ -102,6 +107,8 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
     Object? player2VictoryDeclined = null,
     Object? player1VictoryThreshold = null,
     Object? player2VictoryThreshold = null,
+    Object? player1DeckColors = null,
+    Object? player2DeckColors = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -172,6 +179,14 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.player2VictoryThreshold
           : player2VictoryThreshold // ignore: cast_nullable_to_non_nullable
               as int,
+      player1DeckColors: null == player1DeckColors
+          ? _value.player1DeckColors
+          : player1DeckColors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      player2DeckColors: null == player2DeckColors
+          ? _value.player2DeckColors
+          : player2DeckColors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 
@@ -217,7 +232,9 @@ abstract class _$$GameStateImplCopyWith<$Res>
       bool player1VictoryDeclined,
       bool player2VictoryDeclined,
       int player1VictoryThreshold,
-      int player2VictoryThreshold});
+      int player2VictoryThreshold,
+      List<String> player1DeckColors,
+      List<String> player2DeckColors});
 
   @override
   $PlayerCopyWith<$Res> get player1;
@@ -253,6 +270,8 @@ class __$$GameStateImplCopyWithImpl<$Res>
     Object? player2VictoryDeclined = null,
     Object? player1VictoryThreshold = null,
     Object? player2VictoryThreshold = null,
+    Object? player1DeckColors = null,
+    Object? player2DeckColors = null,
   }) {
     return _then(_$GameStateImpl(
       id: null == id
@@ -323,6 +342,14 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value.player2VictoryThreshold
           : player2VictoryThreshold // ignore: cast_nullable_to_non_nullable
               as int,
+      player1DeckColors: null == player1DeckColors
+          ? _value._player1DeckColors
+          : player1DeckColors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      player2DeckColors: null == player2DeckColors
+          ? _value._player2DeckColors
+          : player2DeckColors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -347,8 +374,12 @@ class _$GameStateImpl extends _GameState {
       this.player1VictoryDeclined = false,
       this.player2VictoryDeclined = false,
       this.player1VictoryThreshold = 20,
-      this.player2VictoryThreshold = 20})
+      this.player2VictoryThreshold = 20,
+      final List<String> player1DeckColors = const [],
+      final List<String> player2DeckColors = const []})
       : _rounds = rounds,
+        _player1DeckColors = player1DeckColors,
+        _player2DeckColors = player2DeckColors,
         super._();
 
   factory _$GameStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -406,10 +437,31 @@ class _$GameStateImpl extends _GameState {
   @override
   @JsonKey()
   final int player2VictoryThreshold;
+  final List<String> _player1DeckColors;
+  @override
+  @JsonKey()
+  List<String> get player1DeckColors {
+    if (_player1DeckColors is EqualUnmodifiableListView)
+      return _player1DeckColors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_player1DeckColors);
+  }
+
+// Les 2 couleurs du deck du joueur 1 pour cette partie
+  final List<String> _player2DeckColors;
+// Les 2 couleurs du deck du joueur 1 pour cette partie
+  @override
+  @JsonKey()
+  List<String> get player2DeckColors {
+    if (_player2DeckColors is EqualUnmodifiableListView)
+      return _player2DeckColors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_player2DeckColors);
+  }
 
   @override
   String toString() {
-    return 'GameState(id: $id, player1: $player1, player2: $player2, startTime: $startTime, endTime: $endTime, player1Score: $player1Score, player2Score: $player2Score, currentRound: $currentRound, rounds: $rounds, status: $status, matchFormat: $matchFormat, player1Wins: $player1Wins, player2Wins: $player2Wins, player1VictoryDeclined: $player1VictoryDeclined, player2VictoryDeclined: $player2VictoryDeclined, player1VictoryThreshold: $player1VictoryThreshold, player2VictoryThreshold: $player2VictoryThreshold)';
+    return 'GameState(id: $id, player1: $player1, player2: $player2, startTime: $startTime, endTime: $endTime, player1Score: $player1Score, player2Score: $player2Score, currentRound: $currentRound, rounds: $rounds, status: $status, matchFormat: $matchFormat, player1Wins: $player1Wins, player2Wins: $player2Wins, player1VictoryDeclined: $player1VictoryDeclined, player2VictoryDeclined: $player2VictoryDeclined, player1VictoryThreshold: $player1VictoryThreshold, player2VictoryThreshold: $player2VictoryThreshold, player1DeckColors: $player1DeckColors, player2DeckColors: $player2DeckColors)';
   }
 
   @override
@@ -446,30 +498,37 @@ class _$GameStateImpl extends _GameState {
                 other.player1VictoryThreshold == player1VictoryThreshold) &&
             (identical(
                     other.player2VictoryThreshold, player2VictoryThreshold) ||
-                other.player2VictoryThreshold == player2VictoryThreshold));
+                other.player2VictoryThreshold == player2VictoryThreshold) &&
+            const DeepCollectionEquality()
+                .equals(other._player1DeckColors, _player1DeckColors) &&
+            const DeepCollectionEquality()
+                .equals(other._player2DeckColors, _player2DeckColors));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      player1,
-      player2,
-      startTime,
-      endTime,
-      player1Score,
-      player2Score,
-      currentRound,
-      const DeepCollectionEquality().hash(_rounds),
-      status,
-      matchFormat,
-      player1Wins,
-      player2Wins,
-      player1VictoryDeclined,
-      player2VictoryDeclined,
-      player1VictoryThreshold,
-      player2VictoryThreshold);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        player1,
+        player2,
+        startTime,
+        endTime,
+        player1Score,
+        player2Score,
+        currentRound,
+        const DeepCollectionEquality().hash(_rounds),
+        status,
+        matchFormat,
+        player1Wins,
+        player2Wins,
+        player1VictoryDeclined,
+        player2VictoryDeclined,
+        player1VictoryThreshold,
+        player2VictoryThreshold,
+        const DeepCollectionEquality().hash(_player1DeckColors),
+        const DeepCollectionEquality().hash(_player2DeckColors)
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -503,7 +562,9 @@ abstract class _GameState extends GameState {
       final bool player1VictoryDeclined,
       final bool player2VictoryDeclined,
       final int player1VictoryThreshold,
-      final int player2VictoryThreshold}) = _$GameStateImpl;
+      final int player2VictoryThreshold,
+      final List<String> player1DeckColors,
+      final List<String> player2DeckColors}) = _$GameStateImpl;
   const _GameState._() : super._();
 
   factory _GameState.fromJson(Map<String, dynamic> json) =
@@ -543,6 +604,10 @@ abstract class _GameState extends GameState {
   int get player1VictoryThreshold;
   @override
   int get player2VictoryThreshold;
+  @override
+  List<String> get player1DeckColors;
+  @override // Les 2 couleurs du deck du joueur 1 pour cette partie
+  List<String> get player2DeckColors;
   @override
   @JsonKey(ignore: true)
   _$$GameStateImplCopyWith<_$GameStateImpl> get copyWith =>
