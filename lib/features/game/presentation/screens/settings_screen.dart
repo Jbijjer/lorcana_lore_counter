@@ -232,7 +232,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               color: AppTheme.warningColor,
             ),
             const SizedBox(width: 8),
-            const Text('Confirmer la suppression'),
+            const Flexible(
+              child: Text('Confirmer la suppression'),
+            ),
           ],
         ),
         content: const Text(
