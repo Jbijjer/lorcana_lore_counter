@@ -6,6 +6,7 @@ import '../../../../core/providers/accessibility_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../data/game_persistence_service.dart';
 import '../../data/game_statistics_service.dart';
+import 'home_screen.dart';
 
 /// Écran des paramètres de l'application
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -374,7 +375,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void _handleQuitAndSave() {
     HapticUtils.medium();
     // La partie est automatiquement sauvegardée par le gameProvider
-    // Il suffit de naviguer vers l'écran d'accueil
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    // Retourner à l'écran d'accueil en nettoyant la pile de navigation
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      (route) => false,
+    );
   }
 }
