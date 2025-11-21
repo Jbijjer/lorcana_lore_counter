@@ -13,6 +13,8 @@ class RadialMenu extends StatefulWidget {
     this.onSettingsTap,
     this.onDiceTap,
     this.onQuitAndSaveTap,
+    this.hideCenterLogo = false,
+    this.onMenuOpenChanged,
   });
 
   final VoidCallback? onStatisticsTap;
@@ -21,12 +23,15 @@ class RadialMenu extends StatefulWidget {
   final VoidCallback? onSettingsTap;
   final VoidCallback? onDiceTap;
   final VoidCallback? onQuitAndSaveTap;
+  final bool hideCenterLogo;
+  final ValueChanged<bool>? onMenuOpenChanged;
 
   @override
-  State<RadialMenu> createState() => _RadialMenuState();
+  State<RadialMenu> createState() => RadialMenuState();
 }
 
-class _RadialMenuState extends State<RadialMenu>
+/// État du RadialMenu exposé pour permettre la fermeture externe
+class RadialMenuState extends State<RadialMenu>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -34,6 +39,16 @@ class _RadialMenuState extends State<RadialMenu>
   late Animation<double> _liftAnimation;
   late Animation<double> _shadowAnimation;
   bool _isOpen = false;
+
+  /// Indique si le menu est actuellement ouvert
+  bool get isOpen => _isOpen;
+
+  /// Ferme le menu (peut être appelé depuis l'extérieur via GlobalKey)
+  void closeMenu() {
+    if (_isOpen) {
+      _toggleMenu();
+    }
+  }
 
   @override
   void initState() {
@@ -91,6 +106,8 @@ class _RadialMenuState extends State<RadialMenu>
         _controller.reverse();
       }
     });
+    // Notifier le parent du changement d'état
+    widget.onMenuOpenChanged?.call(_isOpen);
   }
 
   void _handleMenuItemTap(VoidCallback? callback) {
@@ -111,21 +128,54 @@ class _RadialMenuState extends State<RadialMenu>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Overlay semi-transparent qui se ferme quand on clique dessus
-          if (_isOpen)
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: _toggleMenu,
-                behavior: HitTestBehavior.translucent,
-                child: Container(color: AppTheme.transparentColor),
-              ),
+          // Logo Lorcana au centre (bouton principal)
+          // Placé en premier pour que son ombre ne recouvre pas les boutons
+          // Caché quand le mode Time est actif (le TimeOverlay affiche son propre logo)
+          if (!widget.hideCenterLogo)
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _liftAnimation.value,
+                  child: Transform.rotate(
+                    angle: _rotationAnimation.value,
+                    child: GestureDetector(
+                      onTap: _toggleMenu,
+                      child: Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
+                              blurRadius: 12 * _shadowAnimation.value,
+                              spreadRadius: 2 * _shadowAnimation.value,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/lorcana_logo.png',
+                            width: 88,
+                            height: 88,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
 
           // Boutons du menu radial (distribution égale à 60° d'intervalle)
+          // Chaque bouton utilise une couleur officielle de Lorcana
+          // Placés après le logo pour être au-dessus de son ombre
           _buildMenuItem(
             icon: Icons.bar_chart,
             angle: -math.pi / 2, // Haut (270°)
-            color: AppTheme.menuStatsColor,
+            color: AppTheme.sapphireColor, // Saphir
             label: 'Stats',
             onTap: widget.onStatisticsTap != null
                 ? () => _handleMenuItemTap(widget.onStatisticsTap)
@@ -134,7 +184,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.casino,
             angle: -math.pi / 6, // Haut-droite (300°)
-            color: AppTheme.secondaryColor,
+            color: AppTheme.amethystColor, // Améthyste
             label: 'Dés',
             onTap: widget.onDiceTap != null
                 ? () => _handleMenuItemTap(widget.onDiceTap)
@@ -143,7 +193,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.refresh,
             angle: math.pi / 6, // Bas-droite (30°)
-            color: AppTheme.menuResetColor,
+            color: AppTheme.rubyColor, // Rubis
             label: 'Reset',
             onTap: widget.onResetTap != null
                 ? () => _handleMenuItemTap(widget.onResetTap)
@@ -152,8 +202,8 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.timer,
             angle: math.pi / 2, // Bas (90°)
-            color: AppTheme.menuTimerColor,
-            label: 'Timer',
+            color: AppTheme.amberColor, // Ambre
+            label: 'Time',
             onTap: widget.onTimerTap != null
                 ? () => _handleMenuItemTap(widget.onTimerTap)
                 : null,
@@ -161,7 +211,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.exit_to_app,
             angle: 5 * math.pi / 6, // Bas-gauche (150°)
-            color: AppTheme.warningColor,
+            color: AppTheme.steelColor, // Acier
             label: 'Quitter',
             onTap: widget.onQuitAndSaveTap != null
                 ? () => _handleMenuItemTap(widget.onQuitAndSaveTap)
@@ -170,49 +220,11 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.settings,
             angle: 7 * math.pi / 6, // Haut-gauche (210°)
-            color: AppTheme.menuHistoryColor,
+            color: AppTheme.emeraldColor, // Émeraude
             label: 'Paramètres',
             onTap: widget.onSettingsTap != null
                 ? () => _handleMenuItemTap(widget.onSettingsTap)
                 : null,
-          ),
-
-          // Logo Lorcana au centre (bouton principal)
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _liftAnimation.value,
-                child: Transform.rotate(
-                  angle: _rotationAnimation.value,
-                  child: GestureDetector(
-                    onTap: _toggleMenu,
-                    child: Container(
-                      width: 88,
-                      height: 88,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3 * _shadowAnimation.value),
-                            blurRadius: 12 * _shadowAnimation.value,
-                            spreadRadius: 2 * _shadowAnimation.value,
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/lorcana_logo.png',
-                          width: 88,
-                          height: 88,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
           ),
         ],
       ),

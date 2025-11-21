@@ -43,6 +43,8 @@ _$GameStateImpl _$$GameStateImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      isTimeMode: json['isTimeMode'] as bool? ?? false,
+      timeCount: (json['timeCount'] as num?)?.toInt() ?? 5,
     );
 
 Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
@@ -66,6 +68,8 @@ Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
       'player2VictoryThreshold': instance.player2VictoryThreshold,
       'player1DeckColors': instance.player1DeckColors,
       'player2DeckColors': instance.player2DeckColors,
+      'isTimeMode': instance.isTimeMode,
+      'timeCount': instance.timeCount,
     };
 
 const _$GameStatusEnumMap = {
