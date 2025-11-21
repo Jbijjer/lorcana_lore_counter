@@ -146,15 +146,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Option de supprimer une partie de l'historique
 - [x] Statistiques de base (winrate par joueur, parties jouées, parties nulles)
 
-### 8. Menu d'options complet ✅ COMPLÉTÉ
-- [x] Écran de paramètres
-- [x] Choix du nombre de points pour gagner (20 par défaut, 10/15/25 optionnel)
-- [x] Toggle feedback haptique
-- [x] Toggle sons (si ajoutés)
-- [x] About/Credits
-- [x] Bouton "Effacer toutes les données"
-
-### 9. Section d'aide
+### 8. Section d'aide
 - [ ] Créer une section d'aide accessible depuis le menu principal ou les paramètres
 - [ ] Expliquer toutes les petites fonctionnalités de l'application :
   - [ ] Fonctionnement du menu radial central
@@ -202,55 +194,12 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Choix du mode (Best of X) ✅ (Commit 9d92e7b)
 - [x] Bouton "Démarrer la partie" ✅
 
-### 12. Système de Tournoi et Rounds
-**Informations à capturer par partie :**
-- [ ] Quel round du tournoi sommes-nous (ex: Round 1/5)
-- [ ] Le deck de l'adversaire (ses 2 couleurs parmi Amber, Amethyst, Emerald, Ruby, Sapphire, Steel)
-- [ ] Position de départ : Play (commence en premier) ou Draw (joue en deuxième)
-- [ ] Le pointage final des 2 joueurs
-- [ ] Une note/commentaire lorsqu'on enregistre la partie (optionnel)
-
-**Logique du bouton central - Menu radial étendu :**
-- [ ] Ajouter option "Nouveau tournoi" dans le menu radial
-  - [ ] Si un tournoi est déjà en cours, demander confirmation pour quitter
-  - [ ] Dialog: "Voulez-vous quitter le tournoi actuel?"
-  - [ ] Si oui, demander: "Voulez-vous garder ou ignorer les statistiques du tournoi abandonné?"
-  - [ ] Au démarrage d'un tournoi, demander le nombre de rounds (ex: 3, 4, 5, 6 rounds)
-  - [ ] Initialiser le compteur de round à 1/X
-
-- [ ] Ajouter option "Nouveau round" dans le menu radial
-  - [ ] Désactivé si aucun tournoi n'est en cours
-  - [ ] Au clic, vider le nom de l'adversaire actuel
-  - [ ] Demander de choisir le nouvel adversaire
-  - [ ] Incrémenter le compteur de round (ex: 2/5)
-  - [ ] Réinitialiser les scores à 0
-  - [ ] Garder les informations du tournoi en cours
-
-**Système Best of 3 par round :**
-- [x] Chaque round de tournoi est un Best of 3 (match de 3 parties)
-- [x] Afficher des indicateurs visuels (2 ronds ou étoiles) pour suivre les victoires
-  - [x] 2 indicateurs gris par défaut
-  - [x] Deviennent blancs (ou colorés) quand on remporte une partie
-  - [x] Premier joueur à 2 victoires remporte le round
-- [ ] À la fin d'un round (Best of 3), proposer automatiquement "Nouveau round"
-- [ ] Sauvegarder les résultats de chaque partie du round
-
-**Dialog de fin de partie (après victoire) :**
-- [x] Afficher le gagnant et les scores finaux
-- [ ] Formulaire pour capturer les informations :
-  - [ ] Deck de l'adversaire (2 couleurs)
-  - [ ] Position de départ (Play/Draw)
-  - [ ] Note/commentaire (champ texte optionnel)
-- [ ] Bouton "Enregistrer" pour sauvegarder les données
-- [ ] Bouton "Partie suivante" (dans un Best of 3)
-
 ## 🎨 Basse Priorité
 
 ### 13. Statistiques avancées
 - [ ] Graphiques de progression
 - [x] Winrate global par joueur ✅ (déjà implémenté)
 - [ ] Scores moyens
-- [ ] Export en CSV/JSON
 
 ### 14. Animations et polish
 - [x] Animation sur changement de score (scale, bounce)
@@ -263,17 +212,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Animations de transition entre les scores (counter animation)
 - [x] Shake animation quand le score descend
 - [x] Glow effect autour du bouton central
-
-### 16. Support multi-langues
-- [ ] Français
-- [ ] Anglais
-- [ ] Utiliser package intl ou easy_localization
-
-## 🚀 Nice to Have
-- [ ] Sons de victoire/défaite
-- [ ] Partage de résultats (screenshot)
-- [ ] Synchronisation cloud (Firebase)
-- [ ] Support tablette (layout adaptatif)
 
 ## 📝 Notes techniques
 
