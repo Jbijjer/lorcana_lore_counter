@@ -15,6 +15,7 @@ import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
 import 'statistics_screen.dart';
+import 'settings_screen.dart';
 import 'home_screen.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -205,7 +206,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onStatisticsTap: _handleStatisticsTap,
                     onResetTap: _handleResetTap,
                     onTimerTap: _handleTimerTap,
-                    onHistoryTap: _handleHistoryTap,
+                    onSettingsTap: _handleSettingsTap,
                   ),
                 ),
 
@@ -543,13 +544,11 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     );
   }
 
-  /// Gère l'ouverture de l'historique des rounds
-  void _handleHistoryTap() {
-    // TODO: Implémenter l'historique des rounds
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Historique - À implémenter'),
-        duration: Duration(seconds: 1),
+  /// Gère l'ouverture de l'écran des paramètres
+  void _handleSettingsTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SettingsScreen(),
       ),
     );
   }
