@@ -124,10 +124,11 @@ class _RadialMenuState extends State<RadialMenu>
             ),
 
           // Boutons du menu radial (distribution égale à 60° d'intervalle)
+          // Chaque bouton utilise une couleur officielle de Lorcana
           _buildMenuItem(
             icon: Icons.bar_chart,
             angle: -math.pi / 2, // Haut (270°)
-            color: AppTheme.menuStatsColor,
+            color: AppTheme.sapphireColor, // Saphir
             label: 'Stats',
             onTap: widget.onStatisticsTap != null
                 ? () => _handleMenuItemTap(widget.onStatisticsTap)
@@ -136,7 +137,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.casino,
             angle: -math.pi / 6, // Haut-droite (300°)
-            color: AppTheme.secondaryColor,
+            color: AppTheme.amethystColor, // Améthyste
             label: 'Dés',
             onTap: widget.onDiceTap != null
                 ? () => _handleMenuItemTap(widget.onDiceTap)
@@ -145,7 +146,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.refresh,
             angle: math.pi / 6, // Bas-droite (30°)
-            color: AppTheme.menuResetColor,
+            color: AppTheme.rubyColor, // Rubis
             label: 'Reset',
             onTap: widget.onResetTap != null
                 ? () => _handleMenuItemTap(widget.onResetTap)
@@ -154,7 +155,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.timer,
             angle: math.pi / 2, // Bas (90°)
-            color: AppTheme.menuTimerColor,
+            color: AppTheme.amberColor, // Ambre
             label: 'Time',
             onTap: widget.onTimerTap != null
                 ? () => _handleMenuItemTap(widget.onTimerTap)
@@ -163,7 +164,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.exit_to_app,
             angle: 5 * math.pi / 6, // Bas-gauche (150°)
-            color: AppTheme.warningColor,
+            color: AppTheme.steelColor, // Acier
             label: 'Quitter',
             onTap: widget.onQuitAndSaveTap != null
                 ? () => _handleMenuItemTap(widget.onQuitAndSaveTap)
@@ -172,7 +173,7 @@ class _RadialMenuState extends State<RadialMenu>
           _buildMenuItem(
             icon: Icons.settings,
             angle: 7 * math.pi / 6, // Haut-gauche (210°)
-            color: AppTheme.menuHistoryColor,
+            color: AppTheme.emeraldColor, // Émeraude
             label: 'Paramètres',
             onTap: widget.onSettingsTap != null
                 ? () => _handleMenuItemTap(widget.onSettingsTap)
