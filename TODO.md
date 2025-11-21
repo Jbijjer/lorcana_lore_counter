@@ -76,29 +76,46 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Animations de transition vers l'écran stats
 - [ ] Feedback haptique supplémentaire sur les actions
 
-### 1. Auto-save avec Hive
-- [ ] Créer adaptateur Hive pour GameState
-- [ ] Sauvegarder automatiquement après chaque changement de score
-- [ ] Charger la dernière partie au démarrage
-- [ ] Persister l'état même après fermeture de l'app
+### 1. Auto-save avec Hive ✅ COMPLÉTÉ
+- [x] Créer adaptateur Hive pour GameState
+- [x] Sauvegarder automatiquement après chaque changement de score
+- [x] Charger la dernière partie au démarrage
+- [x] Persister l'état même après fermeture de l'app
 
-### 2. Page d'accueil de l'application
-- [ ] Créer une page d'accueil pour l'application
-- [ ] Bouton "Continuer Partie"
-  - [ ] Afficher un résumé de la partie en cours (joueurs, scores)
-  - [ ] L'usager doit confirmer s'il veut reprendre cette partie
-- [ ] Bouton "Nouveau Round"
-  - [ ] Si une partie est en cours, avertir que celle-ci sera effacée
-  - [ ] Dialog de confirmation avant d'effacer la partie en cours
-- [ ] Bouton "Statistiques"
-  - [ ] Navigation vers l'écran de statistiques existant
-- [ ] Bouton "Paramètres"
-  - [ ] Navigation vers l'écran de paramètres (à créer)
-- [ ] Afficher la version de l'appli en bas à gauche en petit
-- [ ] Utiliser le look et le style des autres fenêtres pour la créer
-  - [ ] Reprendre les dégradés colorés
-  - [ ] Coins arrondis cohérents avec le reste de l'app
-  - [ ] Typographie et espacement similaires
+**✅ Fonctionnalités opérationnelles :**
+- ✅ Sauvegarde automatique à chaque modification d'état (GameProvider._saveState())
+- ✅ Stockage via Hive en format JSON (GamePersistenceService)
+- ✅ Chargement automatique au démarrage si partie en cours
+- ✅ Détection intelligente : sauvegarde uniquement si status == inProgress
+- ✅ Suppression automatique quand la partie se termine
+- ✅ Gestion d'erreur : supprime les sauvegardes corrompues
+
+### 2. Page d'accueil de l'application ✅ COMPLÉTÉ
+- [x] Créer une page d'accueil pour l'application
+- [x] Bouton "Continuer Partie"
+  - [x] Afficher un résumé de la partie en cours (joueurs, scores)
+  - [x] L'usager doit confirmer s'il veut reprendre cette partie
+- [x] Bouton "Nouveau Round"
+  - [x] Si une partie est en cours, avertir que celle-ci sera effacée
+  - [x] Dialog de confirmation avant d'effacer la partie en cours
+- [x] Bouton "Statistiques"
+  - [x] Navigation vers l'écran de statistiques existant
+- [x] Bouton "Paramètres"
+  - [x] Navigation vers l'écran de paramètres
+- [x] Afficher la version de l'appli en bas à gauche en petit
+- [x] Utiliser le look et le style des autres fenêtres pour la créer
+  - [x] Reprendre les dégradés colorés
+  - [x] Coins arrondis cohérents avec le reste de l'app
+  - [x] Typographie et espacement similaires
+
+**✅ Fonctionnalités opérationnelles :**
+- ✅ HomeScreen avec logo Lorcana animé (flip périodique)
+- ✅ Détection automatique de partie en cours
+- ✅ Bouton "Continuer Partie" avec dialogue de confirmation et résumé complet
+- ✅ Bouton "Nouveau Round" avec avertissement si partie en cours
+- ✅ Navigation vers Statistiques et Paramètres
+- ✅ Version affichée en bas de l'écran
+- ✅ Design cohérent avec dégradés et Material 3
 
 ### 3. Restart rapide (One-tap) ✅
 - [x] Ajouter dialog de confirmation avec animation
