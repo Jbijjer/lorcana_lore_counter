@@ -78,10 +78,10 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     final colorKeys = _colorMap.keys.toList();
     _drawColor = _colorMap[colorKeys[random.nextInt(colorKeys.length)]]!;
 
-    // Animation des confettis (une seule fois pour le draw, sobre)
+    // Animation des confettis (une seule fois pour le draw, lente et sobre)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 8),
     )..forward();
 
     HapticUtils.medium();
@@ -472,9 +472,10 @@ class _ConfettiPainter extends CustomPainter {
       final offsetX = size.width * confettiRandom.nextDouble();
       final startDelay = confettiRandom.nextDouble() * 0.4;
       final effectiveAnimation = (animationValue - startDelay).clamp(0.0, 1.0);
-      final startY = -50 - (confettiRandom.nextDouble() * 200);
-      final speedFactor = 1.1 + (confettiRandom.nextDouble() * 0.5);
-      final currentY = startY + (size.height + 700) * effectiveAnimation * speedFactor;
+      final startY = -30 - (confettiRandom.nextDouble() * 100);
+      // Chute lente pour le draw
+      final speedFactor = 0.4 + (confettiRandom.nextDouble() * 0.2);
+      final currentY = startY + (size.height + 300) * effectiveAnimation * speedFactor;
 
       double opacity = 0.8;
       if (effectiveAnimation < 0.1) {
