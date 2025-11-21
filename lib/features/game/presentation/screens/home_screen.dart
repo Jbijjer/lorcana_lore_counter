@@ -122,31 +122,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Logo et titre
-                  _buildHeader(),
-                  const SizedBox(height: 40),
-
-                  // Boutons principaux
-                  _buildMainButtons(hasOngoingGame),
-
-                  const Spacer(),
-
-                  // Version de l'app
-                  if (_appVersion.isNotEmpty)
-                    Text(
-                      'Version $_appVersion',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
-                  const SizedBox(height: 8),
-                ],
-              ),
+                    child: IntrinsicHeight(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Logo et titre
+                            _buildHeader(),
+                            const SizedBox(height: 40),
+
+                            // Boutons principaux
+                            _buildMainButtons(hasOngoingGame),
+
+                            const Spacer(),
+
+                            // Version de l'app
+                            if (_appVersion.isNotEmpty)
+                              Text(
+                                'Version $_appVersion',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[600],
+                                    ),
+                              ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
