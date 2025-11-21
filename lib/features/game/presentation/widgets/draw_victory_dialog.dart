@@ -34,9 +34,6 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
   late AnimationController _confettiController;
   late TextEditingController _noteController;
 
-  // Compteur de cycles pour varier la disposition des confettis
-  int _confettiCycleCount = 0;
-
   // Couleur aléatoire pour le dialog
   late Color _drawColor;
 
@@ -81,20 +78,11 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     final colorKeys = _colorMap.keys.toList();
     _drawColor = _colorMap[colorKeys[random.nextInt(colorKeys.length)]]!;
 
-    // Animation des confettis
+    // Animation des confettis (une seule fois pour le draw, lente et sobre)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
-
-    // Incrémenter le compteur de cycles à chaque répétition
-    _confettiController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          _confettiCycleCount++;
-        });
-      }
-    });
+      duration: const Duration(seconds: 12),
+    )..forward();
 
     HapticUtils.medium();
   }
@@ -267,7 +255,6 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                       painter: _ConfettiPainter(
                         animationValue: _confettiController.value,
                         color: _drawColor,
-                        cycleCount: _confettiCycleCount,
                       ),
                     );
                   },
@@ -461,16 +448,14 @@ class LorcanaDeckColor {
   });
 }
 
-/// Painter pour les têtes de Mickey qui tombent
+/// Painter pour quelques têtes de Mickey disparates (draw sobre)
 class _ConfettiPainter extends CustomPainter {
   final double animationValue;
   final Color color;
-  final int cycleCount;
 
   _ConfettiPainter({
     required this.animationValue,
     required this.color,
-    required this.cycleCount,
   });
 
   @override
@@ -479,17 +464,18 @@ class _ConfettiPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    // Dessiner des têtes de Mickey multicolores
-    for (int i = 0; i < 25; i++) {
-      final confettiRandom =
-          math.Random(42 + cycleCount * 1234 + i * 789 + (cycleCount * i * 37));
+    // Dessiner quelques têtes de Mickey disparates (draw = sobre)
+    for (int i = 0; i < 4; i++) {
+      // Seed différent pour chaque confetti pour une distribution espacée
+      final confettiRandom = math.Random(42 + i * 789);
 
       final offsetX = size.width * confettiRandom.nextDouble();
       final startDelay = confettiRandom.nextDouble() * 0.4;
       final effectiveAnimation = (animationValue - startDelay).clamp(0.0, 1.0);
-      final startY = -50 - (confettiRandom.nextDouble() * 200);
-      final speedFactor = 1.1 + (confettiRandom.nextDouble() * 0.5);
-      final currentY = startY + (size.height + 700) * effectiveAnimation * speedFactor;
+      final startY = -30 - (confettiRandom.nextDouble() * 100);
+      // Chute lente pour le draw
+      final speedFactor = 0.4 + (confettiRandom.nextDouble() * 0.2);
+      final currentY = startY + (size.height + 300) * effectiveAnimation * speedFactor;
 
       double opacity = 0.8;
       if (effectiveAnimation < 0.1) {
