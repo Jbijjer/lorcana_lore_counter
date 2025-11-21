@@ -567,6 +567,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
   }
 
   /// Gère la confirmation d'une nulle
+  /// Une nulle termine le round complètement et retourne au home screen
   Future<void> _handleConfirmDraw() async {
     final gameState = ref.read(gameProvider);
     if (gameState == null) return;
@@ -583,7 +584,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       builder: (context) => DrawVictoryDialog(
         player1: gameState.player1,
         player2: gameState.player2,
-        isMatchComplete: false, // Une nulle ne termine jamais le match
+        isMatchComplete: true, // Une nulle termine toujours le match
         previousPlayer1DeckColors: gameState.player1DeckColors,
         previousPlayer2DeckColors: gameState.player2DeckColors,
       ),
@@ -595,12 +596,22 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     final player1DeckColors = result['player1DeckColors'] as List<String>;
     final player2DeckColors = result['player2DeckColors'] as List<String>;
 
-    // Ajouter la nulle
+    // Enregistrer la nulle dans les statistiques
     ref.read(gameProvider.notifier).addDraw(
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
     );
+
+    // Terminer la partie et retourner au home screen
+    ref.read(gameProvider.notifier).resetGame();
+
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        (route) => false,
+      );
+    }
   }
 
   /// Gère l'annulation du mode Time
