@@ -374,11 +374,9 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
           ),
           // Effet shimmer sur tout le bouton
           if (isSelected)
-            Positioned.fill(
-              child: SimpleShimmerEffect(
-                animationValue: shimmerController.value,
-                borderRadius: 16,
-              ),
+            SimpleShimmerEffect(
+              animationValue: shimmerController.value,
+              borderRadius: 16,
             ),
         ],
       ),

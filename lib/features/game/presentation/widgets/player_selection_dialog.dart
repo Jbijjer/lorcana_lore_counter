@@ -248,12 +248,10 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                 ),
                 // Effet shimmer sur tout le bouton
                 if (!isExcluded)
-                  Positioned.fill(
-                    child: SimpleShimmerEffect(
-                      animationValue: shimmerController.value,
-                      borderRadius: 12,
-                      alpha: 0.2,
-                    ),
+                  SimpleShimmerEffect(
+                    animationValue: shimmerController.value,
+                    borderRadius: 12,
+                    alpha: 0.2,
                   ),
               ],
             ),
@@ -333,11 +331,9 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
               ),
             ),
             // Effet shimmer sur tout le bouton
-            Positioned.fill(
-              child: SimpleShimmerEffect(
-                animationValue: shimmerController.value,
-                borderRadius: 12,
-              ),
+            SimpleShimmerEffect(
+              animationValue: shimmerController.value,
+              borderRadius: 12,
             ),
           ],
         ),
