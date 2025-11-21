@@ -144,21 +144,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Option de supprimer une partie de l'historique
 - [x] Statistiques de base (winrate par joueur, parties jouées, parties nulles)
 
-### 8. Section d'aide
-- [ ] Créer une section d'aide accessible depuis le menu principal ou les paramètres
-- [ ] Expliquer toutes les petites fonctionnalités de l'application :
-  - [ ] Fonctionnement du menu radial central
-  - [ ] Long press pour modifier manuellement un score
-  - [ ] Système de confirmation de victoire
-  - [ ] Modes de jeu (Best of 1/2/3/5)
-  - [ ] Statistiques et historique des parties
-  - [ ] Feedback haptique
-  - [ ] Animations et effets visuels
-  - [ ] Personnalisation des couleurs de deck
-  - [ ] Gestion des parties nulles
-- [ ] Utiliser un format accessible et facile à parcourir (accordéons, sections pliables, etc.)
-- [ ] Ajouter des captures d'écran ou des illustrations si pertinent
-
 ### 11. Écran de configuration pré-partie
 - [x] Sélection des noms de joueurs ✅ (Commit e0b6458 - transformation magique)
 - [x] Sélection des couleurs ✅
