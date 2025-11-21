@@ -548,7 +548,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
   void _handleSettingsTap() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const SettingsScreen(),
+        builder: (context) => const SettingsScreen(fromActiveGame: true),
       ),
     );
   }

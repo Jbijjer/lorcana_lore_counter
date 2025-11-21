@@ -6,10 +6,14 @@ import '../../../../core/providers/accessibility_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../data/game_persistence_service.dart';
 import '../../data/game_statistics_service.dart';
+import 'home_screen.dart';
 
 /// Écran des paramètres de l'application
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({super.key, this.fromActiveGame = false});
+
+  /// Indique si on arrive depuis une partie en cours
+  final bool fromActiveGame;
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -48,6 +52,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          // Bouton Quitter et sauvegarder (si partie en cours)
+          if (widget.fromActiveGame) ...[
+            _buildQuitAndSaveButton(),
+            const SizedBox(height: 24),
+          ],
+
           // Section Accessibilité
           _buildSectionHeader('Accessibilité'),
           _buildAccessibilitySettings(),
@@ -62,6 +72,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildSectionHeader('À propos'),
           _buildAboutSettings(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuitAndSaveButton() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppTheme.successColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(
+            Icons.save_outlined,
+            color: AppTheme.successColor,
+          ),
+        ),
+        title: const Text(
+          'Quitter et sauvegarder',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: const Text('Retourner à l\'écran d\'accueil'),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: _handleQuitAndSave,
       ),
     );
   }
@@ -177,54 +216,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        children: [
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.2),
-                    AppTheme.secondaryColor.withValues(alpha: 0.2),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.info_outline,
-                color: AppTheme.primaryColor,
-              ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.primaryColor.withValues(alpha: 0.2),
+                AppTheme.secondaryColor.withValues(alpha: 0.2),
+              ],
             ),
-            title: const Text('Version de l\'application'),
-            subtitle: Text(
-              _appVersion.isNotEmpty
-                  ? 'Version $_appVersion (Build $_appBuildNumber)'
-                  : 'Chargement...',
-            ),
+            borderRadius: BorderRadius.circular(8),
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.2),
-                    AppTheme.secondaryColor.withValues(alpha: 0.2),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.auto_awesome,
-                color: AppTheme.secondaryColor,
-              ),
-            ),
-            title: const Text('Lorcana Score Keeper'),
-            subtitle: const Text('Application de comptage de points pour Lorcana'),
+          child: const Icon(
+            Icons.info_outline,
+            color: AppTheme.primaryColor,
           ),
-        ],
+        ),
+        title: const Text('Version de l\'application'),
+        subtitle: Text(
+          _appVersion.isNotEmpty
+              ? 'Version $_appVersion (Build $_appBuildNumber)'
+              : 'Chargement...',
+        ),
       ),
     );
   }
@@ -355,5 +369,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       );
     }
+  }
+
+  /// Gère le retour à l'écran d'accueil en sauvegardant la partie
+  void _handleQuitAndSave() {
+    HapticUtils.medium();
+    // La partie est automatiquement sauvegardée par le gameProvider
+    // Retourner à l'écran d'accueil en nettoyant la pile de navigation
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      (route) => false,
+    );
   }
 }
