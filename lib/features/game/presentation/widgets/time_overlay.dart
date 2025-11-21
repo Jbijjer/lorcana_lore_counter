@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 
-/// Overlay du mode Time qui apparaît quand le temps de jeu est écoulé
+/// Widget du mode Time qui s'affiche au centre sans bloquer les zones de joueurs
 class TimeOverlay extends StatefulWidget {
   const TimeOverlay({
     required this.timeCount,
@@ -132,19 +132,27 @@ class _TimeOverlayState extends State<TimeOverlay>
   Widget build(BuildContext context) {
     final bool isDrawState = widget.timeCount == 0;
 
+    // En état Nulle, on bloque tout l'écran
+    // Sinon, on laisse les zones de joueurs accessibles
+    if (isDrawState) {
+      return _buildFullScreenOverlay();
+    } else {
+      return _buildCenterOnlyWidget();
+    }
+  }
+
+  /// Overlay plein écran pour l'état Nulle (bloque les interactions)
+  Widget _buildFullScreenOverlay() {
     return Stack(
       children: [
-        // Fond semi-transparent - clic pour annuler (seulement si pas en état nulle)
+        // Fond semi-transparent
         Positioned.fill(
-          child: GestureDetector(
-            onTap: isDrawState ? null : _handleCancel,
-            child: Container(
-              color: AppTheme.pureBlack.withValues(alpha: 0.7),
-            ),
+          child: Container(
+            color: AppTheme.pureBlack.withValues(alpha: 0.7),
           ),
         ),
 
-        // Logo et compteur au centre
+        // Compteur et boutons au centre
         Center(
           child: SizedBox(
             width: 300,
@@ -152,8 +160,55 @@ class _TimeOverlayState extends State<TimeOverlay>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Boutons +/- (si menu visible et pas en état nulle)
-                if (_showMenu && !isDrawState) ...[
+                // Boutons Oui/Non en état Nulle
+                if (_showMenu) ...[
+                  _buildMenuButton(
+                    label: 'Oui',
+                    angle: math.pi / 2, // Bas
+                    color: AppTheme.successColor,
+                    onTap: _handleConfirmDraw,
+                  ),
+                  _buildMenuButton(
+                    label: 'Non',
+                    angle: -math.pi / 2, // Haut
+                    color: AppTheme.errorColor,
+                    onTap: _handleCancel,
+                  ),
+                ],
+
+                // Compteur au centre
+                _buildCounterDisplay(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Widget central seulement (permet les interactions avec les zones de joueurs)
+  Widget _buildCenterOnlyWidget() {
+    return Stack(
+      children: [
+        // Fond transparent qui laisse passer les clics
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Container(
+              color: Colors.transparent,
+            ),
+          ),
+        ),
+
+        // Compteur et boutons au centre uniquement
+        Center(
+          child: SizedBox(
+            width: 300,
+            height: 300,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Boutons +/- (si menu visible)
+                if (_showMenu) ...[
                   // Bouton -
                   _buildControlButton(
                     label: '-',
@@ -172,44 +227,32 @@ class _TimeOverlayState extends State<TimeOverlay>
                   ),
                 ],
 
-                // Boutons Oui/Non en état Nulle
-                if (_showMenu && isDrawState) ...[
-                  _buildMenuButton(
-                    label: 'Oui',
-                    angle: math.pi / 2, // Bas
-                    color: AppTheme.successColor,
-                    onTap: _handleConfirmDraw,
-                  ),
-                  _buildMenuButton(
-                    label: 'Non',
-                    angle: -math.pi / 2, // Haut
-                    color: AppTheme.errorColor,
-                    onTap: _handleCancel,
-                  ),
-                ],
-
                 // Logo/Compteur au centre avec animation de flip
-                AnimatedBuilder(
-                  animation: _flipAnimation,
-                  builder: (context, child) {
-                    final showFront = _flipAnimation.value < math.pi / 2;
+                // Cliquer dessus annule le Time pour accéder au menu radial
+                GestureDetector(
+                  onTap: _handleCancel,
+                  child: AnimatedBuilder(
+                    animation: _flipAnimation,
+                    builder: (context, child) {
+                      final showFront = _flipAnimation.value < math.pi / 2;
 
-                    return Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateX(_flipAnimation.value),
-                      child: showFront
-                          ? _buildLogo()
-                          : Transform(
-                              alignment: Alignment.center,
-                              transform: Matrix4.identity()..rotateX(math.pi),
-                              child: _hasFlipped
-                                  ? _buildCounterDisplay()
-                                  : _buildLogo(),
-                            ),
-                    );
-                  },
+                      return Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.001)
+                          ..rotateX(_flipAnimation.value),
+                        child: showFront
+                            ? _buildLogo()
+                            : Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.identity()..rotateX(math.pi),
+                                child: _hasFlipped
+                                    ? _buildCounterDisplay()
+                                    : _buildLogo(),
+                              ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
