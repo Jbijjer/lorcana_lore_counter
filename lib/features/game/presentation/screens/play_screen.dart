@@ -580,7 +580,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
               color: AppTheme.warningColor,
             ),
             const SizedBox(width: 8),
-            const Text('Sauvegarder et quitter ?'),
+            const Expanded(
+              child: Text('Sauvegarder et quitter ?'),
+            ),
           ],
         ),
         content: const Text(
