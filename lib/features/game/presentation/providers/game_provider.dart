@@ -32,9 +32,18 @@ class Game extends _$Game {
   }) {
     if (state == null) return;
 
+    // Déterminer le nom du joueur qui a commencé
+    String? firstToPlayName;
+    if (state!.firstToPlay == 1) {
+      firstToPlayName = state!.player1.name;
+    } else if (state!.firstToPlay == 2) {
+      firstToPlayName = state!.player2.name;
+    }
+
     print('📊 Sauvegarde de la partie dans les statistiques');
     print('  - ${state!.player1.name} ${state!.player1Score} - ${state!.player2Score} ${state!.player2.name}');
     print('  - Gagnant: ${winnerName ?? "Match nul"}');
+    print('  - Premier à jouer: ${firstToPlayName ?? "Non défini"}');
     if (note != null) print('  - Note: $note');
 
     final statisticsService = ref.read(gameStatisticsServiceProvider);
@@ -47,6 +56,7 @@ class Game extends _$Game {
       player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
       player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
       note: note,
+      firstToPlayName: firstToPlayName,
     );
   }
 
@@ -60,11 +70,13 @@ class Game extends _$Game {
     required Player player1,
     required Player player2,
     MatchFormat matchFormat = MatchFormat.bestOf3,
+    int? firstToPlay,
   }) {
     state = GameState.create(
       player1: player1,
       player2: player2,
       matchFormat: matchFormat,
+      firstToPlay: firstToPlay,
     );
     _saveState();
   }

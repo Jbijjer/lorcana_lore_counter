@@ -24,6 +24,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
   Player? _player1;
   Player? _player2;
   MatchFormat _selectedFormat = MatchFormat.bestOf3;
+  int? _firstToPlay; // 1 pour joueur 1, 2 pour joueur 2, null si non défini
 
   @override
   void initState() {
@@ -161,6 +162,10 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
 
             // Sélection du format de match
             _buildMatchFormatSelector(),
+            const SizedBox(height: 24),
+
+            // Sélection de qui commence
+            _buildFirstToPlaySelector(),
             const SizedBox(height: 24),
 
             // Bouton démarrer
@@ -414,6 +419,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                   'player1': _player1!,
                   'player2': _player2!,
                   'matchFormat': _selectedFormat,
+                  'firstToPlay': _firstToPlay,
                 });
               }
             : null,
@@ -556,6 +562,170 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
             color: isSelected ? Colors.black : Colors.grey[700],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFirstToPlaySelector() {
+    final hasPlayers = _player1 != null && _player2 != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Icons.flag,
+              color: AppTheme.amberColor,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Qui commence ?',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildFirstToPlayButton(
+                playerNumber: 1,
+                player: _player1,
+                enabled: hasPlayers,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildFirstToPlayButton(
+                playerNumber: 2,
+                player: _player2,
+                enabled: hasPlayers,
+              ),
+            ),
+          ],
+        ),
+        if (!hasPlayers)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Sélectionnez les joueurs pour choisir qui commence',
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+                color: Colors.grey[500],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildFirstToPlayButton({
+    required int playerNumber,
+    required Player? player,
+    required bool enabled,
+  }) {
+    final isSelected = _firstToPlay == playerNumber;
+    final hasPlayer = player != null;
+    final accentColor =
+        playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor;
+
+    return InkWell(
+      onTap: enabled && hasPlayer
+          ? () {
+              HapticUtils.light();
+              setState(() {
+                // Si déjà sélectionné, désélectionner
+                if (_firstToPlay == playerNumber) {
+                  _firstToPlay = null;
+                } else {
+                  _firstToPlay = playerNumber;
+                }
+              });
+            }
+          : null,
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          gradient: isSelected && hasPlayer
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    accentColor,
+                    accentColor.withValues(alpha: 0.8),
+                  ],
+                )
+              : null,
+          color: isSelected || !hasPlayer ? null : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected && hasPlayer
+                ? accentColor
+                : hasPlayer
+                    ? Colors.grey.shade300
+                    : Colors.grey.shade200,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected && hasPlayer
+              ? [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (hasPlayer) ...[
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected ? Colors.white : Colors.grey.shade400,
+                    width: 1.5,
+                  ),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    player.iconAssetPath,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+            ],
+            Flexible(
+              child: Text(
+                hasPlayer ? player.name : 'Joueur $playerNumber',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected && hasPlayer
+                      ? Colors.white
+                      : hasPlayer
+                          ? Colors.grey[700]
+                          : Colors.grey[400],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

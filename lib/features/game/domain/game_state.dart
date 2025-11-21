@@ -29,6 +29,7 @@ class GameState with _$GameState {
     @Default([]) List<String> player2DeckColors, // Les 2 couleurs du deck du joueur 2 pour cette partie
     @Default(false) bool isTimeMode, // Mode Time activé (fin de temps de jeu)
     @Default(5) int timeCount, // Compteur Time (0 à 5)
+    int? firstToPlay, // 1 pour joueur 1, 2 pour joueur 2, null si non défini
   }) = _GameState;
 
   const GameState._();
@@ -41,6 +42,7 @@ class GameState with _$GameState {
     required Player player1,
     required Player player2,
     MatchFormat matchFormat = MatchFormat.bestOf3,
+    int? firstToPlay,
   }) {
     return GameState(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -48,6 +50,7 @@ class GameState with _$GameState {
       player2: player2,
       startTime: DateTime.now(),
       matchFormat: matchFormat,
+      firstToPlay: firstToPlay,
     );
   }
 

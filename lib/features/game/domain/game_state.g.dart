@@ -45,6 +45,7 @@ _$GameStateImpl _$$GameStateImplFromJson(Map<String, dynamic> json) =>
           const [],
       isTimeMode: json['isTimeMode'] as bool? ?? false,
       timeCount: (json['timeCount'] as num?)?.toInt() ?? 5,
+      firstToPlay: (json['firstToPlay'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
@@ -70,6 +71,7 @@ Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
       'player2DeckColors': instance.player2DeckColors,
       'isTimeMode': instance.isTimeMode,
       'timeCount': instance.timeCount,
+      'firstToPlay': instance.firstToPlay,
     };
 
 const _$GameStatusEnumMap = {
