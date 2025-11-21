@@ -71,8 +71,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - ✅ Affichage des couleurs de deck
 
 **⏸️ Améliorations optionnelles (reportées) :**
-- [ ] Bouton "Timer" dans le menu (voir section 10)
-- [ ] Bouton "Historique des rounds" dans le menu (à clarifier si différent des stats)
 - [ ] Animations de transition vers l'écran stats
 - [ ] Feedback haptique supplémentaire sur les actions
 
@@ -160,33 +158,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [ ] Gestion des parties nulles
 - [ ] Utiliser un format accessible et facile à parcourir (accordéons, sections pliables, etc.)
 - [ ] Ajouter des captures d'écran ou des illustrations si pertinent
-
-### 10. Bouton central dynamique et interactif
-- [x] Animation flip (pièce de monnaie) lors d'événements clés ✅ (Commit 293edbf, cd0d27c)
-- [x] Transformation du bouton selon l'état de la partie : ✅
-  - [x] État normal : logo Lorcana (menu radial) ✅
-  - [x] État victoire : "Win!" (quand un joueur atteint 20 points) ✅
-- [x] Bouton "Win!" pour confirmer la victoire ✅
-  - [x] S'affiche avec animation flip quand un joueur atteint 20 ✅ (Commit 293edbf)
-  - [x] Retour à l'état normal si le score descend sous 20 ✅
-  - [x] Clic confirme la victoire et affiche le dialog ✅ (Commit 3b7fbe9)
-- [x] Menu radial du bouton central (état normal) ✅
-  - [x] Bouton central qui fait apparaître d'autres boutons autour (menu expandable) ✅
-  - [x] Animation d'expansion/contraction du menu radial ✅ (Commit 61532d5 - jetons vert/rouge)
-- [ ] Bouton "Time" : compteur manuel de tours
-  - [ ] Affichage d'un compteur à droite du bouton central
-  - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
-  - [ ] Boutons +/- pour modifier le compteur
-  - [ ] Alerte visuelle quand le compteur atteint 0
-  - [ ] Fin de partie automatique à 0 (partie nulle)
-  - [ ] Possibilité de réinitialiser le compteur
-- [x] Bouton "Reset" : remise à zéro rapide
-  - [x] Remet les scores à 0 pour les deux joueurs
-  - [x] Dialog de confirmation
-  - [x] Animation de transition
-- [ ] Autres boutons potentiels :
-  - [ ] Bouton historique des rounds
-  - [ ] Bouton paramètres rapides
 
 ### 11. Écran de configuration pré-partie
 - [x] Sélection des noms de joueurs ✅ (Commit e0b6458 - transformation magique)
