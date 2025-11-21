@@ -215,54 +215,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        children: [
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.2),
-                    AppTheme.secondaryColor.withValues(alpha: 0.2),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.info_outline,
-                color: AppTheme.primaryColor,
-              ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.primaryColor.withValues(alpha: 0.2),
+                AppTheme.secondaryColor.withValues(alpha: 0.2),
+              ],
             ),
-            title: const Text('Version de l\'application'),
-            subtitle: Text(
-              _appVersion.isNotEmpty
-                  ? 'Version $_appVersion (Build $_appBuildNumber)'
-                  : 'Chargement...',
-            ),
+            borderRadius: BorderRadius.circular(8),
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.2),
-                    AppTheme.secondaryColor.withValues(alpha: 0.2),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.auto_awesome,
-                color: AppTheme.secondaryColor,
-              ),
-            ),
-            title: const Text('Lorcana Score Keeper'),
-            subtitle: const Text('Application de comptage de points pour Lorcana'),
+          child: const Icon(
+            Icons.info_outline,
+            color: AppTheme.primaryColor,
           ),
-        ],
+        ),
+        title: const Text('Version de l\'application'),
+        subtitle: Text(
+          _appVersion.isNotEmpty
+              ? 'Version $_appVersion (Build $_appBuildNumber)'
+              : 'Chargement...',
+        ),
       ),
     );
   }
