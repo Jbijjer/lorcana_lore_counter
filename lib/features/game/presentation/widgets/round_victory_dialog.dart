@@ -13,18 +13,24 @@ import '../../../../widgets/dialogs/common/sparkles_painter.dart';
 class RoundVictoryDialog extends StatefulWidget {
   const RoundVictoryDialog({
     required this.winner,
+    required this.loser,
     required this.isMatchComplete,
     required this.winnerWins,
     required this.loserWins,
-    required this.loserName,
+    this.previousPlayer1DeckColors = const [],
+    this.previousPlayer2DeckColors = const [],
+    this.isPlayer1Winner = true,
     super.key,
   });
 
   final Player winner;
+  final Player loser;
   final bool isMatchComplete;
   final int winnerWins;
   final int loserWins;
-  final String loserName;
+  final List<String> previousPlayer1DeckColors;
+  final List<String> previousPlayer2DeckColors;
+  final bool isPlayer1Winner;
 
   @override
   State<RoundVictoryDialog> createState() => _RoundVictoryDialogState();
@@ -33,6 +39,7 @@ class RoundVictoryDialog extends StatefulWidget {
 class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     with TickerProviderStateMixin, DialogAnimationsMixin {
   late AnimationController _confettiController;
+  late TextEditingController _noteController;
 
   // Compteur de cycles pour varier la disposition des confettis
   int _confettiCycleCount = 0;
@@ -41,7 +48,11 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late String _victoryImageName;
   late Color _victoryColor;
 
-  // Map des couleurs disponibles
+  // Couleurs de deck sélectionnées
+  late List<String> _player1DeckColors;
+  late List<String> _player2DeckColors;
+
+  // Map des couleurs disponibles pour l'image de victoire
   static const Map<String, Color> _colorMap = {
     'bleu': Colors.blue,
     'gris': Colors.grey,
@@ -51,10 +62,27 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     'vert': Colors.green,
   };
 
+  // Couleurs de deck Lorcana
+  static const List<LorcanaDeckColor> _lorcanaColors = [
+    LorcanaDeckColor(name: 'Ambre', color: Color(0xFFFFC107)),
+    LorcanaDeckColor(name: 'Améthyste', color: Color(0xFF9C27B0)),
+    LorcanaDeckColor(name: 'Émeraude', color: Color(0xFF4CAF50)),
+    LorcanaDeckColor(name: 'Rubis', color: Color(0xFFE53935)),
+    LorcanaDeckColor(name: 'Saphir', color: Color(0xFF2196F3)),
+    LorcanaDeckColor(name: 'Acier', color: Color(0xFF9E9E9E)),
+  ];
+
   @override
   void initState() {
     super.initState();
     initDialogAnimations();
+
+    // Initialiser le contrôleur de texte pour la note
+    _noteController = TextEditingController();
+
+    // Initialiser les couleurs de deck avec les valeurs précédentes
+    _player1DeckColors = List.from(widget.previousPlayer1DeckColors);
+    _player2DeckColors = List.from(widget.previousPlayer2DeckColors);
 
     // Sélection aléatoire d'une couleur
     final random = math.Random();
@@ -82,6 +110,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   @override
   void dispose() {
+    _noteController.dispose();
     _confettiController.dispose();
     disposeDialogAnimations();
     super.dispose();
@@ -97,13 +126,13 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           children: [
             // Contenu principal
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Image de victoire
                   SizedBox(
-                    height: 160,
+                    height: 120,
                     child: Image.asset(
                       'assets/images/victoire_$_victoryImageName.png',
                       fit: BoxFit.contain,
@@ -116,8 +145,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     children: [
                       // Halo de lumière
                       Container(
-                        width: 168,
-                        height: 168,
+                        width: 140,
+                        height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           boxShadow: [
@@ -132,8 +161,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                       // Portrait avec gradient
                       Container(
-                        width: 144,
-                        height: 144,
+                        width: 120,
+                        height: 120,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: LinearGradient(
@@ -159,8 +188,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                         child: ClipOval(
                           child: Image.asset(
                             widget.winner.iconAssetPath,
-                            width: 144,
-                            height: 144,
+                            width: 120,
+                            height: 120,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -173,7 +202,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                   // Nom du gagnant
                   Text(
                     widget.winner.name,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: _victoryColor,
                         ),
@@ -182,62 +211,32 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                   const SizedBox(height: 16),
 
-                  // Score du match
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 2,
+                  // Champ de note
+                  TextField(
+                    controller: _noteController,
+                    decoration: InputDecoration(
+                      labelText: 'Note de la partie',
+                      hintText: 'Ex: Bonne partie...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[50],
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.isMatchComplete
-                              ? 'Score Final'
-                              : 'Score du Match',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${widget.winner.name}: ${widget.winnerWins}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                            ),
-                            Text(
-                              '${widget.loserName}: ${widget.loserWins}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    maxLines: 2,
+                    textCapitalization: TextCapitalization.sentences,
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+
+                  // Sélection des couleurs de deck
+                  _buildDeckColorsSelection(),
+
+                  const SizedBox(height: 20),
 
                   // Bouton principal avec effet shimmer
                   SizedBox(
@@ -252,7 +251,13 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           child: FilledButton(
                             onPressed: () {
                               HapticUtils.light();
-                              Navigator.of(context).pop();
+                              Navigator.of(context).pop({
+                                'note': _noteController.text.trim().isEmpty
+                                    ? null
+                                    : _noteController.text.trim(),
+                                'player1DeckColors': _player1DeckColors,
+                                'player2DeckColors': _player2DeckColors,
+                              });
                             },
                             style: FilledButton.styleFrom(
                               backgroundColor: _victoryColor,
@@ -327,6 +332,159 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       ),
     );
   }
+
+  Widget _buildDeckColorsSelection() {
+    return Column(
+      children: [
+        // Ligne pour le gagnant
+        _buildPlayerColorRow(
+          playerName: widget.winner.name,
+          deckColors: widget.isPlayer1Winner ? _player1DeckColors : _player2DeckColors,
+          isPlayer1: widget.isPlayer1Winner,
+        ),
+        const SizedBox(height: 8),
+        // Ligne pour le perdant
+        _buildPlayerColorRow(
+          playerName: widget.loser.name,
+          deckColors: widget.isPlayer1Winner ? _player2DeckColors : _player1DeckColors,
+          isPlayer1: !widget.isPlayer1Winner,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlayerColorRow({
+    required String playerName,
+    required List<String> deckColors,
+    required bool isPlayer1,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              playerName,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          // Deux carrés de couleurs
+          _buildColorSquare(
+            colorName: deckColors.isNotEmpty ? deckColors[0] : null,
+            onTap: () => _showColorPicker(isPlayer1, 0),
+          ),
+          const SizedBox(width: 8),
+          _buildColorSquare(
+            colorName: deckColors.length > 1 ? deckColors[1] : null,
+            onTap: () => _showColorPicker(isPlayer1, 1),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColorSquare({String? colorName, required VoidCallback onTap}) {
+    final Color? color = colorName != null
+        ? _lorcanaColors.firstWhere((c) => c.name == colorName).color
+        : null;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color ?? Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: color != null ? Colors.white : Colors.grey[400]!,
+            width: 2,
+          ),
+        ),
+        child: color == null
+            ? Icon(Icons.add, color: Colors.grey[600], size: 20)
+            : null,
+      ),
+    );
+  }
+
+  Future<void> _showColorPicker(bool isPlayer1, int colorIndex) async {
+    final colors = isPlayer1 ? _player1DeckColors : _player2DeckColors;
+
+    final selectedColor = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir une couleur'),
+        content: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: _lorcanaColors.map((lorcanaColor) {
+            final isSelected = colors.contains(lorcanaColor.name);
+            return InkWell(
+              onTap: () {
+                HapticUtils.light();
+                Navigator.of(context).pop(lorcanaColor.name);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: lorcanaColor.color,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? Colors.black : Colors.white,
+                    width: isSelected ? 3 : 2,
+                  ),
+                ),
+                child: isSelected
+                    ? const Icon(Icons.check, color: Colors.white, size: 30)
+                    : null,
+              ),
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              HapticUtils.light();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Annuler'),
+          ),
+        ],
+      ),
+    );
+
+    if (selectedColor != null) {
+      setState(() {
+        if (colorIndex < colors.length) {
+          colors[colorIndex] = selectedColor;
+        } else {
+          colors.add(selectedColor);
+        }
+      });
+    }
+  }
+}
+
+class LorcanaDeckColor {
+  final String name;
+  final Color color;
+
+  const LorcanaDeckColor({
+    required this.name,
+    required this.color,
+  });
 }
 
 /// Painter pour les têtes de Mickey qui tombent

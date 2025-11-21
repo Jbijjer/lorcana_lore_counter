@@ -253,7 +253,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     }
   }
 
-  void _checkWinner() {
+  Future<void> _checkWinner() async {
     final gameState = ref.read(gameProvider);
     if (gameState == null || !gameState.isFinished) return;
 
@@ -264,49 +264,63 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         gameState.player1HasReachedThreshold &&
         !gameState.player1VictoryDeclined;
 
-    // Ajouter une victoire au gagnant de la manche
-    if (isPlayer1Winner) {
-      ref.read(gameProvider.notifier).addPlayer1Win();
-    } else {
-      ref.read(gameProvider.notifier).addPlayer2Win();
-    }
-
-    // Récupérer l'état mis à jour après l'ajout de la victoire
-    final updatedState = ref.read(gameProvider);
-    if (updatedState == null) return;
-
-    final winner = isPlayer1Winner ? updatedState.player1 : updatedState.player2;
-    final loser = isPlayer1Winner ? updatedState.player2 : updatedState.player1;
-    final winnerWins = isPlayer1Winner ? updatedState.player1Wins : updatedState.player2Wins;
-    final loserWins = isPlayer1Winner ? updatedState.player2Wins : updatedState.player1Wins;
-    final winsNeeded = updatedState.matchFormat.winsNeeded;
+    final winner = isPlayer1Winner ? gameState.player1 : gameState.player2;
+    final loser = isPlayer1Winner ? gameState.player2 : gameState.player1;
+    final winnerWins = isPlayer1Winner ? gameState.player1Wins + 1 : gameState.player2Wins + 1;
+    final loserWins = isPlayer1Winner ? gameState.player2Wins : gameState.player1Wins;
+    final winsNeeded = gameState.matchFormat.winsNeeded;
 
     // Vérifier si le joueur a gagné le match complet
     final isMatchComplete = winnerWins >= winsNeeded;
 
-    if (isMatchComplete) {
-      // Match terminé
-      ref.read(gameProvider.notifier).finishGame();
-    }
-
-    showDialog(
+    // Afficher le dialog de victoire avec saisie de note et couleurs
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
       builder: (context) => RoundVictoryDialog(
         winner: winner,
+        loser: loser,
         isMatchComplete: isMatchComplete,
         winnerWins: winnerWins,
         loserWins: loserWins,
-        loserName: loser.name,
+        previousPlayer1DeckColors: gameState.player1DeckColors,
+        previousPlayer2DeckColors: gameState.player2DeckColors,
+        isPlayer1Winner: isPlayer1Winner,
       ),
-    ).then((_) async {
-      if (isMatchComplete && mounted) {
-        // Après la fermeture du dialog de victoire du match
-        ref.read(gameProvider.notifier).resetGame();
+    );
+
+    // Si l'utilisateur a annulé (ne devrait pas arriver car barrierDismissible = false)
+    if (result == null) return;
+
+    final note = result['note'] as String?;
+    final player1DeckColors = result['player1DeckColors'] as List<String>;
+    final player2DeckColors = result['player2DeckColors'] as List<String>;
+
+    // Ajouter une victoire au gagnant de la manche avec les informations saisies
+    if (isPlayer1Winner) {
+      ref.read(gameProvider.notifier).addPlayer1Win(
+        note: note,
+        player1DeckColors: player1DeckColors,
+        player2DeckColors: player2DeckColors,
+      );
+    } else {
+      ref.read(gameProvider.notifier).addPlayer2Win(
+        note: note,
+        player1DeckColors: player1DeckColors,
+        player2DeckColors: player2DeckColors,
+      );
+    }
+
+    if (isMatchComplete) {
+      // Match terminé
+      ref.read(gameProvider.notifier).finishGame();
+
+      if (mounted) {
         // Afficher le dialog de sélection des joueurs pour une nouvelle partie
+        ref.read(gameProvider.notifier).resetGame();
         await _showGameSetupDialog();
       }
-    });
+    }
   }
 
   void _handleVictoryConfirm() {
