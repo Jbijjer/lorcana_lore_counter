@@ -161,6 +161,18 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Utiliser un format accessible et facile à parcourir (accordéons, sections pliables, etc.)
 - [ ] Ajouter des captures d'écran ou des illustrations si pertinent
 
+### 9. Mode de saisie manuelle
+- [ ] Ajouter un bouton dans le menu principal pour accéder à un mode "manuel"
+- [ ] Créer une interface de saisie manuelle permettant d'entrer :
+  - [ ] Les joueurs participants
+  - [ ] Les couleurs de deck de chaque joueur
+  - [ ] Le score de chaque partie
+  - [ ] Qui a commencé chaque partie
+  - [ ] Le nombre de parties dans chaque round
+- [ ] Sauvegarder ces données dans l'historique des parties
+- [ ] Permettre l'ajout de plusieurs parties/rounds en une session
+- [ ] Interface intuitive qui ne nécessite pas de passer par l'interface de jeu complète
+
 ### 10. Bouton central dynamique et interactif
 - [x] Animation flip (pièce de monnaie) lors d'événements clés ✅ (Commit 293edbf, cd0d27c)
 - [x] Transformation du bouton selon l'état de la partie : ✅
