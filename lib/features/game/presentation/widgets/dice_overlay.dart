@@ -24,6 +24,7 @@ class _DiceOverlayState extends State<DiceOverlay>
   int _dice1Value = 1;
   int _dice2Value = 1;
   bool _isRolling = false;
+  bool _hasRolled = false;
 
   final _random = math.Random();
 
@@ -72,6 +73,7 @@ class _DiceOverlayState extends State<DiceOverlay>
       _dice1Value = _random.nextInt(6) + 1;
       _dice2Value = _random.nextInt(6) + 1;
       _isRolling = false;
+      _hasRolled = true;
     });
 
     // Animation de "pop" à la fin
@@ -99,49 +101,53 @@ class _DiceOverlayState extends State<DiceOverlay>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Les deux dés
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildDice(_dice1Value, 0),
-                    const SizedBox(width: 32),
-                    _buildDice(_dice2Value, 1),
-                  ],
+                // Les deux dés (cliquables pour relancer)
+                GestureDetector(
+                  onTap: _isRolling ? null : _rollDice,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildDice(_dice1Value, 0),
+                      const SizedBox(width: 32),
+                      _buildDice(_dice2Value, 1),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 48),
 
-                // Total
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppTheme.primaryColor,
-                        AppTheme.primaryColor.withValues(alpha: 0.8),
+                // Total (seulement après le premier lancer)
+                if (_hasRolled && !_isRolling)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.primaryColor,
+                          AppTheme.primaryColor.withValues(alpha: 0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryColor.withValues(alpha: 0.4),
-                        blurRadius: 20,
-                        spreadRadius: 2,
+                    child: Text(
+                      'Total: ${_dice1Value + _dice2Value}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                  child: Text(
-                    'Total: ${_dice1Value + _dice2Value}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
 
                 const SizedBox(height: 48),
 
