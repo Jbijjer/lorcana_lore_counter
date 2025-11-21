@@ -173,6 +173,13 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Menu radial du bouton central (état normal) ✅
   - [x] Bouton central qui fait apparaître d'autres boutons autour (menu expandable) ✅
   - [x] Animation d'expansion/contraction du menu radial ✅ (Commit 61532d5 - jetons vert/rouge)
+- [ ] Bouton "Dice" : lancer de dés
+  - [ ] Bouton dans le menu radial pour lancer 2 dés à 6 faces
+  - [ ] Animation de lancer de dés (rotation/roll)
+  - [ ] Affichage des résultats des 2 dés
+  - [ ] Possibilité de relancer les dés
+  - [ ] Feedback haptique lors du lancer
+  - [ ] Affichage temporaire ou permanent (à définir)
 - [ ] Bouton "Time" : compteur manuel de tours
   - [ ] Affichage d'un compteur à droite du bouton central
   - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
