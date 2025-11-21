@@ -12,6 +12,7 @@ class RadialMenu extends StatefulWidget {
     this.onTimerTap,
     this.onSettingsTap,
     this.onDiceTap,
+    this.onQuitAndSaveTap,
   });
 
   final VoidCallback? onStatisticsTap;
@@ -19,6 +20,7 @@ class RadialMenu extends StatefulWidget {
   final VoidCallback? onTimerTap;
   final VoidCallback? onSettingsTap;
   final VoidCallback? onDiceTap;
+  final VoidCallback? onQuitAndSaveTap;
 
   @override
   State<RadialMenu> createState() => _RadialMenuState();
@@ -163,6 +165,15 @@ class _RadialMenuState extends State<RadialMenu>
             label: 'Paramètres',
             onTap: widget.onSettingsTap != null
                 ? () => _handleMenuItemTap(widget.onSettingsTap)
+                : null,
+          ),
+          _buildMenuItem(
+            icon: Icons.exit_to_app,
+            angle: 3 * math.pi / 4, // Bas-gauche (135°)
+            color: AppTheme.warningColor,
+            label: 'Quitter',
+            onTap: widget.onQuitAndSaveTap != null
+                ? () => _handleMenuItemTap(widget.onQuitAndSaveTap)
                 : null,
           ),
 

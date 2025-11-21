@@ -209,6 +209,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onTimerTap: _handleTimerTap,
                     onSettingsTap: _handleSettingsTap,
                     onDiceTap: _handleDiceTap,
+                    onQuitAndSaveTap: _handleQuitAndSave,
                   ),
                 ),
 
@@ -565,6 +566,51 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         onClose: () => Navigator.of(context).pop(),
       ),
     );
+  }
+
+  /// Gère la sauvegarde et le retour à l'écran d'accueil avec validation
+  Future<void> _handleQuitAndSave() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(
+              Icons.save,
+              color: AppTheme.warningColor,
+            ),
+            const SizedBox(width: 8),
+            const Text('Sauvegarder et quitter ?'),
+          ],
+        ),
+        content: const Text(
+          'Voulez-vous vraiment quitter la partie ? Votre progression sera sauvegardée.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.successColor,
+            ),
+            child: const Text('Sauvegarder et quitter'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      HapticUtils.medium();
+      // La partie est automatiquement sauvegardée par le gameProvider
+      // Retourner à l'écran d'accueil en nettoyant la pile de navigation
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        (route) => false,
+      );
+    }
   }
 }
 

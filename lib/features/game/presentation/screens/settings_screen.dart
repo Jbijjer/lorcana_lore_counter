@@ -6,7 +6,6 @@ import '../../../../core/providers/accessibility_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../data/game_persistence_service.dart';
 import '../../data/game_statistics_service.dart';
-import 'home_screen.dart';
 
 /// Écran des paramètres de l'application
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -52,12 +51,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Bouton Quitter et sauvegarder (si partie en cours)
-          if (widget.fromActiveGame) ...[
-            _buildQuitAndSaveButton(),
-            const SizedBox(height: 24),
-          ],
-
           // Section Accessibilité
           _buildSectionHeader('Accessibilité'),
           _buildAccessibilitySettings(),
@@ -72,35 +65,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildSectionHeader('À propos'),
           _buildAboutSettings(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildQuitAndSaveButton() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.successColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.save_outlined,
-            color: AppTheme.successColor,
-          ),
-        ),
-        title: const Text(
-          'Quitter et sauvegarder',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: const Text('Retourner à l\'écran d\'accueil'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: _handleQuitAndSave,
       ),
     );
   }
@@ -369,16 +333,5 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       );
     }
-  }
-
-  /// Gère le retour à l'écran d'accueil en sauvegardant la partie
-  void _handleQuitAndSave() {
-    HapticUtils.medium();
-    // La partie est automatiquement sauvegardée par le gameProvider
-    // Retourner à l'écran d'accueil en nettoyant la pile de navigation
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-      (route) => false,
-    );
   }
 }
