@@ -146,13 +146,13 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Option de supprimer une partie de l'historique
 - [x] Statistiques de base (winrate par joueur, parties jouées, parties nulles)
 
-### 8. Menu d'options complet
-- [ ] Écran de paramètres
-- [ ] Choix du nombre de points pour gagner (20 par défaut, 10/15/25 optionnel)
-- [ ] Toggle feedback haptique
-- [ ] Toggle sons (si ajoutés)
-- [ ] About/Credits
-- [ ] Bouton "Effacer toutes les données"
+### 8. Menu d'options complet ✅ COMPLÉTÉ
+- [x] Écran de paramètres
+- [x] Choix du nombre de points pour gagner (20 par défaut, 10/15/25 optionnel)
+- [x] Toggle feedback haptique
+- [x] Toggle sons (si ajoutés)
+- [x] About/Credits
+- [x] Bouton "Effacer toutes les données"
 
 ### 9. Section d'aide
 - [ ] Créer une section d'aide accessible depuis le menu principal ou les paramètres
