@@ -10,6 +10,7 @@ import '../providers/game_provider.dart';
 import 'play_screen.dart';
 import 'statistics_screen.dart';
 import 'settings_screen.dart';
+import 'help_screen.dart';
 
 /// Page d'accueil de l'application
 class HomeScreen extends ConsumerStatefulWidget {
@@ -271,6 +272,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
         const SizedBox(height: 12),
 
+        // Bouton Aide
+        _buildMenuButton(
+          icon: Icons.help_outline,
+          label: 'Aide',
+          gradient: LinearGradient(
+            colors: [
+              AppTheme.secondaryColor,
+              AppTheme.secondaryColor.withValues(alpha: 0.7),
+            ],
+          ),
+          onTap: _handleHelp,
+        ),
+        const SizedBox(height: 12),
+
         // Bouton Paramètres
         _buildMenuButton(
           icon: Icons.settings,
@@ -472,6 +487,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const StatisticsScreen(),
+      ),
+    );
+  }
+
+  void _handleHelp() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const HelpScreen(),
       ),
     );
   }
