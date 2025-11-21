@@ -325,6 +325,15 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                 ),
               ),
             ),
+
+            // Sparkles overlay
+            IgnorePointer(
+              child: SparklesOverlay(
+                controller: shimmerController,
+                color: _victoryColor,
+                sparkleCount: 5,
+              ),
+            ),
           ],
         ),
       ),
