@@ -153,7 +153,7 @@ class _RadialMenuState extends State<RadialMenu>
             icon: Icons.timer,
             angle: math.pi / 2, // Bas (90°)
             color: AppTheme.menuTimerColor,
-            label: 'Timer',
+            label: 'Time',
             onTap: widget.onTimerTap != null
                 ? () => _handleMenuItemTap(widget.onTimerTap)
                 : null,

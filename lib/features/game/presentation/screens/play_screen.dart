@@ -10,6 +10,8 @@ import '../widgets/reset_confirmation_dialog.dart';
 import '../widgets/victory_overlay.dart';
 import '../widgets/round_victory_dialog.dart';
 import '../widgets/dice_overlay.dart';
+import '../widgets/time_overlay.dart';
+import '../widgets/draw_victory_dialog.dart';
 import '../providers/game_provider.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
@@ -220,6 +222,18 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                       isPlayer1: gameState.isPlayer1AtThreshold,
                       onConfirm: _handleVictoryConfirm,
                       onDecline: _handleVictoryDecline,
+                    ),
+                  ),
+
+                // Overlay du mode Time (au-dessus de tout)
+                if (gameState.isTimeMode)
+                  Positioned.fill(
+                    child: TimeOverlay(
+                      timeCount: gameState.timeCount,
+                      onIncrement: _handleTimeIncrement,
+                      onDecrement: _handleTimeDecrement,
+                      onConfirmDraw: _handleConfirmDraw,
+                      onCancel: _handleTimeCancel,
                     ),
                   ),
               ],
@@ -536,15 +550,63 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     overlay.insert(overlayEntry);
   }
 
-  /// Gère l'activation du timer
+  /// Gère l'activation du mode Time
   void _handleTimerTap() {
-    // TODO: Implémenter le timer de rounds
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Timer - À implémenter'),
-        duration: Duration(seconds: 1),
+    HapticUtils.medium();
+    ref.read(gameProvider.notifier).activateTimeMode();
+  }
+
+  /// Gère l'incrémentation du compteur Time
+  void _handleTimeIncrement() {
+    ref.read(gameProvider.notifier).incrementTimeCount();
+  }
+
+  /// Gère la décrémentation du compteur Time
+  void _handleTimeDecrement() {
+    ref.read(gameProvider.notifier).decrementTimeCount();
+  }
+
+  /// Gère la confirmation d'une nulle
+  Future<void> _handleConfirmDraw() async {
+    final gameState = ref.read(gameProvider);
+    if (gameState == null) return;
+
+    // Désactiver le mode Time
+    ref.read(gameProvider.notifier).deactivateTimeMode();
+
+    HapticUtils.success();
+
+    // Afficher le dialog de nulle
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => DrawVictoryDialog(
+        player1: gameState.player1,
+        player2: gameState.player2,
+        isMatchComplete: false, // Une nulle ne termine jamais le match
+        previousPlayer1DeckColors: gameState.player1DeckColors,
+        previousPlayer2DeckColors: gameState.player2DeckColors,
       ),
     );
+
+    if (result == null) return;
+
+    final note = result['note'] as String?;
+    final player1DeckColors = result['player1DeckColors'] as List<String>;
+    final player2DeckColors = result['player2DeckColors'] as List<String>;
+
+    // Ajouter la nulle
+    ref.read(gameProvider.notifier).addDraw(
+      note: note,
+      player1DeckColors: player1DeckColors,
+      player2DeckColors: player2DeckColors,
+    );
+  }
+
+  /// Gère l'annulation du mode Time
+  void _handleTimeCancel() {
+    HapticUtils.light();
+    ref.read(gameProvider.notifier).deactivateTimeMode();
   }
 
   /// Gère l'ouverture de l'écran des paramètres

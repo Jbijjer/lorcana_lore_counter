@@ -373,6 +373,79 @@ class Game extends _$Game {
     _saveState();
   }
 
+  /// Active le mode Time (fin de temps de jeu)
+  void activateTimeMode() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      isTimeMode: true,
+      timeCount: 5,
+    );
+    _saveState();
+  }
+
+  /// Désactive le mode Time
+  void deactivateTimeMode() {
+    if (state == null) return;
+
+    state = state!.copyWith(
+      isTimeMode: false,
+      timeCount: 5,
+    );
+    _saveState();
+  }
+
+  /// Incrémente le compteur Time (max 5)
+  void incrementTimeCount() {
+    if (state == null || !state!.isTimeMode) return;
+
+    final newCount = (state!.timeCount + 1).clamp(0, 5);
+    state = state!.copyWith(timeCount: newCount);
+    _saveState();
+  }
+
+  /// Décrémente le compteur Time (min 0)
+  void decrementTimeCount() {
+    if (state == null || !state!.isTimeMode) return;
+
+    final newCount = (state!.timeCount - 1).clamp(0, 5);
+    state = state!.copyWith(timeCount: newCount);
+    _saveState();
+  }
+
+  /// Ajoute une nulle (match nul) et réinitialise les scores pour la manche suivante
+  void addDraw({
+    String? note,
+    List<String>? player1DeckColors,
+    List<String>? player2DeckColors,
+  }) {
+    if (state == null) return;
+
+    // Sauvegarder la partie avec un match nul (winnerName = null)
+    _savePartieToStatistics(
+      winnerName: null,
+      note: note,
+      player1DeckColors: player1DeckColors,
+      player2DeckColors: player2DeckColors,
+    );
+
+    // Réinitialiser pour la manche suivante
+    state = state!.copyWith(
+      player1Score: 0,
+      player2Score: 0,
+      currentRound: state!.currentRound + 1,
+      player1VictoryThreshold: 20,
+      player2VictoryThreshold: 20,
+      player1VictoryDeclined: false,
+      player2VictoryDeclined: false,
+      isTimeMode: false,
+      timeCount: 5,
+      player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
+      player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
+    );
+    _saveState();
+  }
+
   /// Réinitialise les flags de victoire refusée individuellement pour chaque joueur
   void resetVictoryDeclined() {
     if (state == null) return;

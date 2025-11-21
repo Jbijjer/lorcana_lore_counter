@@ -27,6 +27,8 @@ class GameState with _$GameState {
     @Default(20) int player2VictoryThreshold,
     @Default([]) List<String> player1DeckColors, // Les 2 couleurs du deck du joueur 1 pour cette partie
     @Default([]) List<String> player2DeckColors, // Les 2 couleurs du deck du joueur 2 pour cette partie
+    @Default(false) bool isTimeMode, // Mode Time activé (fin de temps de jeu)
+    @Default(5) int timeCount, // Compteur Time (0 à 5)
   }) = _GameState;
 
   const GameState._();
