@@ -387,16 +387,26 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       borderRadius: BorderRadius.circular(12),
       child: Row(
         children: [
-          // Icône drapeau à gauche de l'encadré si ce joueur a commencé
+          // Icônes à gauche de l'encadré (trophée et/ou drapeau)
           SizedBox(
             width: 24,
-            child: isFirstToPlay
-                ? const Icon(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isWinner)
+                  Icon(
+                    Icons.emoji_events,
+                    color: _victoryColor,
+                    size: 18,
+                  ),
+                if (isFirstToPlay)
+                  Icon(
                     Icons.flag,
                     color: AppTheme.amberColor,
-                    size: 18,
-                  )
-                : null,
+                    size: 16,
+                  ),
+              ],
+            ),
           ),
           // Encadré du joueur
           Expanded(
@@ -413,15 +423,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
               ),
               child: Row(
                 children: [
-                  // Icône trophée si gagnant
-                  if (isWinner) ...[
-                    Icon(
-                      Icons.emoji_events,
-                      color: _victoryColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 6),
-                  ],
                   Expanded(
                     child: Text(
                       playerName,
