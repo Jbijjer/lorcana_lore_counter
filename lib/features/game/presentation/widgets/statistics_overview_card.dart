@@ -210,6 +210,62 @@ class _PlayerStatsRow extends StatelessWidget {
               ),
             ],
           ),
+
+          // Section "Premier à jouer" (si données disponibles)
+          if (stats.gamesAsFirstPlayer > 0 || stats.gamesAsSecondPlayer > 0) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.flag,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Premier à jouer',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _FirstToPlayStat(
+                          label: 'Commence',
+                          games: stats.gamesAsFirstPlayer,
+                          wins: stats.winsAsFirstPlayer,
+                          winrate: stats.winrateAsFirstPlayer,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _FirstToPlayStat(
+                          label: 'Second',
+                          games: stats.gamesAsSecondPlayer,
+                          wins: stats.winsAsSecondPlayer,
+                          winrate: stats.winrateAsSecondPlayer,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -278,5 +334,97 @@ class _StatChip extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Widget pour afficher les statistiques "Premier à jouer"
+class _FirstToPlayStat extends StatelessWidget {
+  const _FirstToPlayStat({
+    required this.label,
+    required this.games,
+    required this.wins,
+    required this.winrate,
+  });
+
+  final String label;
+  final int games;
+  final int wins;
+  final double winrate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (games == 0) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '-',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final color = _getWinrateColor(winrate, context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '${winrate.toStringAsFixed(0)}%',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: color,
+            ),
+          ),
+          Text(
+            '$wins/$games',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getWinrateColor(double winrate, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (winrate >= 60) return colorScheme.primary;
+    if (winrate >= 40) return colorScheme.tertiary;
+    return colorScheme.error;
   }
 }

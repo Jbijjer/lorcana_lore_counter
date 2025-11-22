@@ -29,12 +29,22 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? firstToPlay,
   }) {
     if (state == null) return;
+
+    // Déterminer le nom du joueur qui a commencé
+    String? firstToPlayName;
+    if (firstToPlay == 1) {
+      firstToPlayName = state!.player1.name;
+    } else if (firstToPlay == 2) {
+      firstToPlayName = state!.player2.name;
+    }
 
     print('📊 Sauvegarde de la partie dans les statistiques');
     print('  - ${state!.player1.name} ${state!.player1Score} - ${state!.player2Score} ${state!.player2.name}');
     print('  - Gagnant: ${winnerName ?? "Match nul"}');
+    print('  - Premier à jouer: ${firstToPlayName ?? "Non défini"}');
     if (note != null) print('  - Note: $note');
 
     final statisticsService = ref.read(gameStatisticsServiceProvider);
@@ -47,6 +57,7 @@ class Game extends _$Game {
       player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
       player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
       note: note,
+      firstToPlayName: firstToPlayName,
     );
   }
 
@@ -276,6 +287,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
@@ -285,6 +297,7 @@ class Game extends _$Game {
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     state = state!.copyWith(
@@ -308,6 +321,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
@@ -317,6 +331,7 @@ class Game extends _$Game {
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     state = state!.copyWith(
@@ -418,6 +433,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
@@ -427,6 +443,7 @@ class Game extends _$Game {
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     // Réinitialiser pour la manche suivante

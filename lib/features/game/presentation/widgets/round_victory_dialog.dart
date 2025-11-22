@@ -49,6 +49,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late List<String> _player1DeckColors;
   late List<String> _player2DeckColors;
 
+  // Qui a commencé cette partie (1 ou 2, null si non sélectionné)
+  int? _firstToPlay;
+
   // Map des couleurs disponibles pour l'image de victoire
   static const Map<String, Color> _colorMap = {
     'bleu': Colors.blue,
@@ -81,16 +84,19 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     _player1DeckColors = List.from(widget.previousPlayer1DeckColors);
     _player2DeckColors = List.from(widget.previousPlayer2DeckColors);
 
+    // Sélectionner le gagnant comme premier joueur par défaut
+    _firstToPlay = widget.isPlayer1Winner ? 1 : 2;
+
     // Sélection aléatoire d'une couleur
     final random = math.Random();
     final colorKeys = _colorMap.keys.toList();
     _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
     _victoryColor = _colorMap[_victoryImageName]!;
 
-    // Animation des confettis (une seule fois, plus lente)
+    // Animation des confettis (une seule fois)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 15),
     )..forward();
 
     HapticUtils.success();
@@ -187,18 +193,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                   const SizedBox(height: 16),
 
-                  // Nom du gagnant
-                  Text(
-                    widget.winner.name,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: _victoryColor,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: 16),
-
                   // Champ de note
                   TextField(
                     controller: _noteController,
@@ -221,7 +215,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                   const SizedBox(height: 16),
 
-                  // Sélection des couleurs de deck
+                  // Sélection des couleurs de deck (tap pour indiquer qui a commencé)
                   _buildDeckColorsSelection(),
 
                   const SizedBox(height: 20),
@@ -245,6 +239,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                     : _noteController.text.trim(),
                                 'player1DeckColors': _player1DeckColors,
                                 'player2DeckColors': _player2DeckColors,
+                                'firstToPlay': _firstToPlay,
                               });
                             },
                             style: FilledButton.styleFrom(
@@ -331,12 +326,33 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   Widget _buildDeckColorsSelection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Indication pour sélectionner qui a commencé
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: [
+              Icon(Icons.touch_app, size: 14, color: Colors.grey[500]),
+              const SizedBox(width: 4),
+              Text(
+                'Tap = premier joueur',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
         // Ligne pour le gagnant
         _buildPlayerColorRow(
           playerName: widget.winner.name,
           deckColors: widget.isPlayer1Winner ? _player1DeckColors : _player2DeckColors,
           isPlayer1: widget.isPlayer1Winner,
+          isWinner: true,
+          playerNumber: widget.isPlayer1Winner ? 1 : 2,
         ),
         const SizedBox(height: 8),
         // Ligne pour le perdant
@@ -344,6 +360,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           playerName: widget.loser.name,
           deckColors: widget.isPlayer1Winner ? _player2DeckColors : _player1DeckColors,
           isPlayer1: !widget.isPlayer1Winner,
+          isWinner: false,
+          playerNumber: widget.isPlayer1Winner ? 2 : 1,
         ),
       ],
     );
@@ -353,36 +371,89 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     required String playerName,
     required List<String> deckColors,
     required bool isPlayer1,
+    required bool isWinner,
+    required int playerNumber,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Row(
+    final isFirstToPlay = _firstToPlay == playerNumber;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          if (_firstToPlay == playerNumber) {
+            _firstToPlay = null;
+          } else {
+            _firstToPlay = playerNumber;
+          }
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Expanded(
-            child: Text(
-              playerName,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.grey[600]
+          // Encadré du joueur (pleine largeur)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!),
+                width: (isWinner || isFirstToPlay) ? 2 : 1,
               ),
             ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    playerName,
+                    style: TextStyle(
+                      fontWeight: (isWinner || isFirstToPlay) ? FontWeight.bold : FontWeight.w600,
+                      fontSize: 14,
+                      color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[600]),
+                    ),
+                  ),
+                ),
+                // Deux carrés de couleurs
+                _buildColorSquare(
+                  colorName: deckColors.isNotEmpty ? deckColors[0] : null,
+                  onTap: () => _showColorPicker(isPlayer1, 0),
+                ),
+                const SizedBox(width: 8),
+                _buildColorSquare(
+                  colorName: deckColors.length > 1 ? deckColors[1] : null,
+                  onTap: () => _showColorPicker(isPlayer1, 1),
+                ),
+              ],
+            ),
           ),
-          // Deux carrés de couleurs
-          _buildColorSquare(
-            colorName: deckColors.isNotEmpty ? deckColors[0] : null,
-            onTap: () => _showColorPicker(isPlayer1, 0),
-          ),
-          const SizedBox(width: 8),
-          _buildColorSquare(
-            colorName: deckColors.length > 1 ? deckColors[1] : null,
-            onTap: () => _showColorPicker(isPlayer1, 1),
-          ),
+          // Icônes qui dépassent dans la marge gauche
+          if (isWinner || isFirstToPlay)
+            Positioned(
+              left: -20,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isWinner)
+                      Icon(
+                        Icons.emoji_events,
+                        color: _victoryColor,
+                        size: 18,
+                      ),
+                    if (isFirstToPlay)
+                      Icon(
+                        Icons.flag,
+                        color: AppTheme.amberColor,
+                        size: 16,
+                      ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -472,6 +543,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       });
     }
   }
+
 }
 
 class LorcanaDeckColor {
@@ -516,8 +588,8 @@ class _ConfettiPainter extends CustomPainter {
       // Position de départ
       final startY = -50 - (confettiRandom.nextDouble() * 200);
 
-      // Vitesse plus lente pour chaque confetti (entre 0.7x et 1.0x)
-      final speedFactor = 0.7 + (confettiRandom.nextDouble() * 0.3);
+      // Vitesse pour chaque confetti (entre 1.3x et 1.8x)
+      final speedFactor = 1.3 + (confettiRandom.nextDouble() * 0.5);
       // Distance totale pour garantir que tous les confettis sortent de l'écran
       final currentY = startY + (size.height + 500) * effectiveAnimation * speedFactor;
 

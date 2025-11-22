@@ -334,6 +334,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     final note = result['note'] as String?;
     final player1DeckColors = result['player1DeckColors'] as List<String>;
     final player2DeckColors = result['player2DeckColors'] as List<String>;
+    final firstToPlay = result['firstToPlay'] as int?;
 
     // Ajouter une victoire au gagnant de la manche avec les informations saisies
     if (isPlayer1Winner) {
@@ -341,12 +342,14 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         note: note,
         player1DeckColors: player1DeckColors,
         player2DeckColors: player2DeckColors,
+        firstToPlay: firstToPlay,
       );
     } else {
       ref.read(gameProvider.notifier).addPlayer2Win(
         note: note,
         player1DeckColors: player1DeckColors,
         player2DeckColors: player2DeckColors,
+        firstToPlay: firstToPlay,
       );
     }
 
@@ -616,12 +619,14 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
     final note = result['note'] as String?;
     final player1DeckColors = result['player1DeckColors'] as List<String>;
     final player2DeckColors = result['player2DeckColors'] as List<String>;
+    final firstToPlay = result['firstToPlay'] as int?;
 
     // Enregistrer la nulle dans les statistiques
     ref.read(gameProvider.notifier).addDraw(
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     // Terminer la partie et retourner au home screen

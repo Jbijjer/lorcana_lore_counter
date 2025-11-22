@@ -43,7 +43,10 @@ mixin _$GameState {
       throw _privateConstructorUsedError; // Les 2 couleurs du deck du joueur 2 pour cette partie
   bool get isTimeMode =>
       throw _privateConstructorUsedError; // Mode Time activé (fin de temps de jeu)
-  int get timeCount => throw _privateConstructorUsedError;
+  int get timeCount =>
+      throw _privateConstructorUsedError; // Compteur Time (0 à 5)
+  int? get firstToPlay =>
+      throw _privateConstructorUsedError; // 1 pour joueur 1, 2 pour joueur 2, null si non défini
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -77,7 +80,8 @@ abstract class $GameStateCopyWith<$Res> {
       List<String> player1DeckColors,
       List<String> player2DeckColors,
       bool isTimeMode,
-      int timeCount});
+      int timeCount,
+      int? firstToPlay});
 
   $PlayerCopyWith<$Res> get player1;
   $PlayerCopyWith<$Res> get player2;
@@ -117,6 +121,7 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
     Object? player2DeckColors = null,
     Object? isTimeMode = null,
     Object? timeCount = null,
+    Object? firstToPlay = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -203,6 +208,10 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.timeCount
           : timeCount // ignore: cast_nullable_to_non_nullable
               as int,
+      firstToPlay: freezed == firstToPlay
+          ? _value.firstToPlay
+          : firstToPlay // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -252,7 +261,8 @@ abstract class _$$GameStateImplCopyWith<$Res>
       List<String> player1DeckColors,
       List<String> player2DeckColors,
       bool isTimeMode,
-      int timeCount});
+      int timeCount,
+      int? firstToPlay});
 
   @override
   $PlayerCopyWith<$Res> get player1;
@@ -292,6 +302,7 @@ class __$$GameStateImplCopyWithImpl<$Res>
     Object? player2DeckColors = null,
     Object? isTimeMode = null,
     Object? timeCount = null,
+    Object? firstToPlay = freezed,
   }) {
     return _then(_$GameStateImpl(
       id: null == id
@@ -378,6 +389,10 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value.timeCount
           : timeCount // ignore: cast_nullable_to_non_nullable
               as int,
+      firstToPlay: freezed == firstToPlay
+          ? _value.firstToPlay
+          : firstToPlay // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -406,7 +421,8 @@ class _$GameStateImpl extends _GameState {
       final List<String> player1DeckColors = const [],
       final List<String> player2DeckColors = const [],
       this.isTimeMode = false,
-      this.timeCount = 5})
+      this.timeCount = 5,
+      this.firstToPlay})
       : _rounds = rounds,
         _player1DeckColors = player1DeckColors,
         _player2DeckColors = player2DeckColors,
@@ -497,10 +513,13 @@ class _$GameStateImpl extends _GameState {
   @override
   @JsonKey()
   final int timeCount;
+// 1 pour joueur 1, 2 pour joueur 2, null si non défini
+  @override
+  final int? firstToPlay;
 
   @override
   String toString() {
-    return 'GameState(id: $id, player1: $player1, player2: $player2, startTime: $startTime, endTime: $endTime, player1Score: $player1Score, player2Score: $player2Score, currentRound: $currentRound, rounds: $rounds, status: $status, matchFormat: $matchFormat, player1Wins: $player1Wins, player2Wins: $player2Wins, player1VictoryDeclined: $player1VictoryDeclined, player2VictoryDeclined: $player2VictoryDeclined, player1VictoryThreshold: $player1VictoryThreshold, player2VictoryThreshold: $player2VictoryThreshold, player1DeckColors: $player1DeckColors, player2DeckColors: $player2DeckColors, isTimeMode: $isTimeMode, timeCount: $timeCount)';
+    return 'GameState(id: $id, player1: $player1, player2: $player2, startTime: $startTime, endTime: $endTime, player1Score: $player1Score, player2Score: $player2Score, currentRound: $currentRound, rounds: $rounds, status: $status, matchFormat: $matchFormat, player1Wins: $player1Wins, player2Wins: $player2Wins, player1VictoryDeclined: $player1VictoryDeclined, player2VictoryDeclined: $player2VictoryDeclined, player1VictoryThreshold: $player1VictoryThreshold, player2VictoryThreshold: $player2VictoryThreshold, player1DeckColors: $player1DeckColors, player2DeckColors: $player2DeckColors, isTimeMode: $isTimeMode, timeCount: $timeCount, firstToPlay: $firstToPlay)';
   }
 
   @override
@@ -545,7 +564,9 @@ class _$GameStateImpl extends _GameState {
             (identical(other.isTimeMode, isTimeMode) ||
                 other.isTimeMode == isTimeMode) &&
             (identical(other.timeCount, timeCount) ||
-                other.timeCount == timeCount));
+                other.timeCount == timeCount) &&
+            (identical(other.firstToPlay, firstToPlay) ||
+                other.firstToPlay == firstToPlay));
   }
 
   @JsonKey(ignore: true)
@@ -572,7 +593,8 @@ class _$GameStateImpl extends _GameState {
         const DeepCollectionEquality().hash(_player1DeckColors),
         const DeepCollectionEquality().hash(_player2DeckColors),
         isTimeMode,
-        timeCount
+        timeCount,
+        firstToPlay
       ]);
 
   @JsonKey(ignore: true)
@@ -611,7 +633,8 @@ abstract class _GameState extends GameState {
       final List<String> player1DeckColors,
       final List<String> player2DeckColors,
       final bool isTimeMode,
-      final int timeCount}) = _$GameStateImpl;
+      final int timeCount,
+      final int? firstToPlay}) = _$GameStateImpl;
   const _GameState._() : super._();
 
   factory _GameState.fromJson(Map<String, dynamic> json) =
@@ -659,6 +682,8 @@ abstract class _GameState extends GameState {
   bool get isTimeMode;
   @override // Compteur Time (0 à 5)
   int get timeCount;
+  @override // 1 pour joueur 1, 2 pour joueur 2, null si non défini
+  int? get firstToPlay;
   @override
   @JsonKey(ignore: true)
   _$$GameStateImplCopyWith<_$GameStateImpl> get copyWith =>

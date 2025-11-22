@@ -35,7 +35,7 @@ class GameHistoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // En-tête avec date
+              // En-tête avec date et premier à jouer
               Row(
                 children: [
                   Icon(
@@ -51,6 +51,35 @@ class GameHistoryCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                   ),
+                  if (game.firstToPlayName != null) ...[
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.flag,
+                            size: 12,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            game.firstToPlayName!,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 11,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 12),
@@ -150,6 +179,15 @@ class GameHistoryCard extends StatelessWidget {
                 value: _formatFullDate(game.timestamp),
                 icon: Icons.calendar_today,
               ),
+              if (game.firstToPlayName != null) ...[
+                const SizedBox(height: 8),
+                _DetailRow(
+                  label: 'Premier à jouer',
+                  value: game.firstToPlayName!,
+                  icon: Icons.flag,
+                  color: colorScheme.primary,
+                ),
+              ],
               const Divider(height: 24),
               _DetailRow(
                 label: game.player1Name,

@@ -41,6 +41,9 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
   late List<String> _player1DeckColors;
   late List<String> _player2DeckColors;
 
+  // Qui a commencé cette partie (1 ou 2, null si non sélectionné)
+  int? _firstToPlay;
+
   // Map des couleurs disponibles
   static const Map<String, Color> _colorMap = {
     'bleu': Colors.blue,
@@ -81,7 +84,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     // Animation des confettis (une seule fois pour le draw, lente et sobre)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 12),
+      duration: const Duration(seconds: 17),
     )..forward();
 
     HapticUtils.medium();
@@ -173,7 +176,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
 
                   const SizedBox(height: 16),
 
-                  // Sélection des couleurs de deck
+                  // Sélection des couleurs de deck (tap pour indiquer qui a commencé)
                   _buildDeckColorsSelection(),
 
                   const SizedBox(height: 20),
@@ -196,6 +199,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                                     : _noteController.text.trim(),
                                 'player1DeckColors': _player1DeckColors,
                                 'player2DeckColors': _player2DeckColors,
+                                'firstToPlay': _firstToPlay,
                               });
                             },
                             style: FilledButton.styleFrom(
@@ -295,12 +299,32 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
 
   Widget _buildDeckColorsSelection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Indication pour sélectionner qui a commencé
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: [
+              Icon(Icons.touch_app, size: 14, color: Colors.grey[500]),
+              const SizedBox(width: 4),
+              Text(
+                'Tap = premier joueur',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
         // Ligne pour le joueur 1
         _buildPlayerColorRow(
           playerName: widget.player1.name,
           deckColors: _player1DeckColors,
           isPlayer1: true,
+          playerNumber: 1,
         ),
         const SizedBox(height: 8),
         // Ligne pour le joueur 2
@@ -308,6 +332,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
           playerName: widget.player2.name,
           deckColors: _player2DeckColors,
           isPlayer1: false,
+          playerNumber: 2,
         ),
       ],
     );
@@ -317,36 +342,76 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     required String playerName,
     required List<String> deckColors,
     required bool isPlayer1,
+    required int playerNumber,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Row(
+    final isFirstToPlay = _firstToPlay == playerNumber;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          if (_firstToPlay == playerNumber) {
+            _firstToPlay = null;
+          } else {
+            _firstToPlay = playerNumber;
+          }
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Expanded(
-            child: Text(
-              playerName,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.grey[600],
+          // Encadré du joueur (pleine largeur)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!,
+                width: isFirstToPlay ? 2 : 1,
               ),
             ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    playerName,
+                    style: TextStyle(
+                      fontWeight: isFirstToPlay ? FontWeight.bold : FontWeight.w600,
+                      fontSize: 14,
+                      color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[600],
+                    ),
+                  ),
+                ),
+                // Deux carrés de couleurs
+                _buildColorSquare(
+                  colorName: deckColors.isNotEmpty ? deckColors[0] : null,
+                  onTap: () => _showColorPicker(isPlayer1, 0),
+                ),
+                const SizedBox(width: 8),
+                _buildColorSquare(
+                  colorName: deckColors.length > 1 ? deckColors[1] : null,
+                  onTap: () => _showColorPicker(isPlayer1, 1),
+                ),
+              ],
+            ),
           ),
-          // Deux carrés de couleurs
-          _buildColorSquare(
-            colorName: deckColors.isNotEmpty ? deckColors[0] : null,
-            onTap: () => _showColorPicker(isPlayer1, 0),
-          ),
-          const SizedBox(width: 8),
-          _buildColorSquare(
-            colorName: deckColors.length > 1 ? deckColors[1] : null,
-            onTap: () => _showColorPicker(isPlayer1, 1),
-          ),
+          // Icône drapeau qui dépasse dans la marge gauche
+          if (isFirstToPlay)
+            Positioned(
+              left: -20,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Icon(
+                  Icons.flag,
+                  color: AppTheme.amberColor,
+                  size: 18,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -436,6 +501,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
       });
     }
   }
+
 }
 
 class LorcanaDeckColor {
@@ -473,8 +539,8 @@ class _ConfettiPainter extends CustomPainter {
       final startDelay = confettiRandom.nextDouble() * 0.4;
       final effectiveAnimation = (animationValue - startDelay).clamp(0.0, 1.0);
       final startY = -30 - (confettiRandom.nextDouble() * 100);
-      // Chute lente pour le draw
-      final speedFactor = 0.4 + (confettiRandom.nextDouble() * 0.2);
+      // Chute modérée pour le draw
+      final speedFactor = 0.9 + (confettiRandom.nextDouble() * 0.3);
       final currentY = startY + (size.height + 300) * effectiveAnimation * speedFactor;
 
       double opacity = 0.8;

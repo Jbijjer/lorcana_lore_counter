@@ -86,6 +86,12 @@ class GameStatisticsService {
     int draws = 0;
     int totalScore = 0;
 
+    // Stats "Premier à jouer"
+    int gamesAsFirstPlayer = 0;
+    int winsAsFirstPlayer = 0;
+    int gamesAsSecondPlayer = 0;
+    int winsAsSecondPlayer = 0;
+
     for (final game in games) {
       final isPlayer1 = game.player1Name == playerName;
       final isPlayer2 = game.player2Name == playerName;
@@ -94,11 +100,27 @@ class GameStatisticsService {
         // Ajouter le score
         totalScore += isPlayer1 ? game.player1FinalScore : game.player2FinalScore;
 
+        // Déterminer si le joueur était premier à jouer
+        final wasFirstToPlay = game.firstToPlayName == playerName;
+        final wasSecondToPlay = game.firstToPlayName != null && game.firstToPlayName != playerName;
+
+        if (wasFirstToPlay) {
+          gamesAsFirstPlayer++;
+        } else if (wasSecondToPlay) {
+          gamesAsSecondPlayer++;
+        }
+
         // Gérer les statistiques
         if (game.isDraw) {
           draws++;
         } else if (game.winnerName == playerName) {
           wins++;
+          // Compter les victoires selon le rôle
+          if (wasFirstToPlay) {
+            winsAsFirstPlayer++;
+          } else if (wasSecondToPlay) {
+            winsAsSecondPlayer++;
+          }
         } else {
           losses++;
         }
@@ -108,6 +130,12 @@ class GameStatisticsService {
     final totalGames = wins + losses + draws;
     final winrate = totalGames > 0 ? (wins / totalGames) * 100 : 0.0;
     final averageScore = totalGames > 0 ? totalScore / totalGames : 0.0;
+    final winrateAsFirstPlayer = gamesAsFirstPlayer > 0
+        ? (winsAsFirstPlayer / gamesAsFirstPlayer) * 100
+        : 0.0;
+    final winrateAsSecondPlayer = gamesAsSecondPlayer > 0
+        ? (winsAsSecondPlayer / gamesAsSecondPlayer) * 100
+        : 0.0;
 
     return PlayerStatistics(
       playerName: playerName,
@@ -117,6 +145,12 @@ class GameStatisticsService {
       draws: draws,
       winrate: winrate,
       averageScore: averageScore,
+      gamesAsFirstPlayer: gamesAsFirstPlayer,
+      winsAsFirstPlayer: winsAsFirstPlayer,
+      gamesAsSecondPlayer: gamesAsSecondPlayer,
+      winsAsSecondPlayer: winsAsSecondPlayer,
+      winrateAsFirstPlayer: winrateAsFirstPlayer,
+      winrateAsSecondPlayer: winrateAsSecondPlayer,
     );
   }
 
@@ -162,6 +196,7 @@ class GameStatisticsService {
     required List<String> player1DeckColors,
     required List<String> player2DeckColors,
     String? note,
+    String? firstToPlayName,
   }) async {
     final gameHistory = GameHistory(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -174,6 +209,7 @@ class GameStatisticsService {
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
       note: note,
+      firstToPlayName: firstToPlayName,
     );
 
     await saveGame(gameHistory);
@@ -189,6 +225,13 @@ class PlayerStatistics {
   final int draws;
   final double winrate;
   final double averageScore;
+  // Statistiques "Premier à jouer"
+  final int gamesAsFirstPlayer; // Nombre de parties où le joueur a commencé
+  final int winsAsFirstPlayer; // Victoires quand il a commencé
+  final int gamesAsSecondPlayer; // Nombre de parties où le joueur n'a pas commencé
+  final int winsAsSecondPlayer; // Victoires quand il n'a pas commencé
+  final double winrateAsFirstPlayer; // Winrate quand il commence
+  final double winrateAsSecondPlayer; // Winrate quand il ne commence pas
 
   const PlayerStatistics({
     required this.playerName,
@@ -198,6 +241,12 @@ class PlayerStatistics {
     required this.draws,
     required this.winrate,
     required this.averageScore,
+    this.gamesAsFirstPlayer = 0,
+    this.winsAsFirstPlayer = 0,
+    this.gamesAsSecondPlayer = 0,
+    this.winsAsSecondPlayer = 0,
+    this.winrateAsFirstPlayer = 0.0,
+    this.winrateAsSecondPlayer = 0.0,
   });
 }
 

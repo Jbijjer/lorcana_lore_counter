@@ -560,4 +560,5 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
       ),
     );
   }
+
 }
