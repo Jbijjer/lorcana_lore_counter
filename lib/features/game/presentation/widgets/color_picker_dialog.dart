@@ -76,6 +76,18 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
     _colorSelectController.forward(from: 0.0);
   }
 
+  /// Retourne le titre du dialogue selon le nombre de couleurs sélectionnées
+  String _getDialogTitle() {
+    switch (_selectedColors.length) {
+      case 0:
+        return '1ère couleur du deck';
+      case 1:
+        return '2e couleur du deck';
+      default:
+        return '2e couleur du deck';
+    }
+  }
+
   Widget _buildPreview() {
     return AnimatedBuilder(
       animation: shimmerController,
@@ -281,10 +293,10 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // En-tête
+            // En-tête avec titre dynamique selon la sélection
             DialogHeader(
               icon: Icons.palette,
-              title: 'Couleur de fond',
+              title: _getDialogTitle(),
               accentColor: widget.playerColor,
               onClose: () => Navigator.of(context).pop(),
             ),
