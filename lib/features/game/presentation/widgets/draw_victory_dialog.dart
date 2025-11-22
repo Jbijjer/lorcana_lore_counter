@@ -309,7 +309,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
               Icon(Icons.touch_app, size: 14, color: Colors.grey[500]),
               const SizedBox(width: 4),
               Text(
-                'Tap pour indiquer qui a commencé',
+                'Tap = premier joueur',
                 style: TextStyle(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
