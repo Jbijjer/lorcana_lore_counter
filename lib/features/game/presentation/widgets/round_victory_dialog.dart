@@ -212,12 +212,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                   const SizedBox(height: 16),
 
-                  // Sélection des couleurs de deck
+                  // Sélection des couleurs de deck (tap pour indiquer qui a commencé)
                   _buildDeckColorsSelection(),
-
-                  // Sélection de qui a commencé la partie
-                  const SizedBox(height: 16),
-                  _buildFirstToPlaySelector(),
 
                   const SizedBox(height: 20),
 
@@ -327,13 +323,33 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   Widget _buildDeckColorsSelection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Indication pour sélectionner qui a commencé
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: [
+              Icon(Icons.touch_app, size: 14, color: Colors.grey[500]),
+              const SizedBox(width: 4),
+              Text(
+                'Tap pour indiquer qui a commencé',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
         // Ligne pour le gagnant
         _buildPlayerColorRow(
           playerName: widget.winner.name,
           deckColors: widget.isPlayer1Winner ? _player1DeckColors : _player2DeckColors,
           isPlayer1: widget.isPlayer1Winner,
           isWinner: true,
+          playerNumber: widget.isPlayer1Winner ? 1 : 2,
         ),
         const SizedBox(height: 8),
         // Ligne pour le perdant
@@ -342,6 +358,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           deckColors: widget.isPlayer1Winner ? _player2DeckColors : _player1DeckColors,
           isPlayer1: !widget.isPlayer1Winner,
           isWinner: false,
+          playerNumber: widget.isPlayer1Winner ? 2 : 1,
         ),
       ],
     );
@@ -352,48 +369,75 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     required List<String> deckColors,
     required bool isPlayer1,
     required bool isWinner,
+    required int playerNumber,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isWinner ? _victoryColor : Colors.grey[300]!,
-          width: isWinner ? 2 : 1,
+    final isFirstToPlay = _firstToPlay == playerNumber;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          if (_firstToPlay == playerNumber) {
+            _firstToPlay = null;
+          } else {
+            _firstToPlay = playerNumber;
+          }
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!),
+            width: (isWinner || isFirstToPlay) ? 2 : 1,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          if (isWinner) ...[
-            Icon(
-              Icons.emoji_events,
-              color: _victoryColor,
-              size: 20,
-            ),
-            const SizedBox(width: 6),
-          ],
-          Expanded(
-            child: Text(
-              playerName,
-              style: TextStyle(
-                fontWeight: isWinner ? FontWeight.bold : FontWeight.w600,
-                fontSize: 14,
-                color: isWinner ? _victoryColor : Colors.grey[600],
+        child: Row(
+          children: [
+            // Icône drapeau si ce joueur a commencé
+            if (isFirstToPlay) ...[
+              const Icon(
+                Icons.flag,
+                color: AppTheme.amberColor,
+                size: 18,
+              ),
+              const SizedBox(width: 4),
+            ],
+            // Icône trophée si gagnant
+            if (isWinner) ...[
+              Icon(
+                Icons.emoji_events,
+                color: _victoryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 6),
+            ],
+            Expanded(
+              child: Text(
+                playerName,
+                style: TextStyle(
+                  fontWeight: (isWinner || isFirstToPlay) ? FontWeight.bold : FontWeight.w600,
+                  fontSize: 14,
+                  color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[600]),
+                ),
               ),
             ),
-          ),
-          // Deux carrés de couleurs
-          _buildColorSquare(
-            colorName: deckColors.isNotEmpty ? deckColors[0] : null,
-            onTap: () => _showColorPicker(isPlayer1, 0),
-          ),
-          const SizedBox(width: 8),
-          _buildColorSquare(
-            colorName: deckColors.length > 1 ? deckColors[1] : null,
-            onTap: () => _showColorPicker(isPlayer1, 1),
-          ),
-        ],
+            // Deux carrés de couleurs
+            _buildColorSquare(
+              colorName: deckColors.isNotEmpty ? deckColors[0] : null,
+              onTap: () => _showColorPicker(isPlayer1, 0),
+            ),
+            const SizedBox(width: 8),
+            _buildColorSquare(
+              colorName: deckColors.length > 1 ? deckColors[1] : null,
+              onTap: () => _showColorPicker(isPlayer1, 1),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -483,145 +527,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     }
   }
 
-  Widget _buildFirstToPlaySelector() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.flag,
-                size: 18,
-                color: _victoryColor,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Qui a commencé la partie ?',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildFirstToPlayButton(
-                  player: widget.isPlayer1Winner ? widget.winner : widget.loser,
-                  playerNumber: 1,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildFirstToPlayButton(
-                  player: widget.isPlayer1Winner ? widget.loser : widget.winner,
-                  playerNumber: 2,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFirstToPlayButton({
-    required Player player,
-    required int playerNumber,
-  }) {
-    final isSelected = _firstToPlay == playerNumber;
-    final accentColor = playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor;
-
-    return InkWell(
-      onTap: () {
-        HapticUtils.light();
-        setState(() {
-          if (_firstToPlay == playerNumber) {
-            _firstToPlay = null;
-          } else {
-            _firstToPlay = playerNumber;
-          }
-        });
-      },
-      borderRadius: BorderRadius.circular(10),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    accentColor,
-                    accentColor.withValues(alpha: 0.8),
-                  ],
-                )
-              : null,
-          color: isSelected ? null : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected ? accentColor : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: accentColor.withValues(alpha: 0.3),
-                    blurRadius: 6,
-                    spreadRadius: 1,
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? Colors.white : Colors.grey.shade400,
-                  width: 1.5,
-                ),
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  player.iconAssetPath,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                player.name,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected ? Colors.white : Colors.grey[700],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class LorcanaDeckColor {
