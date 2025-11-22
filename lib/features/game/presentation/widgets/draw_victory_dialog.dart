@@ -358,58 +358,60 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
         });
       },
       borderRadius: BorderRadius.circular(12),
-      child: Row(
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // Icône drapeau à gauche de l'encadré si ce joueur a commencé
-          SizedBox(
-            width: 24,
-            child: isFirstToPlay
-                ? const Icon(
-                    Icons.flag,
-                    color: AppTheme.amberColor,
-                    size: 18,
-                  )
-                : null,
-          ),
-          // Encadré du joueur
-          Expanded(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!,
-                  width: isFirstToPlay ? 2 : 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      playerName,
-                      style: TextStyle(
-                        fontWeight: isFirstToPlay ? FontWeight.bold : FontWeight.w600,
-                        fontSize: 14,
-                        color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                  // Deux carrés de couleurs
-                  _buildColorSquare(
-                    colorName: deckColors.isNotEmpty ? deckColors[0] : null,
-                    onTap: () => _showColorPicker(isPlayer1, 0),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildColorSquare(
-                    colorName: deckColors.length > 1 ? deckColors[1] : null,
-                    onTap: () => _showColorPicker(isPlayer1, 1),
-                  ),
-                ],
+          // Encadré du joueur (pleine largeur)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!,
+                width: isFirstToPlay ? 2 : 1,
               ),
             ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    playerName,
+                    style: TextStyle(
+                      fontWeight: isFirstToPlay ? FontWeight.bold : FontWeight.w600,
+                      fontSize: 14,
+                      color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[600],
+                    ),
+                  ),
+                ),
+                // Deux carrés de couleurs
+                _buildColorSquare(
+                  colorName: deckColors.isNotEmpty ? deckColors[0] : null,
+                  onTap: () => _showColorPicker(isPlayer1, 0),
+                ),
+                const SizedBox(width: 8),
+                _buildColorSquare(
+                  colorName: deckColors.length > 1 ? deckColors[1] : null,
+                  onTap: () => _showColorPicker(isPlayer1, 1),
+                ),
+              ],
+            ),
           ),
+          // Icône drapeau qui dépasse dans la marge gauche
+          if (isFirstToPlay)
+            Positioned(
+              left: -20,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Icon(
+                  Icons.flag,
+                  color: AppTheme.amberColor,
+                  size: 18,
+                ),
+              ),
+            ),
         ],
       ),
     );
