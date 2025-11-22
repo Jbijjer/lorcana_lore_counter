@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/providers/accessibility_provider.dart';
+import '../../../../core/providers/update_checker_provider.dart';
+import '../../../../core/models/app_update_info.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../widgets/dialogs/update_available_dialog.dart';
 import '../../data/game_persistence_service.dart';
 import '../../data/game_statistics_service.dart';
 
@@ -175,35 +178,165 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _buildAboutSettings() {
+    final updateState = ref.watch(updateCheckerProvider);
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppTheme.primaryColor.withValues(alpha: 0.2),
-                AppTheme.secondaryColor.withValues(alpha: 0.2),
-              ],
+      child: Column(
+        children: [
+          // Version de l'application
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.primaryColor.withValues(alpha: 0.2),
+                    AppTheme.secondaryColor.withValues(alpha: 0.2),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.info_outline,
+                color: AppTheme.primaryColor,
+              ),
             ),
-            borderRadius: BorderRadius.circular(8),
+            title: const Text('Version de l\'application'),
+            subtitle: Text(
+              _appVersion.isNotEmpty
+                  ? 'Version $_appVersion (Build $_appBuildNumber)'
+                  : 'Chargement...',
+            ),
           ),
-          child: const Icon(
-            Icons.info_outline,
-            color: AppTheme.primaryColor,
+          const Divider(height: 1),
+
+          // Vérifier les mises à jour
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _getUpdateIconColor(updateState).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: _buildUpdateIcon(updateState),
+            ),
+            title: const Text('Mises à jour'),
+            subtitle: _buildUpdateSubtitle(updateState),
+            trailing: _buildUpdateTrailing(updateState),
+            onTap: () => _handleUpdateTap(updateState),
           ),
+        ],
+      ),
+    );
+  }
+
+  Color _getUpdateIconColor(UpdateCheckState state) {
+    return state.when(
+      initial: () => AppTheme.infoColor,
+      checking: () => AppTheme.infoColor,
+      updateAvailable: (_) => AppTheme.successColor,
+      upToDate: (_) => AppTheme.successColor,
+      error: (_) => AppTheme.errorColor,
+    );
+  }
+
+  Widget _buildUpdateIcon(UpdateCheckState state) {
+    return state.when(
+      initial: () => const Icon(Icons.system_update, color: AppTheme.infoColor),
+      checking: () => const SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+      updateAvailable: (_) => const Icon(Icons.download, color: AppTheme.successColor),
+      upToDate: (_) => const Icon(Icons.check_circle, color: AppTheme.successColor),
+      error: (_) => const Icon(Icons.error_outline, color: AppTheme.errorColor),
+    );
+  }
+
+  Widget _buildUpdateSubtitle(UpdateCheckState state) {
+    return state.when(
+      initial: () => const Text('Appuyez pour vérifier'),
+      checking: () => const Text('Vérification en cours...'),
+      updateAvailable: (info) => Text(
+        'Version ${info.latestVersion} disponible',
+        style: const TextStyle(color: AppTheme.successColor),
+      ),
+      upToDate: (_) => const Text('Vous êtes à jour'),
+      error: (message) => Text(
+        'Erreur de vérification',
+        style: TextStyle(color: AppTheme.errorColor),
+      ),
+    );
+  }
+
+  Widget? _buildUpdateTrailing(UpdateCheckState state) {
+    return state.maybeWhen(
+      updateAvailable: (_) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppTheme.successColor,
+          borderRadius: BorderRadius.circular(12),
         ),
-        title: const Text('Version de l\'application'),
-        subtitle: Text(
-          _appVersion.isNotEmpty
-              ? 'Version $_appVersion (Build $_appBuildNumber)'
-              : 'Chargement...',
+        child: const Text(
+          'NOUVEAU',
+          style: TextStyle(
+            color: AppTheme.pureWhite,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
+      orElse: () => null,
+    );
+  }
+
+  void _handleUpdateTap(UpdateCheckState state) {
+    HapticUtils.light();
+
+    state.when(
+      initial: () => _checkForUpdate(),
+      checking: () {}, // Ne rien faire si déjà en cours
+      updateAvailable: (info) => _showUpdateDialog(info),
+      upToDate: (_) => _checkForUpdate(), // Permettre de re-vérifier
+      error: (_) => _checkForUpdate(), // Permettre de réessayer
+    );
+  }
+
+  Future<void> _checkForUpdate() async {
+    await ref.read(updateCheckerProvider.notifier).checkForUpdate();
+
+    if (!mounted) return;
+
+    final state = ref.read(updateCheckerProvider);
+    state.maybeWhen(
+      updateAvailable: (info) => _showUpdateDialog(info),
+      orElse: () {},
+    );
+  }
+
+  void _showUpdateDialog(AppUpdateInfo info) {
+    showUpdateAvailableDialog(
+      context,
+      updateInfo: info,
+      onDownload: () async {
+        final success = await ref
+            .read(updateCheckerProvider.notifier)
+            .openDownloadUrl(info.downloadUrl);
+
+        if (!success && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Impossible d\'ouvrir le lien de téléchargement'),
+              backgroundColor: AppTheme.errorColor,
+            ),
+          );
+        }
+      },
     );
   }
 
