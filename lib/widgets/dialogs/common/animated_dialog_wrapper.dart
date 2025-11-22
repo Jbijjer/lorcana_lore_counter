@@ -49,6 +49,9 @@ class AnimatedDialogWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Dialog(
       backgroundColor: AppTheme.transparentColor,
       child: Container(
@@ -57,7 +60,7 @@ class AnimatedDialogWrapper extends StatelessWidget {
           maxHeight: maxHeight ?? double.infinity,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
+          color: isDark ? theme.colorScheme.surface : AppTheme.pureWhite,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -104,6 +107,9 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Dialog(
       backgroundColor: AppTheme.transparentColor,
       child: Container(
@@ -112,7 +118,7 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
           maxHeight: maxHeight ?? double.infinity,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
+          color: isDark ? theme.colorScheme.surface : AppTheme.pureWhite,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(

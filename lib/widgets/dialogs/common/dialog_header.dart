@@ -42,13 +42,16 @@ class DialogHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Row(
       children: [
         // Icône avec background coloré
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.1),
+            color: accentColor.withValues(alpha: isDark ? 0.2 : 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -76,7 +79,7 @@ class DialogHeader extends StatelessWidget {
                 },
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                         color: AppTheme.pureWhite,
                         fontWeight: FontWeight.bold,
                       ),
@@ -86,8 +89,8 @@ class DialogHeader extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subtitle!,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[700],
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                        color: isDark ? Colors.grey[400] : Colors.grey[700],
                         fontWeight: FontWeight.w500,
                       ),
                 ),
@@ -99,7 +102,10 @@ class DialogHeader extends StatelessWidget {
         // Bouton de fermeture
         if (onClose != null)
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(
+              Icons.close,
+              color: isDark ? Colors.grey[400] : null,
+            ),
             onPressed: onClose,
           ),
       ],

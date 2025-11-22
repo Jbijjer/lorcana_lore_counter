@@ -89,6 +89,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
   }
 
   Widget _buildPreview() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: shimmerController,
       builder: (context, child) {
@@ -137,7 +140,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.pureWhite.withValues(alpha: 0.9),
+                      color: isDark
+                          ? theme.colorScheme.surface.withValues(alpha: 0.95)
+                          : AppTheme.pureWhite.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
@@ -157,7 +162,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                         const SizedBox(width: 8),
                         Text(
                           'Couleur aléatoire',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                                 color: widget.playerColor,
                                 fontWeight: FontWeight.bold,
                               ),
