@@ -83,11 +83,29 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
         return Stack(
           children: [
             if (_selectedColors.isEmpty)
-              // Aucune couleur sélectionnée - montrer un aperçu aléatoire
+              // Aucune couleur sélectionnée - montrer un aperçu aléatoire avec gradient animé
               Container(
                 height: 100,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment(
+                      -1.0 + (shimmerController.value * 2),
+                      -1.0,
+                    ),
+                    end: Alignment(
+                      1.0 + (shimmerController.value * 2),
+                      1.0,
+                    ),
+                    colors: [
+                      AppTheme.lorcanaColors[0].withValues(alpha: 0.3),
+                      AppTheme.lorcanaColors[1].withValues(alpha: 0.3),
+                      AppTheme.lorcanaColors[2].withValues(alpha: 0.3),
+                      AppTheme.lorcanaColors[3].withValues(alpha: 0.3),
+                      AppTheme.lorcanaColors[4].withValues(alpha: 0.3),
+                      AppTheme.lorcanaColors[5].withValues(alpha: 0.3),
+                    ],
+                  ),
                   border: Border.all(
                     color: widget.playerColor.withValues(alpha: 0.5),
                     width: 3,
@@ -101,23 +119,39 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                   ],
                 ),
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.shuffle,
-                        size: 32,
-                        color: widget.playerColor,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Couleur aléatoire',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: widget.playerColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.pureWhite.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: widget.playerColor.withValues(alpha: 0.2),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.shuffle,
+                          size: 24,
+                          color: widget.playerColor,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Couleur aléatoire',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: widget.playerColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -263,23 +297,34 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
             const SizedBox(height: 16),
 
             // Info sur la sélection
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 16,
-                  color: Colors.grey[700],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: widget.playerColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: widget.playerColor.withValues(alpha: 0.2),
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: widget.playerColor.withValues(alpha: 0.8),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: widget.playerColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -372,20 +417,45 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: () {
-                    HapticUtils.light();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Annuler',
-                    style: TextStyle(
-                      color: Colors.grey[800],
-                      fontWeight: FontWeight.w600,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: widget.playerColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      HapticUtils.light();
+                      Navigator.of(context).pop();
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.close,
+                          size: 18,
+                          color: widget.playerColor.withValues(alpha: 0.7),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Annuler',
+                          style: TextStyle(
+                            color: widget.playerColor.withValues(alpha: 0.8),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 _buildConfirmButton(),
               ],
             ),
