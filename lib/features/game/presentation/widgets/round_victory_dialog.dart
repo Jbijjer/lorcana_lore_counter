@@ -84,16 +84,19 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     _player1DeckColors = List.from(widget.previousPlayer1DeckColors);
     _player2DeckColors = List.from(widget.previousPlayer2DeckColors);
 
+    // Sélectionner le gagnant comme premier joueur par défaut
+    _firstToPlay = widget.isPlayer1Winner ? 1 : 2;
+
     // Sélection aléatoire d'une couleur
     final random = math.Random();
     final colorKeys = _colorMap.keys.toList();
     _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
     _victoryColor = _colorMap[_victoryImageName]!;
 
-    // Animation des confettis (une seule fois, plus lente)
+    // Animation des confettis (une seule fois)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 15),
     )..forward();
 
     HapticUtils.success();
