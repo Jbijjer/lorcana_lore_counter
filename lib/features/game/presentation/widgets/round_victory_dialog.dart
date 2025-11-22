@@ -49,8 +49,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late List<String> _player1DeckColors;
   late List<String> _player2DeckColors;
 
-  // Qui commence la prochaine partie (1 ou 2, null si non sélectionné)
-  int? _nextFirstToPlay;
+  // Qui a commencé cette partie (1 ou 2, null si non sélectionné)
+  int? _firstToPlay;
 
   // Map des couleurs disponibles pour l'image de victoire
   static const Map<String, Color> _colorMap = {
@@ -190,18 +190,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
                   const SizedBox(height: 16),
 
-                  // Nom du gagnant
-                  Text(
-                    widget.winner.name,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: _victoryColor,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: 16),
-
                   // Champ de note
                   TextField(
                     controller: _noteController,
@@ -227,11 +215,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                   // Sélection des couleurs de deck
                   _buildDeckColorsSelection(),
 
-                  // Sélection de qui commence la prochaine partie (si pas terminé)
-                  if (!widget.isMatchComplete) ...[
-                    const SizedBox(height: 16),
-                    _buildNextFirstToPlaySelector(),
-                  ],
+                  // Sélection de qui a commencé la partie
+                  const SizedBox(height: 16),
+                  _buildFirstToPlaySelector(),
 
                   const SizedBox(height: 20),
 
@@ -254,7 +240,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                                     : _noteController.text.trim(),
                                 'player1DeckColors': _player1DeckColors,
                                 'player2DeckColors': _player2DeckColors,
-                                'nextFirstToPlay': _nextFirstToPlay,
+                                'firstToPlay': _firstToPlay,
                               });
                             },
                             style: FilledButton.styleFrom(
@@ -347,6 +333,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           playerName: widget.winner.name,
           deckColors: widget.isPlayer1Winner ? _player1DeckColors : _player2DeckColors,
           isPlayer1: widget.isPlayer1Winner,
+          isWinner: true,
         ),
         const SizedBox(height: 8),
         // Ligne pour le perdant
@@ -354,6 +341,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           playerName: widget.loser.name,
           deckColors: widget.isPlayer1Winner ? _player2DeckColors : _player1DeckColors,
           isPlayer1: !widget.isPlayer1Winner,
+          isWinner: false,
         ),
       ],
     );
@@ -363,23 +351,35 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     required String playerName,
     required List<String> deckColors,
     required bool isPlayer1,
+    required bool isWinner,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(
+          color: isWinner ? _victoryColor : Colors.grey[300]!,
+          width: isWinner ? 2 : 1,
+        ),
       ),
       child: Row(
         children: [
+          if (isWinner) ...[
+            Icon(
+              Icons.emoji_events,
+              color: _victoryColor,
+              size: 20,
+            ),
+            const SizedBox(width: 6),
+          ],
           Expanded(
             child: Text(
               playerName,
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: isWinner ? FontWeight.bold : FontWeight.w600,
                 fontSize: 14,
-                color: Colors.grey[600]
+                color: isWinner ? _victoryColor : Colors.grey[600],
               ),
             ),
           ),
@@ -483,7 +483,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     }
   }
 
-  Widget _buildNextFirstToPlaySelector() {
+  Widget _buildFirstToPlaySelector() {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -503,7 +503,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
               ),
               const SizedBox(width: 8),
               Text(
-                'Qui commence la prochaine partie ?',
+                'Qui a commencé la partie ?',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -539,17 +539,17 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     required Player player,
     required int playerNumber,
   }) {
-    final isSelected = _nextFirstToPlay == playerNumber;
+    final isSelected = _firstToPlay == playerNumber;
     final accentColor = playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor;
 
     return InkWell(
       onTap: () {
         HapticUtils.light();
         setState(() {
-          if (_nextFirstToPlay == playerNumber) {
-            _nextFirstToPlay = null;
+          if (_firstToPlay == playerNumber) {
+            _firstToPlay = null;
           } else {
-            _nextFirstToPlay = playerNumber;
+            _firstToPlay = playerNumber;
           }
         });
       },

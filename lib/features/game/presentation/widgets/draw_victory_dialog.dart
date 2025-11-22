@@ -41,8 +41,8 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
   late List<String> _player1DeckColors;
   late List<String> _player2DeckColors;
 
-  // Qui commence la prochaine partie (1 ou 2, null si non sélectionné)
-  int? _nextFirstToPlay;
+  // Qui a commencé cette partie (1 ou 2, null si non sélectionné)
+  int? _firstToPlay;
 
   // Map des couleurs disponibles
   static const Map<String, Color> _colorMap = {
@@ -179,11 +179,9 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                   // Sélection des couleurs de deck
                   _buildDeckColorsSelection(),
 
-                  // Sélection de qui commence la prochaine partie (si pas terminé)
-                  if (!widget.isMatchComplete) ...[
-                    const SizedBox(height: 16),
-                    _buildNextFirstToPlaySelector(),
-                  ],
+                  // Sélection de qui a commencé la partie
+                  const SizedBox(height: 16),
+                  _buildFirstToPlaySelector(),
 
                   const SizedBox(height: 20),
 
@@ -205,7 +203,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                                     : _noteController.text.trim(),
                                 'player1DeckColors': _player1DeckColors,
                                 'player2DeckColors': _player2DeckColors,
-                                'nextFirstToPlay': _nextFirstToPlay,
+                                'firstToPlay': _firstToPlay,
                               });
                             },
                             style: FilledButton.styleFrom(
@@ -447,7 +445,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     }
   }
 
-  Widget _buildNextFirstToPlaySelector() {
+  Widget _buildFirstToPlaySelector() {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -467,7 +465,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
               ),
               const SizedBox(width: 8),
               Text(
-                'Qui commence la prochaine partie ?',
+                'Qui a commencé la partie ?',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -503,17 +501,17 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     required Player player,
     required int playerNumber,
   }) {
-    final isSelected = _nextFirstToPlay == playerNumber;
+    final isSelected = _firstToPlay == playerNumber;
     final accentColor = playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor;
 
     return InkWell(
       onTap: () {
         HapticUtils.light();
         setState(() {
-          if (_nextFirstToPlay == playerNumber) {
-            _nextFirstToPlay = null;
+          if (_firstToPlay == playerNumber) {
+            _firstToPlay = null;
           } else {
-            _nextFirstToPlay = playerNumber;
+            _firstToPlay = playerNumber;
           }
         });
       },

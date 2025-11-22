@@ -29,14 +29,15 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
     // Déterminer le nom du joueur qui a commencé
     String? firstToPlayName;
-    if (state!.firstToPlay == 1) {
+    if (firstToPlay == 1) {
       firstToPlayName = state!.player1.name;
-    } else if (state!.firstToPlay == 2) {
+    } else if (firstToPlay == 2) {
       firstToPlayName = state!.player2.name;
     }
 
@@ -286,7 +287,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
-    int? nextFirstToPlay,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
@@ -296,6 +297,7 @@ class Game extends _$Game {
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     state = state!.copyWith(
@@ -310,8 +312,6 @@ class Game extends _$Game {
       // Mettre à jour les couleurs de deck si fournies
       player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
       player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
-      // Mettre à jour qui commence la prochaine partie
-      firstToPlay: nextFirstToPlay,
     );
     _saveState();
   }
@@ -321,7 +321,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
-    int? nextFirstToPlay,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
@@ -331,6 +331,7 @@ class Game extends _$Game {
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     state = state!.copyWith(
@@ -345,8 +346,6 @@ class Game extends _$Game {
       // Mettre à jour les couleurs de deck si fournies
       player1DeckColors: player1DeckColors ?? state!.player1DeckColors,
       player2DeckColors: player2DeckColors ?? state!.player2DeckColors,
-      // Mettre à jour qui commence la prochaine partie
-      firstToPlay: nextFirstToPlay,
     );
     _saveState();
   }
@@ -434,6 +433,7 @@ class Game extends _$Game {
     String? note,
     List<String>? player1DeckColors,
     List<String>? player2DeckColors,
+    int? firstToPlay,
   }) {
     if (state == null) return;
 
@@ -443,6 +443,7 @@ class Game extends _$Game {
       note: note,
       player1DeckColors: player1DeckColors,
       player2DeckColors: player2DeckColors,
+      firstToPlay: firstToPlay,
     );
 
     // Réinitialiser pour la manche suivante
