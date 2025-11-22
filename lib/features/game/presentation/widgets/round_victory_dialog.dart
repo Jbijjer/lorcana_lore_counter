@@ -4,10 +4,10 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/player.dart';
 import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
-import '../../../../widgets/dialogs/common/dialog_header.dart';
 import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
 import '../../../../widgets/dialogs/common/shimmer_effect.dart';
 import '../../../../widgets/dialogs/common/sparkles_painter.dart';
+import 'deck_color_picker_dialog.dart';
 
 /// Dialog de victoire de manche avec portrait du joueur
 class RoundVictoryDialog extends StatefulWidget {
@@ -62,15 +62,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     'vert': Colors.green,
   };
 
-  // Couleurs de deck Lorcana
-  static const List<LorcanaDeckColor> _lorcanaColors = [
-    LorcanaDeckColor(name: 'Ambre', color: Color(0xFFFFC107)),
-    LorcanaDeckColor(name: 'Améthyste', color: Color(0xFF9C27B0)),
-    LorcanaDeckColor(name: 'Émeraude', color: Color(0xFF4CAF50)),
-    LorcanaDeckColor(name: 'Rubis', color: Color(0xFFE53935)),
-    LorcanaDeckColor(name: 'Saphir', color: Color(0xFF2196F3)),
-    LorcanaDeckColor(name: 'Acier', color: Color(0xFF9E9E9E)),
-  ];
 
   @override
   void initState() {
@@ -461,7 +452,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   Widget _buildColorSquare({String? colorName, required VoidCallback onTap}) {
     final Color? color = colorName != null
-        ? _lorcanaColors.firstWhere((c) => c.name == colorName).color
+        ? lorcanaColors.firstWhere((c) => c.name == colorName).color
         : null;
 
     return InkWell(
@@ -490,46 +481,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
     final selectedColor = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir une couleur'),
-        content: Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: _lorcanaColors.map((lorcanaColor) {
-            final isSelected = colors.contains(lorcanaColor.name);
-            return InkWell(
-              onTap: () {
-                HapticUtils.light();
-                Navigator.of(context).pop(lorcanaColor.name);
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: lorcanaColor.color,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? Colors.black : Colors.white,
-                    width: isSelected ? 3 : 2,
-                  ),
-                ),
-                child: isSelected
-                    ? const Icon(Icons.check, color: Colors.white, size: 30)
-                    : null,
-              ),
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              HapticUtils.light();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Annuler'),
-          ),
-        ],
+      builder: (context) => DeckColorPickerDialog(
+        accentColor: _victoryColor,
+        selectedColors: colors,
       ),
     );
 
@@ -544,16 +498,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     }
   }
 
-}
-
-class LorcanaDeckColor {
-  final String name;
-  final Color color;
-
-  const LorcanaDeckColor({
-    required this.name,
-    required this.color,
-  });
 }
 
 /// Painter pour les têtes de Mickey qui tombent
