@@ -385,59 +385,68 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
         });
       },
       borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!),
-            width: (isWinner || isFirstToPlay) ? 2 : 1,
+      child: Row(
+        children: [
+          // Icône drapeau à gauche de l'encadré si ce joueur a commencé
+          SizedBox(
+            width: 24,
+            child: isFirstToPlay
+                ? const Icon(
+                    Icons.flag,
+                    color: AppTheme.amberColor,
+                    size: 18,
+                  )
+                : null,
           ),
-        ),
-        child: Row(
-          children: [
-            // Icône drapeau si ce joueur a commencé
-            if (isFirstToPlay) ...[
-              const Icon(
-                Icons.flag,
-                color: AppTheme.amberColor,
-                size: 18,
-              ),
-              const SizedBox(width: 4),
-            ],
-            // Icône trophée si gagnant
-            if (isWinner) ...[
-              Icon(
-                Icons.emoji_events,
-                color: _victoryColor,
-                size: 20,
-              ),
-              const SizedBox(width: 6),
-            ],
-            Expanded(
-              child: Text(
-                playerName,
-                style: TextStyle(
-                  fontWeight: (isWinner || isFirstToPlay) ? FontWeight.bold : FontWeight.w600,
-                  fontSize: 14,
-                  color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[600]),
+          // Encadré du joueur
+          Expanded(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!),
+                  width: (isWinner || isFirstToPlay) ? 2 : 1,
                 ),
               ),
+              child: Row(
+                children: [
+                  // Icône trophée si gagnant
+                  if (isWinner) ...[
+                    Icon(
+                      Icons.emoji_events,
+                      color: _victoryColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Expanded(
+                    child: Text(
+                      playerName,
+                      style: TextStyle(
+                        fontWeight: (isWinner || isFirstToPlay) ? FontWeight.bold : FontWeight.w600,
+                        fontSize: 14,
+                        color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[600]),
+                      ),
+                    ),
+                  ),
+                  // Deux carrés de couleurs
+                  _buildColorSquare(
+                    colorName: deckColors.isNotEmpty ? deckColors[0] : null,
+                    onTap: () => _showColorPicker(isPlayer1, 0),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildColorSquare(
+                    colorName: deckColors.length > 1 ? deckColors[1] : null,
+                    onTap: () => _showColorPicker(isPlayer1, 1),
+                  ),
+                ],
+              ),
             ),
-            // Deux carrés de couleurs
-            _buildColorSquare(
-              colorName: deckColors.isNotEmpty ? deckColors[0] : null,
-              onTap: () => _showColorPicker(isPlayer1, 0),
-            ),
-            const SizedBox(width: 8),
-            _buildColorSquare(
-              colorName: deckColors.length > 1 ? deckColors[1] : null,
-              onTap: () => _showColorPicker(isPlayer1, 1),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
