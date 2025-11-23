@@ -121,7 +121,12 @@ class _VictoryOverlayState extends State<VictoryOverlay>
         // Flip le token pour revenir au logo Lorcana
         _flipController.reverse().then((_) {
           if (mounted) {
-            widget.onDecline();
+            // Réduire la taille du logo doucement
+            _growController.reverse().then((_) {
+              if (mounted) {
+                widget.onDecline();
+              }
+            });
           }
         });
       }

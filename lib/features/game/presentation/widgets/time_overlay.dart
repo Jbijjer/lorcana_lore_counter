@@ -175,7 +175,12 @@ class _TimeOverlayState extends State<TimeOverlay>
         // Flip le token pour revenir au logo Lorcana
         _flipController.reverse().then((_) {
           if (mounted) {
-            widget.onCancel();
+            // Réduire la taille du logo doucement
+            _growController.reverse().then((_) {
+              if (mounted) {
+                widget.onCancel();
+              }
+            });
           }
         });
       }
