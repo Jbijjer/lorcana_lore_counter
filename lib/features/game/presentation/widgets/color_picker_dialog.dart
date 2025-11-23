@@ -328,12 +328,14 @@ class _ColorPickerDialogState extends State<ColorPickerDialog>
                     color: widget.playerColor.withValues(alpha: 0.8),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: widget.playerColor,
-                          fontWeight: FontWeight.w500,
-                        ),
+                  Flexible(
+                    child: Text(
+                      'Cochez 0, 1 ou 2 couleurs (${_selectedColors.length}/2)',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: widget.playerColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
                   ),
                 ],
               ),
