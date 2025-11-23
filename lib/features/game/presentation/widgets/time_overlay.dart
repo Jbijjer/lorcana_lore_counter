@@ -232,8 +232,27 @@ class _TimeOverlayState extends State<TimeOverlay>
                   ),
                 ],
 
-                // Compteur au centre
-                _buildCounterDisplay(),
+                // Compteur au centre avec animation de flip
+                AnimatedBuilder(
+                  animation: _flipAnimation,
+                  builder: (context, child) {
+                    final showFront = _flipAnimation.value < math.pi / 2;
+
+                    return Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, 0.001)
+                        ..rotateX(_flipAnimation.value),
+                      child: showFront
+                          ? _buildLogo()
+                          : Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()..rotateX(math.pi),
+                              child: _buildCounterDisplay(),
+                            ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
