@@ -102,51 +102,54 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 
   @override
   Widget build(BuildContext context) {
-    return buildAnimatedDialog(
-      child: AnimatedDialogWrapper(
-        accentColor: _victoryColor,
-        maxWidth: 400,
-        child: Stack(
-          children: [
-            // Contenu principal
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Texte de victoire stylisé avec glow et sparkles
-                  _buildVictoryText(),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
+      body: buildAnimatedDialog(
+        child: AnimatedDialogWrapper(
+          accentColor: _victoryColor,
+          maxWidth: 400,
+          child: Stack(
+            children: [
+              // Contenu principal
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Texte de victoire stylisé avec glow et sparkles
+                    _buildVictoryText(),
 
-                  // Portrait du joueur
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Halo de lumière
-                      Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: widget.winner.color.withValues(alpha: 0.4),
-                              blurRadius: 40,
-                              spreadRadius: 10,
-                            ),
-                          ],
+                    // Portrait du joueur
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Halo de lumière
+                        Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: widget.winner.color.withValues(alpha: 0.4),
+                                blurRadius: 40,
+                                spreadRadius: 10,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
-                      // Portrait avec gradient
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
+                        // Portrait avec gradient
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
                               widget.winner.backgroundColorStart,
                               widget.winner.backgroundColorEnd,
                             ],
@@ -286,6 +289,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           ],
         ),
       ),
+    ),
     );
   }
 
