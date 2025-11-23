@@ -32,8 +32,12 @@ class _TimeOverlayState extends State<TimeOverlay>
   late Animation<double> _growAnimation;
   late Animation<double> _flipAnimation;
   late Animation<double> _scaleAnimation;
+  late List<Animation<double>> _staggeredAnimations;
   bool _showMenu = false;
   bool _hasFlipped = false;
+
+  // Nombre d'éléments du menu pour le stagger (2 boutons)
+  static const int _menuItemCount = 2;
 
   @override
   void initState() {
@@ -75,8 +79,27 @@ class _TimeOverlayState extends State<TimeOverlay>
 
     _scaleAnimation = CurvedAnimation(
       parent: _menuController,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
     );
+
+    // Animations staggered pour chaque élément du menu
+    // Chaque bouton apparaît avec un léger décalage pour un effet fluide
+    _staggeredAnimations = List.generate(_menuItemCount, (index) {
+      // Décalage progressif pour 2 boutons
+      final startDelay = index * 0.15;
+      final endTime = 0.6 + (index * 0.2);
+
+      return Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _menuController,
+          curve: Interval(
+            startDelay,
+            endTime.clamp(0.0, 1.0),
+            curve: Curves.easeOutBack,
+          ),
+        ),
+      );
+    });
 
     // Séquence d'animations : grow -> flip -> menu
     _growController.forward().then((_) {
@@ -167,12 +190,14 @@ class _TimeOverlayState extends State<TimeOverlay>
                     angle: math.pi / 2, // Bas
                     color: AppTheme.successColor,
                     onTap: _handleConfirmDraw,
+                    index: 0,
                   ),
                   _buildMenuButton(
                     label: 'Non',
                     angle: -math.pi / 2, // Haut
                     color: AppTheme.errorColor,
                     onTap: _handleCancel,
+                    index: 1,
                   ),
                 ],
 
@@ -216,6 +241,7 @@ class _TimeOverlayState extends State<TimeOverlay>
                     color: AppTheme.errorColor,
                     onTap: _handleDecrement,
                     isEnabled: widget.timeCount > 0,
+                    index: 0,
                   ),
                   // Bouton +
                   _buildControlButton(
@@ -224,6 +250,7 @@ class _TimeOverlayState extends State<TimeOverlay>
                     color: AppTheme.successColor,
                     onTap: _handleIncrement,
                     isEnabled: widget.timeCount < 5,
+                    index: 1,
                   ),
                 ],
 
@@ -354,15 +381,16 @@ class _TimeOverlayState extends State<TimeOverlay>
     required Color color,
     required VoidCallback onTap,
     required bool isEnabled,
+    required int index,
   }) {
     const radius = 100.0;
     final x = radius * math.cos(angle);
     final y = radius * math.sin(angle);
 
     return AnimatedBuilder(
-      animation: _scaleAnimation,
+      animation: _staggeredAnimations[index],
       builder: (context, child) {
-        final scale = _scaleAnimation.value;
+        final scale = _staggeredAnimations[index].value;
         final offsetX = x * scale;
         final offsetY = y * scale;
 
@@ -412,6 +440,7 @@ class _TimeOverlayState extends State<TimeOverlay>
     required double angle,
     required Color color,
     required VoidCallback onTap,
+    required int index,
   }) {
     const radius = 120.0;
     final x = radius * math.cos(angle);
@@ -422,9 +451,9 @@ class _TimeOverlayState extends State<TimeOverlay>
         : 'assets/images/jeton_rouge.png';
 
     return AnimatedBuilder(
-      animation: _scaleAnimation,
+      animation: _staggeredAnimations[index],
       builder: (context, child) {
-        final scale = _scaleAnimation.value;
+        final scale = _staggeredAnimations[index].value;
         final offsetX = x * scale;
         final offsetY = y * scale;
 
