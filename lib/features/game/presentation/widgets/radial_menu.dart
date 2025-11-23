@@ -38,7 +38,11 @@ class RadialMenuState extends State<RadialMenu>
   late Animation<double> _rotationAnimation;
   late Animation<double> _liftAnimation;
   late Animation<double> _shadowAnimation;
+  late List<Animation<double>> _staggeredAnimations;
   bool _isOpen = false;
+
+  // Nombre d'éléments du menu pour le stagger
+  static const int _menuItemCount = 6;
 
   /// Indique si le menu est actuellement ouvert
   bool get isOpen => _isOpen;
@@ -54,13 +58,13 @@ class RadialMenuState extends State<RadialMenu>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
 
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
     );
 
     _rotationAnimation = Tween<double>(
@@ -88,6 +92,26 @@ class RadialMenuState extends State<RadialMenu>
       parent: _controller,
       curve: Curves.easeOut,
     ));
+
+    // Animations staggered pour chaque élément du menu
+    // Chaque bouton apparaît avec un léger décalage pour un effet fluide
+    _staggeredAnimations = List.generate(_menuItemCount, (index) {
+      // Décalage progressif : 0.0, 0.08, 0.16, 0.24, 0.32, 0.40
+      final startDelay = index * 0.08;
+      // Fin progressive : 0.6, 0.68, 0.76, 0.84, 0.92, 1.0
+      final endTime = 0.6 + (index * 0.08);
+
+      return Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Interval(
+            startDelay,
+            endTime.clamp(0.0, 1.0),
+            curve: Curves.easeOutBack,
+          ),
+        ),
+      );
+    });
   }
 
   @override
@@ -177,6 +201,7 @@ class RadialMenuState extends State<RadialMenu>
             angle: -math.pi / 2, // Haut (270°)
             color: AppTheme.sapphireColor, // Saphir
             label: 'Stats',
+            index: 0,
             onTap: widget.onStatisticsTap != null
                 ? () => _handleMenuItemTap(widget.onStatisticsTap)
                 : null,
@@ -186,6 +211,7 @@ class RadialMenuState extends State<RadialMenu>
             angle: -math.pi / 6, // Haut-droite (300°)
             color: AppTheme.amethystColor, // Améthyste
             label: 'Dés',
+            index: 1,
             onTap: widget.onDiceTap != null
                 ? () => _handleMenuItemTap(widget.onDiceTap)
                 : null,
@@ -195,6 +221,7 @@ class RadialMenuState extends State<RadialMenu>
             angle: math.pi / 6, // Bas-droite (30°)
             color: AppTheme.rubyColor, // Rubis
             label: 'Reset',
+            index: 2,
             onTap: widget.onResetTap != null
                 ? () => _handleMenuItemTap(widget.onResetTap)
                 : null,
@@ -204,6 +231,7 @@ class RadialMenuState extends State<RadialMenu>
             angle: math.pi / 2, // Bas (90°)
             color: AppTheme.amberColor, // Ambre
             label: 'Time',
+            index: 3,
             onTap: widget.onTimerTap != null
                 ? () => _handleMenuItemTap(widget.onTimerTap)
                 : null,
@@ -213,6 +241,7 @@ class RadialMenuState extends State<RadialMenu>
             angle: 5 * math.pi / 6, // Bas-gauche (150°)
             color: AppTheme.steelColor, // Acier
             label: 'Quitter',
+            index: 4,
             onTap: widget.onQuitAndSaveTap != null
                 ? () => _handleMenuItemTap(widget.onQuitAndSaveTap)
                 : null,
@@ -222,6 +251,7 @@ class RadialMenuState extends State<RadialMenu>
             angle: 7 * math.pi / 6, // Haut-gauche (210°)
             color: AppTheme.emeraldColor, // Émeraude
             label: 'Paramètres',
+            index: 5,
             onTap: widget.onSettingsTap != null
                 ? () => _handleMenuItemTap(widget.onSettingsTap)
                 : null,
@@ -236,6 +266,7 @@ class RadialMenuState extends State<RadialMenu>
     required double angle,
     required Color color,
     required String label,
+    required int index,
     VoidCallback? onTap,
   }) {
     // Distance du centre (rayon)
@@ -246,9 +277,9 @@ class RadialMenuState extends State<RadialMenu>
     final y = radius * math.sin(angle);
 
     return AnimatedBuilder(
-      animation: _scaleAnimation,
+      animation: _staggeredAnimations[index],
       builder: (context, child) {
-        final scale = _scaleAnimation.value;
+        final scale = _staggeredAnimations[index].value;
         final offsetX = x * scale;
         final offsetY = y * scale;
 
