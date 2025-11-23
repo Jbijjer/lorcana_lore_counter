@@ -41,4 +41,12 @@ class AccessibilityNotifier extends _$AccessibilityNotifier {
     await _box.put(_accessibilityKey, updated);
     state = AsyncValue.data(updated);
   }
+
+  /// Définit le mode de thème (0 = système, 1 = clair, 2 = sombre)
+  Future<void> setThemeMode(int themeModeIndex) async {
+    final current = await future;
+    final updated = current.copyWith(themeModeIndex: themeModeIndex);
+    await _box.put(_accessibilityKey, updated);
+    state = AsyncValue.data(updated);
+  }
 }

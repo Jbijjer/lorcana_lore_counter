@@ -54,6 +54,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          // Section Apparence
+          _buildSectionHeader('Apparence'),
+          _buildAppearanceSettings(),
+          const SizedBox(height: 24),
+
           // Section Accessibilité
           _buildSectionHeader('Accessibilité'),
           _buildAccessibilitySettings(),
@@ -81,6 +86,132 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
+      ),
+    );
+  }
+
+  Widget _buildAppearanceSettings() {
+    final accessibilityPrefs = ref.watch(accessibilityNotifierProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: accessibilityPrefs.when(
+        data: (prefs) => Column(
+          children: [
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _getThemeModeIcon(prefs.themeModeIndex),
+                  color: colorScheme.primary,
+                ),
+              ),
+              title: const Text('Mode de thème'),
+              subtitle: Text(_getThemeModeLabel(prefs.themeModeIndex)),
+              trailing: Icon(
+                Icons.chevron_right,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              onTap: () => _showThemeModeDialog(prefs.themeModeIndex),
+            ),
+          ],
+        ),
+        loading: () => const Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        error: (_, __) => const ListTile(
+          title: Text('Erreur de chargement des préférences'),
+        ),
+      ),
+    );
+  }
+
+  IconData _getThemeModeIcon(int themeModeIndex) {
+    switch (themeModeIndex) {
+      case 1:
+        return Icons.light_mode;
+      case 2:
+        return Icons.dark_mode;
+      default:
+        return Icons.brightness_auto;
+    }
+  }
+
+  String _getThemeModeLabel(int themeModeIndex) {
+    switch (themeModeIndex) {
+      case 1:
+        return 'Clair';
+      case 2:
+        return 'Sombre';
+      default:
+        return 'Système';
+    }
+  }
+
+  void _showThemeModeDialog(int currentIndex) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Mode de thème'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _ThemeModeOption(
+              icon: Icons.brightness_auto,
+              label: 'Système',
+              subtitle: 'Suivre les paramètres du système',
+              isSelected: currentIndex == 0,
+              onTap: () {
+                HapticUtils.light();
+                ref.read(accessibilityNotifierProvider.notifier).setThemeMode(0);
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            const Divider(height: 1),
+            _ThemeModeOption(
+              icon: Icons.light_mode,
+              label: 'Clair',
+              subtitle: 'Toujours utiliser le thème clair',
+              isSelected: currentIndex == 1,
+              onTap: () {
+                HapticUtils.light();
+                ref.read(accessibilityNotifierProvider.notifier).setThemeMode(1);
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            const Divider(height: 1),
+            _ThemeModeOption(
+              icon: Icons.dark_mode,
+              label: 'Sombre',
+              subtitle: 'Toujours utiliser le thème sombre',
+              isSelected: currentIndex == 2,
+              onTap: () {
+                HapticUtils.light();
+                ref.read(accessibilityNotifierProvider.notifier).setThemeMode(2);
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Annuler'),
+          ),
+        ],
       ),
     );
   }
@@ -475,5 +606,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       );
     }
+  }
+}
+
+/// Widget pour afficher une option de mode de thème
+class _ThemeModeOption extends StatelessWidget {
+  const _ThemeModeOption({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+      ),
+      title: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? colorScheme.primary : null,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          fontSize: 12,
+          color: colorScheme.onSurfaceVariant,
+        ),
+      ),
+      trailing: isSelected
+          ? Icon(Icons.check, color: colorScheme.primary)
+          : null,
+      onTap: onTap,
+    );
   }
 }
