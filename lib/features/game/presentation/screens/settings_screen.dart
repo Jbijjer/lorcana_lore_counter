@@ -78,7 +78,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppTheme.primaryColor,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
       ),
@@ -179,6 +179,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildAboutSettings() {
     final updateState = ref.watch(updateCheckerProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       elevation: 2,
@@ -194,15 +195,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.2),
-                    AppTheme.secondaryColor.withValues(alpha: 0.2),
+                    colorScheme.primary.withValues(alpha: 0.2),
+                    colorScheme.secondary.withValues(alpha: 0.2),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.info_outline,
-                color: AppTheme.primaryColor,
+                color: colorScheme.primary,
               ),
             ),
             title: const Text('Version de l\'application'),
@@ -235,18 +236,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Color _getUpdateIconColor(UpdateCheckState state) {
+    final colorScheme = Theme.of(context).colorScheme;
     return state.when(
-      initial: () => AppTheme.infoColor,
-      checking: () => AppTheme.infoColor,
+      initial: () => colorScheme.primary,
+      checking: () => colorScheme.primary,
       updateAvailable: (_) => AppTheme.successColor,
       upToDate: (_) => AppTheme.successColor,
-      error: (_) => AppTheme.errorColor,
+      error: (_) => colorScheme.error,
     );
   }
 
   Widget _buildUpdateIcon(UpdateCheckState state) {
+    final colorScheme = Theme.of(context).colorScheme;
     return state.when(
-      initial: () => const Icon(Icons.system_update, color: AppTheme.infoColor),
+      initial: () => Icon(Icons.system_update, color: colorScheme.primary),
       checking: () => const SizedBox(
         width: 24,
         height: 24,
@@ -254,11 +257,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
       updateAvailable: (_) => const Icon(Icons.download, color: AppTheme.successColor),
       upToDate: (_) => const Icon(Icons.check_circle, color: AppTheme.successColor),
-      error: (_) => const Icon(Icons.error_outline, color: AppTheme.errorColor),
+      error: (_) => Icon(Icons.error_outline, color: colorScheme.error),
     );
   }
 
   Widget _buildUpdateSubtitle(UpdateCheckState state) {
+    final colorScheme = Theme.of(context).colorScheme;
     return state.when(
       initial: () => const Text('Appuyez pour vérifier'),
       checking: () => const Text('Vérification en cours...'),
@@ -269,7 +273,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       upToDate: (_) => const Text('Vous êtes à jour'),
       error: (message) => Text(
         'Erreur de vérification',
-        style: TextStyle(color: AppTheme.errorColor),
+        style: TextStyle(color: colorScheme.error),
       ),
     );
   }
@@ -282,10 +286,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           color: AppTheme.successColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Text(
+        child: Text(
           'NOUVEAU',
           style: TextStyle(
-            color: AppTheme.pureWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
@@ -330,9 +334,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
         if (!success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Impossible d\'ouvrir le lien de téléchargement'),
-              backgroundColor: AppTheme.errorColor,
+            SnackBar(
+              content: const Text('Impossible d\'ouvrir le lien de téléchargement'),
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -343,13 +347,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void _showDeleteGameConfirmation() async {
     final persistenceService = ref.read(gamePersistenceServiceProvider);
     final hasOngoingGame = persistenceService.hasOngoingGame();
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (!hasOngoingGame) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Aucune partie en cours à supprimer'),
-          backgroundColor: AppTheme.infoColor,
+        SnackBar(
+          content: const Text('Aucune partie en cours à supprimer'),
+          backgroundColor: colorScheme.primary,
         ),
       );
       return;
@@ -357,7 +362,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Row(
           children: [
             Icon(
@@ -375,11 +380,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('Annuler'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.warningColor,
             ),
@@ -394,12 +399,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await persistenceService.clearGame();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: AppTheme.pureWhite),
-              SizedBox(width: 8),
-              Text('Partie supprimée avec succès'),
+              Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: 8),
+              const Text('Partie supprimée avec succès'),
             ],
           ),
           backgroundColor: AppTheme.successColor,
@@ -409,14 +414,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showDeleteAllDataConfirmation() async {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Row(
           children: [
             Icon(
               Icons.error,
-              color: AppTheme.errorColor,
+              color: colorScheme.error,
             ),
             const SizedBox(width: 8),
             const Text('ATTENTION'),
@@ -430,13 +437,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('Annuler'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.errorColor,
+              backgroundColor: colorScheme.error,
             ),
             child: const Text('Effacer l\'historique'),
           ),
@@ -456,15 +463,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: AppTheme.pureWhite),
-              SizedBox(width: 8),
-              Text('L\'historique a été effacé'),
+              Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onError),
+              const SizedBox(width: 8),
+              const Text('L\'historique a été effacé'),
             ],
           ),
-          backgroundColor: AppTheme.errorColor,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
