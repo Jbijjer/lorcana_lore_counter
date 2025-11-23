@@ -128,6 +128,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               ),
             ),
           ],
+          // Padding en bas pour éviter que le contenu soit coupé
+          const SizedBox(height: 32),
         ],
       ),
     );
@@ -172,7 +174,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(top: 8, bottom: 32),
       itemCount: games.length,
       itemBuilder: (context, index) {
         final game = games[index];
