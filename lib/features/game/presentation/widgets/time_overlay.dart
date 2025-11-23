@@ -120,6 +120,19 @@ class _TimeOverlayState extends State<TimeOverlay>
   }
 
   @override
+  void didUpdateWidget(TimeOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Quand on passe à l'état "Nulle?" (timeCount == 0), rejouer l'animation du menu
+    if (widget.timeCount == 0 && oldWidget.timeCount != 0) {
+      // Réinitialiser et rejouer l'animation pour les boutons Oui/Non
+      _menuController.reset();
+      _menuController.forward();
+      HapticUtils.medium();
+    }
+  }
+
+  @override
   void dispose() {
     _growController.dispose();
     _flipController.dispose();
