@@ -91,35 +91,33 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      resizeToAvoidBottomInset: false,
-      body: buildAnimatedDialog(
-        child: AnimatedDialogWrapper(
-          accentColor: _drawColor,
-          maxWidth: 400,
-          child: Stack(
-            children: [
-              // Contenu principal
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Titre "Nulle"
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: _drawColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: _drawColor.withValues(alpha: 0.3),
-                          width: 2,
-                        ),
+    return buildAnimatedDialog(
+      child: AnimatedDialogWrapper(
+        accentColor: _drawColor,
+        maxWidth: 400,
+        ignoreKeyboardInsets: true,
+        child: Stack(
+          children: [
+            // Contenu principal
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Titre "Nulle"
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: _drawColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _drawColor.withValues(alpha: 0.3),
+                        width: 2,
                       ),
-                      child: Text(
-                        'NULLE',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    ),
+                    child: Text(
+                      'NULLE',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: _drawColor,
                         letterSpacing: 4,
@@ -254,7 +252,6 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
           ],
         ),
       ),
-    ),
     );
   }
 
