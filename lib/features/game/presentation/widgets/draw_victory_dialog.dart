@@ -135,7 +135,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                       Text(
                         'VS',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -156,7 +156,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: Colors.grey[50],
+                      fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 8,
@@ -280,7 +280,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
         Text(
           player.name,
           style: TextStyle(
-            color: Colors.grey[800],
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -298,14 +298,14 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             children: [
-              Icon(Icons.touch_app, size: 14, color: Colors.grey[500]),
+              Icon(Icons.touch_app, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 4),
               Text(
                 'Tap = premier joueur',
                 style: TextStyle(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -358,10 +358,10 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!,
+                color: isFirstToPlay ? AppTheme.amberColor : Theme.of(context).colorScheme.outlineVariant,
                 width: isFirstToPlay ? 2 : 1,
               ),
             ),
@@ -373,7 +373,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                     style: TextStyle(
                       fontWeight: isFirstToPlay ? FontWeight.bold : FontWeight.w600,
                       fontSize: 14,
-                      color: isFirstToPlay ? AppTheme.amberColor : Colors.grey[600],
+                      color: isFirstToPlay ? AppTheme.amberColor : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -413,6 +413,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     final Color? color = colorName != null
         ? lorcanaColors.firstWhere((c) => c.name == colorName).color
         : null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return InkWell(
       onTap: onTap,
@@ -421,15 +422,15 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color ?? Colors.grey[200],
+          color: color ?? colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: color != null ? Colors.white : Colors.grey[400]!,
+            color: color != null ? colorScheme.surface : colorScheme.outlineVariant,
             width: 2,
           ),
         ),
         child: color == null
-            ? Icon(Icons.add, color: Colors.grey[600], size: 20)
+            ? Icon(Icons.add, color: colorScheme.onSurfaceVariant, size: 20)
             : null,
       ),
     );

@@ -115,14 +115,8 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Image de victoire
-                  SizedBox(
-                    height: 120,
-                    child: Image.asset(
-                      'assets/images/victoire_$_victoryImageName.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+                  // Texte de victoire stylisé avec glow et sparkles
+                  _buildVictoryText(),
 
                   // Portrait du joueur
                   Stack(
@@ -194,7 +188,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: Colors.grey[50],
+                      fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 8,
@@ -315,6 +309,101 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     );
   }
 
+  Widget _buildVictoryText() {
+    return SizedBox(
+      height: 120,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Glow effect derrière le texte
+          AnimatedBuilder(
+            animation: shimmerController,
+            builder: (context, child) {
+              return Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: _victoryColor.withValues(alpha: 0.4 + (shimmerController.value * 0.2)),
+                      blurRadius: 40 + (shimmerController.value * 20),
+                      spreadRadius: 10 + (shimmerController.value * 10),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          // Sparkles autour du texte
+          Positioned.fill(
+            child: SparklesOverlay(
+              controller: shimmerController,
+              color: _victoryColor,
+              sparkleCount: 8,
+            ),
+          ),
+          // Texte avec outline et gradient
+          Stack(
+            children: [
+              // Outline noir épais
+              Text(
+                'Victoire !',
+                style: TextStyle(
+                  fontSize: 42,
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 6
+                    ..color = AppTheme.pureBlack,
+                  shadows: [
+                    Shadow(
+                      color: AppTheme.pureBlack.withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      offset: const Offset(2, 2),
+                    ),
+                  ],
+                ),
+              ),
+              // Texte avec gradient de couleur
+              ShaderMask(
+                shaderCallback: (bounds) {
+                  return LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      _victoryColor,
+                      Color.lerp(_victoryColor, AppTheme.pureWhite, 0.3)!,
+                      _victoryColor,
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ).createShader(bounds);
+                },
+                child: Text(
+                  'Victoire !',
+                  style: TextStyle(
+                    fontSize: 42,
+                    fontWeight: FontWeight.w900,
+                    fontStyle: FontStyle.italic,
+                    color: AppTheme.pureWhite,
+                    shadows: [
+                      Shadow(
+                        color: _victoryColor.withValues(alpha: 0.8),
+                        blurRadius: 20,
+                      ),
+                      Shadow(
+                        color: _victoryColor.withValues(alpha: 0.5),
+                        blurRadius: 40,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDeckColorsSelection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,14 +413,14 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             children: [
-              Icon(Icons.touch_app, size: 14, color: Colors.grey[500]),
+              Icon(Icons.touch_app, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 4),
               Text(
                 'Tap = premier joueur',
                 style: TextStyle(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -387,10 +476,10 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Colors.grey[50],
+              color: isWinner ? _victoryColor.withValues(alpha: 0.15) : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[300]!),
+                color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Theme.of(context).colorScheme.outlineVariant),
                 width: (isWinner || isFirstToPlay) ? 2 : 1,
               ),
             ),
@@ -402,7 +491,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                     style: TextStyle(
                       fontWeight: (isWinner || isFirstToPlay) ? FontWeight.bold : FontWeight.w600,
                       fontSize: 14,
-                      color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Colors.grey[600]),
+                      color: isWinner ? _victoryColor : (isFirstToPlay ? AppTheme.amberColor : Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ),
                 ),
@@ -454,6 +543,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     final Color? color = colorName != null
         ? lorcanaColors.firstWhere((c) => c.name == colorName).color
         : null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return InkWell(
       onTap: onTap,
@@ -462,15 +552,15 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color ?? Colors.grey[200],
+          color: color ?? colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: color != null ? Colors.white : Colors.grey[400]!,
+            color: color != null ? colorScheme.surface : colorScheme.outlineVariant,
             width: 2,
           ),
         ),
         child: color == null
-            ? Icon(Icons.add, color: Colors.grey[600], size: 20)
+            ? Icon(Icons.add, color: colorScheme.onSurfaceVariant, size: 20)
             : null,
       ),
     );
