@@ -112,7 +112,20 @@ class _VictoryOverlayState extends State<VictoryOverlay>
 
   void _handleDecline() {
     HapticUtils.medium();
-    widget.onDecline();
+    // Animer la disparition des boutons avant d'annuler
+    _menuController.reverse().then((_) {
+      if (mounted) {
+        setState(() {
+          _showMenu = false;
+        });
+        // Flip le token pour revenir au logo Lorcana
+        _flipController.reverse().then((_) {
+          if (mounted) {
+            widget.onDecline();
+          }
+        });
+      }
+    });
   }
 
   @override
