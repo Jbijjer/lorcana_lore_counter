@@ -70,14 +70,14 @@ class _ResetConfirmationDialogState extends State<ResetConfirmationDialog>
                 Icon(
                   Icons.help_outline,
                   size: 18,
-                  color: Colors.grey[700],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Que voulez-vous réinitialiser ?',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[800],
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -116,7 +116,7 @@ class _ResetConfirmationDialogState extends State<ResetConfirmationDialog>
                 child: Text(
                   'Annuler',
                   style: TextStyle(
-                    color: Colors.grey[800],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -226,7 +226,7 @@ class _ResetOptionCardState extends State<_ResetOptionCard> {
                                 .titleSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                           ),
                           const SizedBox(height: 4),
@@ -236,7 +236,7 @@ class _ResetOptionCardState extends State<_ResetOptionCard> {
                                 .textTheme
                                 .bodySmall
                                 ?.copyWith(
-                                  color: Colors.grey[700],
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w500,
                                 ),
                           ),
