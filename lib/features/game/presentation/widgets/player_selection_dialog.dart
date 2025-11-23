@@ -152,109 +152,133 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
     final iconAssetPath = service.getPlayerIcon(name);
     final isExcluded =
         widget.excludedPlayerName != null && name == widget.excludedPlayerName;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Opacity(
-      opacity: isExcluded ? 0.4 : 1.0,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isExcluded
-                ? null
-                : () {
-                    HapticUtils.light();
-                    _handleSelectPlayer(name);
-                  },
-            borderRadius: BorderRadius.circular(12),
-            child: Stack(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        widget.defaultColor.withValues(alpha: 0.05),
-                        widget.defaultColor.withValues(alpha: 0.02),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: widget.defaultColor.withValues(alpha: 0.2),
-                      width: 1,
-                    ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isExcluded
+              ? null
+              : () {
+                  HapticUtils.light();
+                  _handleSelectPlayer(name);
+                },
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isExcluded
+                        ? [
+                            colorScheme.surfaceContainerHighest,
+                            colorScheme.surfaceContainer,
+                          ]
+                        : [
+                            widget.defaultColor.withValues(alpha: 0.05),
+                            widget.defaultColor.withValues(alpha: 0.02),
+                          ],
                   ),
-                  child: Row(
-                    children: [
-                      // Avatar
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.defaultColor.withValues(alpha: 0.1),
-                          border: Border.all(
-                            color: AppTheme.pureBlack,
-                            width: 2,
-                          ),
-                        ),
-                        child: ClipOval(
-                          child: iconAssetPath != null
-                              ? Image.asset(
-                                  iconAssetPath,
-                                  fit: BoxFit.cover,
-                                )
-                              : Icon(
-                                  Icons.person,
-                                  color: widget.defaultColor,
-                                  size: 24,
-                                ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                      if (isExcluded)
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.block,
-                            color: Theme.of(context).colorScheme.error,
-                            size: 20,
-                          ),
-                        )
-                      else
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: widget.defaultColor,
-                          size: 18,
-                        ),
-                    ],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isExcluded
+                        ? colorScheme.outlineVariant
+                        : widget.defaultColor.withValues(alpha: 0.2),
+                    width: 1,
                   ),
                 ),
-                // Effet shimmer sur tout le bouton
-                if (!isExcluded)
-                  SimpleShimmerEffect(
-                    animationValue: shimmerController.value,
-                    borderRadius: 12,
-                    alpha: 0.2,
-                  ),
-              ],
-            ),
+                child: Row(
+                  children: [
+                    // Avatar
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isExcluded
+                            ? colorScheme.surfaceContainerHighest
+                            : widget.defaultColor.withValues(alpha: 0.1),
+                        border: Border.all(
+                          color: isExcluded
+                              ? colorScheme.outlineVariant
+                              : colorScheme.outline,
+                          width: 2,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: iconAssetPath != null
+                            ? ColorFiltered(
+                                colorFilter: isExcluded
+                                    ? const ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.saturation,
+                                      )
+                                    : const ColorFilter.mode(
+                                        Colors.transparent,
+                                        BlendMode.multiply,
+                                      ),
+                                child: Image.asset(
+                                  iconAssetPath,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Icon(
+                                Icons.person,
+                                color: isExcluded
+                                    ? colorScheme.onSurfaceVariant
+                                    : widget.defaultColor,
+                                size: 24,
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isExcluded
+                              ? colorScheme.onSurfaceVariant
+                              : colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    if (isExcluded)
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: colorScheme.errorContainer,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.block,
+                          color: colorScheme.onErrorContainer,
+                          size: 20,
+                        ),
+                      )
+                    else
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: widget.defaultColor,
+                        size: 18,
+                      ),
+                  ],
+                ),
+              ),
+              // Effet shimmer sur tout le bouton
+              if (!isExcluded)
+                SimpleShimmerEffect(
+                  animationValue: shimmerController.value,
+                  borderRadius: 12,
+                  alpha: 0.2,
+                ),
+            ],
           ),
         ),
       ),
