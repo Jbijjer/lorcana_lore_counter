@@ -128,7 +128,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                       Text(
                         'Sélectionnez les joueurs',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[700],
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -180,7 +180,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                   borderRadius: BorderRadius.circular(12),
                 ),
                 side: BorderSide(
-                  color: Colors.grey.shade400,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 2,
                 ),
               ),
@@ -191,7 +191,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                   Icon(
                     Icons.arrow_back,
                     size: 18,
-                    color: Colors.grey.shade700,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -199,7 +199,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade700,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -247,15 +247,15 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.grey.shade100,
-                        Colors.grey.shade200,
+                        Theme.of(context).colorScheme.surfaceContainerLowest,
+                        Theme.of(context).colorScheme.surfaceContainer,
                       ],
                     ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected
                     ? accentColor.withValues(alpha: 0.5)
-                    : Colors.grey.shade300,
+                    : Theme.of(context).colorScheme.outlineVariant,
                 width: isSelected ? 3 : 2,
               ),
               boxShadow: isSelected
@@ -278,7 +278,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                     shape: BoxShape.circle,
                     color: isSelected
                         ? AppTheme.pureWhite.withValues(alpha: 0.2)
-                        : Colors.grey.shade300,
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     border: Border.all(
                       color: AppTheme.pureBlack,
                       width: isSelected ? 3 : 2,
@@ -301,7 +301,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                           )
                         : Icon(
                             Icons.person_add,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             size: 28,
                           ),
                   ),
@@ -318,7 +318,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                         style: TextStyle(
                           color: isSelected
                               ? AppTheme.pureWhite.withValues(alpha: 0.8)
-                              : Colors.grey[600],
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -354,7 +354,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                         Text(
                           'Sélectionner un joueur',
                           style: TextStyle(
-                            color: Colors.grey[800],
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -419,8 +419,8 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              canStart ? AppTheme.transparentColor : Colors.grey.shade300,
-          foregroundColor: canStart ? AppTheme.pureBlack : Colors.grey.shade600,
+              canStart ? AppTheme.transparentColor : Theme.of(context).colorScheme.surfaceContainerHighest,
+          foregroundColor: canStart ? AppTheme.pureBlack : Theme.of(context).colorScheme.onSurfaceVariant,
           shadowColor: AppTheme.transparentColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
           minimumSize: const Size(double.infinity, 0),
@@ -434,7 +434,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
             Icon(
               Icons.play_arrow,
               size: 24,
-              color: canStart ? Colors.black : Colors.grey.shade600,
+              color: canStart ? AppTheme.pureBlack : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 8),
             Text(
@@ -442,7 +442,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: canStart ? Colors.black : Colors.grey.shade600,
+                color: canStart ? AppTheme.pureBlack : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -468,7 +468,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -530,12 +530,12 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                   ],
                 )
               : null,
-          color: isSelected ? null : Colors.grey.shade200,
+          color: isSelected ? null : Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? AppTheme.amberColor
-                : Colors.grey.shade300,
+                : Theme.of(context).colorScheme.outlineVariant,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -554,7 +554,7 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
           style: TextStyle(
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-            color: isSelected ? Colors.black : Colors.grey[700],
+            color: isSelected ? AppTheme.pureBlack : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),

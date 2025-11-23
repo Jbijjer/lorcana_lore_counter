@@ -79,13 +79,13 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                   Icon(
                     Icons.people,
                     size: 16,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Joueurs existants',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[700],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
@@ -114,7 +114,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                   children: [
                     Expanded(
                       child: Divider(
-                        color: Colors.grey[300],
+                        color: Theme.of(context).colorScheme.outlineVariant,
                         thickness: 1,
                       ),
                     ),
@@ -123,7 +123,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                       child: Text(
                         'ou',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -131,7 +131,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                     ),
                     Expanded(
                       child: Divider(
-                        color: Colors.grey[300],
+                        color: Theme.of(context).colorScheme.outlineVariant,
                         thickness: 1,
                       ),
                     ),
@@ -220,7 +220,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
-                            color: Colors.grey[800],
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -228,12 +228,12 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.block,
-                            color: Colors.red,
+                            color: Theme.of(context).colorScheme.error,
                             size: 20,
                           ),
                         )

@@ -107,23 +107,23 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                 controller: _nameController,
                 maxLength: 15,
                 onChanged: (_) => setState(() {}),
-                style: const TextStyle(
-                  color: AppTheme.pureBlack,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   labelText: 'Nom du joueur',
                   labelStyle: TextStyle(
-                    color: Colors.grey[800],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                   counterStyle: TextStyle(
-                    color: Colors.grey[800],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                   prefixIcon: Icon(
                     Icons.person,
-                    color: Colors.grey[800],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -157,7 +157,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                       ),
                     ],
@@ -167,13 +167,13 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                       Icon(
                         Icons.swipe_vertical,
                         size: 16,
-                        color: Colors.grey[600],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'Glissez pour voir plus',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontStyle: FontStyle.italic,
                             ),
                       ),
@@ -200,7 +200,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                     child: Text(
                       'Annuler',
                       style: TextStyle(
-                        color: Colors.grey[800],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -419,7 +419,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? widget.playerColor : Colors.grey.shade300,
+              color: isSelected ? widget.playerColor : Theme.of(context).colorScheme.outlineVariant,
               width: isSelected ? 3 : 1,
             ),
             boxShadow: isSelected
