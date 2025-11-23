@@ -246,9 +246,7 @@ class _TimeOverlayState extends State<TimeOverlay>
                             : Transform(
                                 alignment: Alignment.center,
                                 transform: Matrix4.identity()..rotateX(math.pi),
-                                child: _hasFlipped
-                                    ? _buildCounterDisplay()
-                                    : _buildLogo(),
+                                child: _buildCounterDisplay(),
                               ),
                       );
                     },
