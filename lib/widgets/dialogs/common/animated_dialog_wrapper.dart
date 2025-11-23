@@ -57,7 +57,7 @@ class AnimatedDialogWrapper extends StatelessWidget {
           maxHeight: maxHeight ?? double.infinity,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -112,7 +112,7 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
           maxHeight: maxHeight ?? double.infinity,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(

@@ -87,13 +87,13 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                   Icon(
                     Icons.people,
                     size: 16,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Joueurs existants',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[700],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
@@ -101,7 +101,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                   Text(
                     'Maintenez pour éditer',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 11,
                           fontStyle: FontStyle.italic,
                         ),
@@ -131,7 +131,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                   children: [
                     Expanded(
                       child: Divider(
-                        color: Colors.grey[300],
+                        color: Theme.of(context).colorScheme.outlineVariant,
                         thickness: 1,
                       ),
                     ),
@@ -140,7 +140,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                       child: Text(
                         'ou',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -148,7 +148,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                     ),
                     Expanded(
                       child: Divider(
-                        color: Colors.grey[300],
+                        color: Theme.of(context).colorScheme.outlineVariant,
                         thickness: 1,
                       ),
                     ),
@@ -170,139 +170,163 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
         widget.excludedPlayerName != null && name == widget.excludedPlayerName;
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Opacity(
-      opacity: isExcluded ? 0.4 : 1.0,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isExcluded
-                ? null
-                : () {
-                    HapticUtils.light();
-                    _handleSelectPlayer(name);
-                  },
-            onLongPress: isExcluded
-                ? null
-                : () {
-                    HapticUtils.medium();
-                    _showEditDialog(name);
-                  },
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isCurrentPlayer
-                      ? [
-                          widget.playerColor.withValues(alpha: 0.15),
-                          widget.playerColor.withValues(alpha: 0.08),
-                        ]
-                      : [
-                          widget.playerColor.withValues(alpha: 0.05),
-                          widget.playerColor.withValues(alpha: 0.02),
-                        ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isCurrentPlayer
-                      ? widget.playerColor.withValues(alpha: 0.4)
-                      : widget.playerColor.withValues(alpha: 0.2),
-                  width: isCurrentPlayer ? 2 : 1,
-                ),
-                boxShadow: isCurrentPlayer
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isExcluded
+              ? null
+              : () {
+                  HapticUtils.light();
+                  _handleSelectPlayer(name);
+                },
+          onLongPress: isExcluded
+              ? null
+              : () {
+                  HapticUtils.medium();
+                  _showEditDialog(name);
+                },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isExcluded
                     ? [
-                        BoxShadow(
-                          color: widget.playerColor.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          spreadRadius: 1,
-                        ),
+                        colorScheme.surfaceContainerHighest,
+                        colorScheme.surfaceContainer,
                       ]
-                    : null,
+                    : isCurrentPlayer
+                        ? [
+                            widget.playerColor.withValues(alpha: 0.15),
+                            widget.playerColor.withValues(alpha: 0.08),
+                          ]
+                        : [
+                            widget.playerColor.withValues(alpha: 0.05),
+                            widget.playerColor.withValues(alpha: 0.02),
+                          ],
               ),
-              child: Row(
-                children: [
-                  // Avatar
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isCurrentPlayer
-                          ? widget.playerColor.withValues(alpha: 0.2)
-                          : widget.playerColor.withValues(alpha: 0.1),
-                      border: Border.all(
-                        color: AppTheme.pureBlack,
-                        width: isCurrentPlayer ? 3 : 2,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isExcluded
+                    ? colorScheme.outlineVariant
+                    : isCurrentPlayer
+                        ? widget.playerColor.withValues(alpha: 0.4)
+                        : widget.playerColor.withValues(alpha: 0.2),
+                width: isCurrentPlayer ? 2 : 1,
+              ),
+              boxShadow: isCurrentPlayer
+                  ? [
+                      BoxShadow(
+                        color: widget.playerColor.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        spreadRadius: 1,
                       ),
-                      boxShadow: isCurrentPlayer
-                          ? [
-                              BoxShadow(
-                                color: widget.playerColor.withValues(alpha: 0.3),
-                                blurRadius: 6,
-                                spreadRadius: 1,
-                              ),
-                            ]
-                          : null,
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                // Avatar
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isExcluded
+                        ? colorScheme.surfaceContainerHighest
+                        : isCurrentPlayer
+                            ? widget.playerColor.withValues(alpha: 0.2)
+                            : widget.playerColor.withValues(alpha: 0.1),
+                    border: Border.all(
+                      color: isExcluded
+                          ? colorScheme.outlineVariant
+                          : colorScheme.outline,
+                      width: isCurrentPlayer ? 3 : 2,
                     ),
-                    child: ClipOval(
-                      child: iconAssetPath != null
-                          ? Image.asset(
+                    boxShadow: isCurrentPlayer
+                        ? [
+                            BoxShadow(
+                              color: widget.playerColor.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: ClipOval(
+                    child: iconAssetPath != null
+                        ? ColorFiltered(
+                            colorFilter: isExcluded
+                                ? const ColorFilter.mode(
+                                    Colors.grey,
+                                    BlendMode.saturation,
+                                  )
+                                : const ColorFilter.mode(
+                                    Colors.transparent,
+                                    BlendMode.multiply,
+                                  ),
+                            child: Image.asset(
                               iconAssetPath,
                               fit: BoxFit.cover,
-                            )
-                          : Icon(
-                              Icons.person,
-                              color: widget.playerColor,
-                              size: 24,
                             ),
+                          )
+                        : Icon(
+                            Icons.person,
+                            color: isExcluded
+                                ? colorScheme.onSurfaceVariant
+                                : widget.playerColor,
+                            size: 24,
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    name,
+                    style: TextStyle(
+                      fontWeight:
+                          isCurrentPlayer ? FontWeight.bold : FontWeight.w600,
+                      fontSize: 16,
+                      color: isExcluded
+                          ? colorScheme.onSurfaceVariant
+                          : isCurrentPlayer
+                              ? widget.playerColor
+                              : colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: TextStyle(
-                        fontWeight:
-                            isCurrentPlayer ? FontWeight.bold : FontWeight.w600,
-                        fontSize: 16,
-                        color: isCurrentPlayer
-                            ? widget.playerColor
-                            : Colors.grey[800],
-                      ),
+                ),
+                if (isExcluded)
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.errorContainer,
+                      shape: BoxShape.circle,
                     ),
+                    child: Icon(
+                      Icons.block,
+                      color: colorScheme.onErrorContainer,
+                      size: 20,
+                    ),
+                  )
+                else if (isCurrentPlayer)
+                  Icon(
+                    Icons.check_circle,
+                    color: widget.playerColor,
+                    size: 24,
+                  )
+                else
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: widget.playerColor,
+                    size: 18,
                   ),
-                  if (isExcluded)
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.block,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                    )
-                  else if (isCurrentPlayer)
-                    Icon(
-                      Icons.check_circle,
-                      color: widget.playerColor,
-                      size: 24,
-                    )
-                  else
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: widget.playerColor,
-                      size: 18,
-                    ),
-                ],
-              ),
+              ],
             ),
           ),
         ),

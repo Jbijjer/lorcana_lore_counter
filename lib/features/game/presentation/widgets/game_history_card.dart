@@ -107,7 +107,9 @@ class GameHistoryCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: game.isDraw ? Colors.orange[100] : Colors.grey[200],
+                        color: game.isDraw
+                            ? Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.2)
+                            : Theme.of(context).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -115,7 +117,9 @@ class GameHistoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
-                          color: game.isDraw ? Colors.orange[700] : Colors.black54,
+                          color: game.isDraw
+                              ? Theme.of(context).colorScheme.tertiary
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -356,12 +360,12 @@ class _PlayerScoreColumn extends StatelessWidget {
                     color: _getDeckColor(color),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: Colors.white,
+                      color: colorScheme.surface,
                       width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
+                        color: colorScheme.shadow.withValues(alpha: 0.2),
                         blurRadius: 2,
                         offset: const Offset(0, 1),
                       ),
@@ -422,9 +426,10 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Icon(icon, size: 18, color: color ?? Colors.grey[600]),
+        Icon(icon, size: 18, color: color ?? colorScheme.onSurfaceVariant),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -434,7 +439,7 @@ class _DetailRow extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               Text(

@@ -18,16 +18,19 @@ class AccessibilityPreferencesAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AccessibilityPreferences(
-      highContrastMode: fields[0] as bool,
+      highContrastMode: fields[0] as bool? ?? false,
+      themeModeIndex: fields[1] as int? ?? 0,
     );
   }
 
   @override
   void write(BinaryWriter writer, AccessibilityPreferences obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.highContrastMode);
+      ..write(obj.highContrastMode)
+      ..writeByte(1)
+      ..write(obj.themeModeIndex);
   }
 
   @override

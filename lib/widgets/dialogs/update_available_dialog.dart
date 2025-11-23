@@ -94,6 +94,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
   }
 
   Widget _buildVersionInfo() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -119,7 +120,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
                 Text(
                   'Actuelle',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -127,9 +128,10 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
                 const SizedBox(height: 4),
                 Text(
                   'v${widget.updateInfo.currentVersion}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -157,7 +159,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
                 Text(
                   'Nouvelle',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -180,6 +182,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
   }
 
   Widget _buildReleaseNotes() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -188,14 +191,14 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
             Icon(
               Icons.article_outlined,
               size: 18,
-              color: Colors.grey[700],
+              color: colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 8),
             Text(
               'Nouveautés',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+                color: colorScheme.onSurface,
               ),
             ),
           ],
@@ -205,7 +208,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
           padding: const EdgeInsets.all(12),
           constraints: const BoxConstraints(maxHeight: 150),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
           ),
           child: SingleChildScrollView(
@@ -213,7 +216,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
               widget.updateInfo.releaseNotes!,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.grey[800],
+                color: colorScheme.onSurface,
                 height: 1.4,
               ),
             ),
@@ -255,7 +258,7 @@ class _UpdateAvailableDialogState extends State<UpdateAvailableDialog>
           child: Text(
             'Plus tard',
             style: TextStyle(
-              color: Colors.grey[600],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w600,
             ),
           ),

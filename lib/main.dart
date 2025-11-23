@@ -66,7 +66,7 @@ class LorcanaScoreKeeperApp extends ConsumerWidget {
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
           darkTheme: darkTheme,
-          themeMode: ThemeMode.system,
+          themeMode: prefs.themeMode,
           home: const HomeScreen(),
         );
       },
