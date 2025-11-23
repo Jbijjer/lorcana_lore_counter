@@ -169,7 +169,15 @@ class _TimeOverlayState extends State<TimeOverlay>
     // Animer la disparition des boutons avant d'annuler
     _menuController.reverse().then((_) {
       if (mounted) {
-        widget.onCancel();
+        setState(() {
+          _showMenu = false;
+        });
+        // Flip le token pour revenir au logo Lorcana
+        _flipController.reverse().then((_) {
+          if (mounted) {
+            widget.onCancel();
+          }
+        });
       }
     });
   }
