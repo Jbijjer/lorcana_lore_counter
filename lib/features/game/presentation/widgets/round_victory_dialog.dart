@@ -315,23 +315,6 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Glow effect derrière le texte
-          AnimatedBuilder(
-            animation: shimmerController,
-            builder: (context, child) {
-              return Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: _victoryColor.withValues(alpha: 0.4 + (shimmerController.value * 0.2)),
-                      blurRadius: 40 + (shimmerController.value * 20),
-                      spreadRadius: 10 + (shimmerController.value * 10),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
           // Sparkles autour du texte
           Positioned.fill(
             child: SparklesOverlay(
