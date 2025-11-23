@@ -149,7 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                               Text(
                                 'Version $_appVersion',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[600],
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     ),
                               ),
                             const SizedBox(height: 8),
@@ -234,7 +234,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         Text(
           'Compteur de Lore',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
           textAlign: TextAlign.center,
@@ -290,8 +290,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           label: 'Paramètres',
           gradient: LinearGradient(
             colors: [
-              Colors.grey[700]!,
-              Colors.grey[600]!,
+              Theme.of(context).colorScheme.outline,
+              Theme.of(context).colorScheme.outlineVariant,
             ],
           ),
           onTap: _handleSettings,

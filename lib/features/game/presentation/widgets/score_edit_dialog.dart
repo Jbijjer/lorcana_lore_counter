@@ -155,14 +155,14 @@ class _ScoreEditDialogState extends State<ScoreEditDialog>
                 Icon(
                   Icons.info_outline,
                   size: 16,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Entrez un score entre ${AppConstants.minScore} et ${AppConstants.maxScore}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 12,
                         ),
                   ),
@@ -184,7 +184,7 @@ class _ScoreEditDialogState extends State<ScoreEditDialog>
                   child: Text(
                     'Annuler',
                     style: TextStyle(
-                      color: Colors.grey[800],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
