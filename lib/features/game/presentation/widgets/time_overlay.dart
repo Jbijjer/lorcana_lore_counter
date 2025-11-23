@@ -156,12 +156,22 @@ class _TimeOverlayState extends State<TimeOverlay>
 
   void _handleConfirmDraw() {
     HapticUtils.success();
-    widget.onConfirmDraw();
+    // Animer la disparition des boutons avant de confirmer
+    _menuController.reverse().then((_) {
+      if (mounted) {
+        widget.onConfirmDraw();
+      }
+    });
   }
 
   void _handleCancel() {
     HapticUtils.medium();
-    widget.onCancel();
+    // Animer la disparition des boutons avant d'annuler
+    _menuController.reverse().then((_) {
+      if (mounted) {
+        widget.onCancel();
+      }
+    });
   }
 
   @override
