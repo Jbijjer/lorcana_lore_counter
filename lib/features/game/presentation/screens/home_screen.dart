@@ -198,7 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         alignment: Alignment.center,
                         transform: Matrix4.identity()..rotateY(math.pi),
                         child: Image.asset(
-                          'assets/images/lorcana_logo.png',
+                          'assets/images/jeton_multicolor.png',
                           fit: BoxFit.contain,
                         ),
                       )
