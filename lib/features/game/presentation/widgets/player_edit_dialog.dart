@@ -198,6 +198,11 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
 
               const SizedBox(height: 16),
 
+              // Galerie des portraits personnalisés existants
+              _buildCustomPortraitsGallery(),
+
+              const SizedBox(height: 16),
+
               // Bouton pour changer les couleurs de fond
               _buildColorButton(),
 
@@ -561,6 +566,149 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
       _customPortraitPath = null;
     });
     _portraitChangeController.forward(from: 0.0);
+  }
+
+  Widget _buildCustomPortraitsGallery() {
+    final service = ref.read(playerHistoryServiceProvider);
+    final allPortraits = service.getAllCustomPortraits();
+
+    // Si aucun portrait personnalisé n'est disponible, ne rien afficher
+    if (allPortraits.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.photo_library,
+                  color: widget.playerColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Mes portraits',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                ),
+              ],
+            ),
+            Text(
+              '${allPortraits.length} photo${allPortraits.length > 1 ? 's' : ''}',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          height: 120,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: widget.playerColor.withValues(alpha: 0.3),
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: allPortraits.length <= 4
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: allPortraits
+                      .map((path) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: _buildPortraitItem(path),
+                          ))
+                      .toList(),
+                )
+              : GridView.builder(
+                  padding: const EdgeInsets.all(8),
+                  scrollDirection: Axis.horizontal,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: allPortraits.length,
+                  itemBuilder: (context, index) {
+                    return _buildPortraitItem(allPortraits[index]);
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPortraitItem(String portraitPath) {
+    final isSelected = _customPortraitPath == portraitPath;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          _customPortraitPath = portraitPath;
+        });
+        _portraitChangeController.forward(from: 0.0);
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? widget.playerColor.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? widget.playerColor
+                : Theme.of(context).colorScheme.outlineVariant,
+            width: isSelected ? 3 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: widget.playerColor.withValues(alpha: 0.4),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : [],
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                File(portraitPath),
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(Icons.broken_image, size: 32),
+                  );
+                },
+              ),
+            ),
+            // Effet scintillant pour le portrait sélectionné
+            if (isSelected)
+              Positioned.fill(
+                child: _buildSparkles(),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildColorButton() {

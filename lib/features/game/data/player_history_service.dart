@@ -275,6 +275,25 @@ class PlayerHistoryService {
     }
   }
 
+  /// Récupère tous les portraits personnalisés (chemins uniques)
+  List<String> getAllCustomPortraits() {
+    if (_box == null) return [];
+
+    final allPortraits = <String>[];
+
+    // Parcourir tous les joueurs et collecter leurs portraits personnalisés
+    for (final player in _box!.values) {
+      if (player.customPortraitPath != null && player.customPortraitPath!.isNotEmpty) {
+        // Éviter les doublons
+        if (!allPortraits.contains(player.customPortraitPath)) {
+          allPortraits.add(player.customPortraitPath!);
+        }
+      }
+    }
+
+    return allPortraits;
+  }
+
   /// Met à jour un joueur par son ID
   Future<void> updatePlayerById({
     required String id,
