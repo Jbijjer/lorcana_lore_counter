@@ -91,7 +91,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     // Animation des confettis (une seule fois)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 25),
+      duration: const Duration(seconds: 35),
     )..forward();
 
     HapticUtils.success();
