@@ -153,7 +153,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [x] Les couleurs de deck de chaque joueur
   - [x] Le score de chaque partie
   - [x] Qui a commencé chaque partie
-  - [ ] Le nombre de parties dans chaque round (optionnel - non implémenté)
 - [x] Sauvegarder ces données dans l'historique des parties
 - [x] Permettre l'ajout de plusieurs parties/rounds en une session
 - [x] Interface intuitive qui ne nécessite pas de passer par l'interface de jeu complète
@@ -218,12 +217,34 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Particules de victoire (confetti, étoiles) ✅ (Commits 61e3bd7, 440411c, 42af3e9, 584b7b3, 8197c08, 50f3ddc, a42a34c, 23b1625 - confettis Mickey)
 - [x] Transitions de page fluides
 - [x] Animations de gradient
-- [ ] Effets visuels amusants (Lottie/Rive pour animations vectorielles)
 - [x] Animation de célébration à 20 points (feux d'artifice, particules) ✅ (confettis Mickey)
 - [x] Feedback visuel sur les interactions (ripple effects, micro-animations) ✅ (Commits 4b07c92, 0849033 - shimmer effects)
 - [x] Animations de transition entre les scores (counter animation)
 - [x] Shake animation quand le score descend
 - [x] Glow effect autour du bouton central
+
+## 🚀 Futures améliorations
+
+### 12. Export des statistiques
+- [ ] Export des stats en CSV
+  - [ ] Exporter l'historique des parties (joueurs, scores, dates, couleurs de deck)
+  - [ ] Exporter les statistiques par joueur (winrate, parties jouées)
+  - [ ] Bouton d'export dans l'écran Statistiques
+  - [ ] Partage du fichier CSV via le système de partage natif
+
+### 13. Portraits personnalisés
+- [ ] Permettre d'ajouter des portraits à partir de photos sur l'appareil
+  - [ ] Accès à la galerie photos de l'appareil
+  - [ ] Recadrage/redimensionnement de l'image
+  - [ ] Stockage local des portraits
+  - [ ] Affichage du portrait dans la sélection de joueur et sur l'écran de jeu
+
+### 14. Sauvegarde Cloud
+- [ ] Synchronisation des données sur le Cloud
+  - [ ] Intégration Google Drive / iCloud
+  - [ ] Backup automatique des statistiques et historique
+  - [ ] Restauration des données sur un nouvel appareil
+  - [ ] Option d'activer/désactiver la sync dans les paramètres
 
 ## 📝 Notes techniques
 
