@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -170,6 +171,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
         widget.excludedPlayerName != null && name == widget.excludedPlayerName;
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
+    final customPortraitPath = service.getPlayerCustomPortrait(name);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -260,29 +262,12 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
                         : null,
                   ),
                   child: ClipOval(
-                    child: iconAssetPath != null
-                        ? ColorFiltered(
-                            colorFilter: isExcluded
-                                ? const ColorFilter.mode(
-                                    Colors.grey,
-                                    BlendMode.saturation,
-                                  )
-                                : const ColorFilter.mode(
-                                    Colors.transparent,
-                                    BlendMode.multiply,
-                                  ),
-                            child: Image.asset(
-                              iconAssetPath,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Icon(
-                            Icons.person,
-                            color: isExcluded
-                                ? colorScheme.onSurfaceVariant
-                                : widget.playerColor,
-                            size: 24,
-                          ),
+                    child: _buildPlayerAvatar(
+                      customPortraitPath: customPortraitPath,
+                      iconAssetPath: iconAssetPath,
+                      isExcluded: isExcluded,
+                      colorScheme: colorScheme,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -533,6 +518,66 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
           setState(() {});
         },
       ),
+    );
+  }
+
+  Widget _buildPlayerAvatar({
+    String? customPortraitPath,
+    String? iconAssetPath,
+    required bool isExcluded,
+    required ColorScheme colorScheme,
+  }) {
+    // Priorité au portrait personnalisé
+    if (customPortraitPath != null && customPortraitPath.isNotEmpty) {
+      return ColorFiltered(
+        colorFilter: isExcluded
+            ? const ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              )
+            : const ColorFilter.mode(
+                Colors.transparent,
+                BlendMode.multiply,
+              ),
+        child: Image.file(
+          File(customPortraitPath),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback vers l'icône si le fichier n'existe plus
+            if (iconAssetPath != null) {
+              return Image.asset(iconAssetPath, fit: BoxFit.cover);
+            }
+            return Icon(
+              Icons.person,
+              color: isExcluded ? colorScheme.onSurfaceVariant : widget.playerColor,
+              size: 24,
+            );
+          },
+        ),
+      );
+    }
+
+    // Sinon, utiliser l'icône
+    if (iconAssetPath != null) {
+      return ColorFiltered(
+        colorFilter: isExcluded
+            ? const ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              )
+            : const ColorFilter.mode(
+                Colors.transparent,
+                BlendMode.multiply,
+              ),
+        child: Image.asset(iconAssetPath, fit: BoxFit.cover),
+      );
+    }
+
+    // Fallback vers une icône par défaut
+    return Icon(
+      Icons.person,
+      color: isExcluded ? colorScheme.onSurfaceVariant : widget.playerColor,
+      size: 24,
     );
   }
 }
