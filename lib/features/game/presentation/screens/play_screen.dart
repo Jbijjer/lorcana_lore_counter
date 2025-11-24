@@ -17,9 +17,7 @@ import '../../domain/player.dart';
 import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
-import 'settings_screen.dart';
-import 'home_screen.dart';
-import '../../../../core/routes/statistics_page_route.dart';
+import '../../../../core/routes/app_page_routes.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/providers/accessibility_provider.dart';
@@ -100,11 +98,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       await historyService.addOrUpdatePlayerName(player2.name);
     } else if (mounted) {
       // L'utilisateur a annulé, retourner à l'écran d'accueil
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
-      );
+      Navigator.of(context).pushReplacement(HomeScreenReplaceRoute());
     }
   }
 
@@ -634,7 +628,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     if (mounted) {
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        HomeScreenReplaceRoute(),
         (route) => false,
       );
     }
@@ -648,11 +642,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   /// Gère l'ouverture de l'écran des paramètres
   void _handleSettingsTap() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const SettingsScreen(fromActiveGame: true),
-      ),
-    );
+    Navigator.of(context).push(SettingsPageRoute(fromActiveGame: true));
   }
 
   /// Gère l'affichage de l'overlay de lancer de dés
@@ -708,7 +698,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       // La partie est automatiquement sauvegardée par le gameProvider
       // Retourner à l'écran d'accueil en nettoyant la pile de navigation
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        HomeScreenReplaceRoute(),
         (route) => false,
       );
     }
