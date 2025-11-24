@@ -1,17 +1,21 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../domain/player.dart';
 
 /// Overlay de victoire qui apparaît quand un joueur atteint 20 points
 class VictoryOverlay extends StatefulWidget {
   const VictoryOverlay({
+    required this.player,
     required this.isPlayer1,
     required this.onConfirm,
     required this.onDecline,
     super.key,
   });
 
+  final Player player;
   final bool isPlayer1;
   final VoidCallback onConfirm;
   final VoidCallback onDecline;
@@ -209,24 +213,57 @@ class _VictoryOverlayState extends State<VictoryOverlay>
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                widget.player.backgroundColorStart,
+                widget.player.backgroundColorEnd,
+              ],
+            ),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.pureBlack.withValues(alpha: 0.5),
+                color: widget.player.color.withValues(alpha: 0.5),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
             ],
           ),
           child: ClipOval(
-            child: Image.asset(
-              'assets/images/lorcana_logo.png',
-              width: size,
-              height: size,
-              fit: BoxFit.cover,
-            ),
+            child: _buildPlayerPortrait(size),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPlayerPortrait(double size) {
+    // Priorité au portrait personnalisé
+    if (widget.player.customPortraitPath != null &&
+        widget.player.customPortraitPath!.isNotEmpty) {
+      return Image.file(
+        File(widget.player.customPortraitPath!),
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback vers l'icône si le fichier n'existe plus
+          return Image.asset(
+            widget.player.iconAssetPath,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
+    // Sinon, utiliser l'icône
+    return Image.asset(
+      widget.player.iconAssetPath,
+      width: size,
+      height: size,
+      fit: BoxFit.cover,
     );
   }
 

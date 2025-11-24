@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -169,12 +170,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                           ],
                         ),
                         child: ClipOval(
-                          child: Image.asset(
-                            widget.winner.iconAssetPath,
-                            width: 120,
-                            height: 120,
-                            fit: BoxFit.cover,
-                          ),
+                          child: _buildWinnerPortrait(),
                         ),
                       ),
                     ],
@@ -630,6 +626,36 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
         }
       });
     }
+  }
+
+  Widget _buildWinnerPortrait() {
+    // Priorité au portrait personnalisé
+    if (widget.winner.customPortraitPath != null &&
+        widget.winner.customPortraitPath!.isNotEmpty) {
+      return Image.file(
+        File(widget.winner.customPortraitPath!),
+        width: 120,
+        height: 120,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback vers l'icône si le fichier n'existe plus
+          return Image.asset(
+            widget.winner.iconAssetPath,
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
+    // Sinon, utiliser l'icône
+    return Image.asset(
+      widget.winner.iconAssetPath,
+      width: 120,
+      height: 120,
+      fit: BoxFit.cover,
+    );
   }
 
 }

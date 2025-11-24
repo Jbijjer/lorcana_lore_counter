@@ -238,6 +238,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                 if (_showVictoryOverlay)
                   Positioned.fill(
                     child: VictoryOverlay(
+                      player: gameState.isPlayer1AtThreshold
+                          ? gameState.player1
+                          : gameState.player2,
                       isPlayer1: gameState.isPlayer1AtThreshold,
                       onConfirm: _handleVictoryConfirm,
                       onDecline: _handleVictoryDecline,
