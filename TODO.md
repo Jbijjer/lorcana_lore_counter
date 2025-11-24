@@ -217,7 +217,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Particules de victoire (confetti, étoiles) ✅ (Commits 61e3bd7, 440411c, 42af3e9, 584b7b3, 8197c08, 50f3ddc, a42a34c, 23b1625 - confettis Mickey)
 - [x] Transitions de page fluides
 - [x] Animations de gradient
-- [ ] Effets visuels amusants (Lottie/Rive pour animations vectorielles)
 - [x] Animation de célébration à 20 points (feux d'artifice, particules) ✅ (confettis Mickey)
 - [x] Feedback visuel sur les interactions (ripple effects, micro-animations) ✅ (Commits 4b07c92, 0849033 - shimmer effects)
 - [x] Animations de transition entre les scores (counter animation)
