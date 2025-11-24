@@ -32,7 +32,7 @@ dependencies:
 
   # Image picker & cropper
   image_picker: ^1.1.2
-  image_cropper: ^8.0.2
+  image_cropper: ^4.0.1
 
   # Network & Updates
   http: ^1.2.0

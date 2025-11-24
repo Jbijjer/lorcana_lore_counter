@@ -35,28 +35,26 @@ class PortraitService {
 
       if (pickedFile == null) return null;
 
-      // Recadrer l'image en cercle
+      // Recadrer l'image en carré (sera affiché en cercle dans l'UI)
       final croppedFile = await ImageCropper().cropImage(
         sourcePath: pickedFile.path,
-        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        aspectRatioPresets: [CropAspectRatioPreset.square],
         compressQuality: 85,
         maxWidth: 256,
         maxHeight: 256,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Recadrer le portrait',
-            toolbarColor: Theme.of(context).colorScheme.primary,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.square,
-            lockAspectRatio: true,
-            hideBottomControls: false,
-          ),
-          IOSUiSettings(
-            title: 'Recadrer le portrait',
-            aspectRatioLockEnabled: true,
-            resetAspectRatioEnabled: false,
-          ),
-        ],
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Recadrer le portrait',
+          toolbarColor: Theme.of(context).colorScheme.primary,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: true,
+          hideBottomControls: false,
+        ),
+        iosUiSettings: const IOSUiSettings(
+          title: 'Recadrer le portrait',
+          aspectRatioLockEnabled: true,
+          resetAspectRatioEnabled: false,
+        ),
       );
 
       if (croppedFile == null) return null;
