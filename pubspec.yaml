@@ -31,8 +31,8 @@ dependencies:
   package_info_plus: ^8.0.0
 
   # Image picker & cropper
-  image_picker: ^1.0.7
-  image_cropper: ^5.0.1
+  image_picker: ^1.1.2
+  image_cropper: ^8.0.2
 
   # Network & Updates
   http: ^1.2.0
