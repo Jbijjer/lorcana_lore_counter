@@ -32,6 +32,7 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
   String? _firstToPlay;
   String? _note;
   bool _isDraw = false;
+  int? _roundNumber;
 
   final TextEditingController _player1ScoreController = TextEditingController(text: '0');
   final TextEditingController _player2ScoreController = TextEditingController(text: '0');
@@ -115,6 +116,8 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
                         _buildScoresSection(),
                         const SizedBox(height: 24),
                         _buildFirstToPlaySection(),
+                        const SizedBox(height: 24),
+                        _buildRoundNumberSection(),
                         const SizedBox(height: 24),
                         _buildNoteSection(),
                         const SizedBox(height: 32),
@@ -810,6 +813,77 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
     );
   }
 
+  Widget _buildRoundNumberSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Numéro de partie (optionnel)', Icons.format_list_numbered, AppTheme.steelColor),
+        const SizedBox(height: 8),
+        Text(
+          'Ex: Partie 1 ou 2 dans un Best of 3',
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildRoundNumberOption(null, 'Aucun'),
+            _buildRoundNumberOption(1, '1'),
+            _buildRoundNumberOption(2, '2'),
+            _buildRoundNumberOption(3, '3'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoundNumberOption(int? number, String label) {
+    final isSelected = _roundNumber == number;
+
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        setState(() {
+          _roundNumber = number;
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    AppTheme.steelColor,
+                    AppTheme.steelColor.withValues(alpha: 0.8),
+                  ],
+                )
+              : null,
+          color: isSelected ? null : Theme.of(context).colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppTheme.steelColor : Theme.of(context).colorScheme.outline,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isSelected
+                ? AppTheme.pureWhite
+                : Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildNoteSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1000,6 +1074,7 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
       player2DeckColors: _player2DeckColors,
       note: _note,
       firstToPlayName: _firstToPlay,
+      roundNumber: _roundNumber,
     );
 
     if (!mounted) return;
@@ -1059,6 +1134,10 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
 
     if (addAnother == true && mounted) {
       // Réinitialiser le formulaire (garder les joueurs)
+      // Incrémenter le numéro de partie si défini (max 5)
+      final nextRoundNumber = _roundNumber != null && _roundNumber! < 5
+          ? _roundNumber! + 1
+          : _roundNumber;
       setState(() {
         _player1DeckColors = [];
         _player2DeckColors = [];
@@ -1070,6 +1149,7 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
         _note = null;
         _noteController.clear();
         _isDraw = false;
+        _roundNumber = nextRoundNumber;
       });
     } else if (mounted) {
       Navigator.of(context).pop();

@@ -46,7 +46,10 @@ mixin _$GameHistory {
   String? get note =>
       throw _privateConstructorUsedError; // Note sur la partie (optionnel)
   @HiveField(10)
-  String? get firstToPlayName => throw _privateConstructorUsedError;
+  String? get firstToPlayName =>
+      throw _privateConstructorUsedError; // Nom du joueur qui a commencé la partie
+  @HiveField(11)
+  int? get roundNumber => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -71,7 +74,8 @@ abstract class $GameHistoryCopyWith<$Res> {
       @HiveField(7) List<String> player1DeckColors,
       @HiveField(8) List<String> player2DeckColors,
       @HiveField(9) String? note,
-      @HiveField(10) String? firstToPlayName});
+      @HiveField(10) String? firstToPlayName,
+      @HiveField(11) int? roundNumber});
 }
 
 /// @nodoc
@@ -98,6 +102,7 @@ class _$GameHistoryCopyWithImpl<$Res, $Val extends GameHistory>
     Object? player2DeckColors = null,
     Object? note = freezed,
     Object? firstToPlayName = freezed,
+    Object? roundNumber = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -144,6 +149,10 @@ class _$GameHistoryCopyWithImpl<$Res, $Val extends GameHistory>
           ? _value.firstToPlayName
           : firstToPlayName // ignore: cast_nullable_to_non_nullable
               as String?,
+      roundNumber: freezed == roundNumber
+          ? _value.roundNumber
+          : roundNumber // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -167,7 +176,8 @@ abstract class _$$GameHistoryImplCopyWith<$Res>
       @HiveField(7) List<String> player1DeckColors,
       @HiveField(8) List<String> player2DeckColors,
       @HiveField(9) String? note,
-      @HiveField(10) String? firstToPlayName});
+      @HiveField(10) String? firstToPlayName,
+      @HiveField(11) int? roundNumber});
 }
 
 /// @nodoc
@@ -192,6 +202,7 @@ class __$$GameHistoryImplCopyWithImpl<$Res>
     Object? player2DeckColors = null,
     Object? note = freezed,
     Object? firstToPlayName = freezed,
+    Object? roundNumber = freezed,
   }) {
     return _then(_$GameHistoryImpl(
       id: null == id
@@ -238,6 +249,10 @@ class __$$GameHistoryImplCopyWithImpl<$Res>
           ? _value.firstToPlayName
           : firstToPlayName // ignore: cast_nullable_to_non_nullable
               as String?,
+      roundNumber: freezed == roundNumber
+          ? _value.roundNumber
+          : roundNumber // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -256,7 +271,8 @@ class _$GameHistoryImpl extends _GameHistory {
       @HiveField(7) final List<String> player1DeckColors = const [],
       @HiveField(8) final List<String> player2DeckColors = const [],
       @HiveField(9) this.note,
-      @HiveField(10) this.firstToPlayName})
+      @HiveField(10) this.firstToPlayName,
+      @HiveField(11) this.roundNumber})
       : _player1DeckColors = player1DeckColors,
         _player2DeckColors = player2DeckColors,
         super._();
@@ -320,10 +336,14 @@ class _$GameHistoryImpl extends _GameHistory {
   @override
   @HiveField(10)
   final String? firstToPlayName;
+// Nom du joueur qui a commencé la partie
+  @override
+  @HiveField(11)
+  final int? roundNumber;
 
   @override
   String toString() {
-    return 'GameHistory(id: $id, player1Name: $player1Name, player2Name: $player2Name, player1FinalScore: $player1FinalScore, player2FinalScore: $player2FinalScore, winnerName: $winnerName, timestamp: $timestamp, player1DeckColors: $player1DeckColors, player2DeckColors: $player2DeckColors, note: $note, firstToPlayName: $firstToPlayName)';
+    return 'GameHistory(id: $id, player1Name: $player1Name, player2Name: $player2Name, player1FinalScore: $player1FinalScore, player2FinalScore: $player2FinalScore, winnerName: $winnerName, timestamp: $timestamp, player1DeckColors: $player1DeckColors, player2DeckColors: $player2DeckColors, note: $note, firstToPlayName: $firstToPlayName, roundNumber: $roundNumber)';
   }
 
   @override
@@ -350,7 +370,9 @@ class _$GameHistoryImpl extends _GameHistory {
                 .equals(other._player2DeckColors, _player2DeckColors) &&
             (identical(other.note, note) || other.note == note) &&
             (identical(other.firstToPlayName, firstToPlayName) ||
-                other.firstToPlayName == firstToPlayName));
+                other.firstToPlayName == firstToPlayName) &&
+            (identical(other.roundNumber, roundNumber) ||
+                other.roundNumber == roundNumber));
   }
 
   @JsonKey(ignore: true)
@@ -367,7 +389,8 @@ class _$GameHistoryImpl extends _GameHistory {
       const DeepCollectionEquality().hash(_player1DeckColors),
       const DeepCollectionEquality().hash(_player2DeckColors),
       note,
-      firstToPlayName);
+      firstToPlayName,
+      roundNumber);
 
   @JsonKey(ignore: true)
   @override
@@ -395,7 +418,8 @@ abstract class _GameHistory extends GameHistory {
       @HiveField(7) final List<String> player1DeckColors,
       @HiveField(8) final List<String> player2DeckColors,
       @HiveField(9) final String? note,
-      @HiveField(10) final String? firstToPlayName}) = _$GameHistoryImpl;
+      @HiveField(10) final String? firstToPlayName,
+      @HiveField(11) final int? roundNumber}) = _$GameHistoryImpl;
   const _GameHistory._() : super._();
 
   factory _GameHistory.fromJson(Map<String, dynamic> json) =
@@ -434,6 +458,9 @@ abstract class _GameHistory extends GameHistory {
   @override // Note sur la partie (optionnel)
   @HiveField(10)
   String? get firstToPlayName;
+  @override // Nom du joueur qui a commencé la partie
+  @HiveField(11)
+  int? get roundNumber;
   @override
   @JsonKey(ignore: true)
   _$$GameHistoryImplCopyWith<_$GameHistoryImpl> get copyWith =>

@@ -22,6 +22,7 @@ class GameHistory with _$GameHistory {
     @HiveField(8) @Default([]) List<String> player2DeckColors, // Les 2 couleurs du deck du joueur 2
     @HiveField(9) String? note, // Note sur la partie (optionnel)
     @HiveField(10) String? firstToPlayName, // Nom du joueur qui a commencé la partie
+    @HiveField(11) int? roundNumber, // Numéro de la partie dans le round (optionnel, ex: 1, 2, 3 pour un Bo3)
   }) = _GameHistory;
 
   const GameHistory._();
