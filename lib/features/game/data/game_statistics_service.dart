@@ -216,6 +216,130 @@ class GameStatisticsService {
 
     await saveGame(gameHistory);
   }
+
+  /// Récupère les statistiques head-to-head entre deux joueurs
+  HeadToHeadStatistics getHeadToHeadStatistics(String playerName, String opponentName) {
+    final games = getAllGames();
+
+    int wins = 0;
+    int losses = 0;
+    int draws = 0;
+
+    for (final game in games) {
+      final isPlayer1 = game.player1Name == playerName && game.player2Name == opponentName;
+      final isPlayer2 = game.player2Name == playerName && game.player1Name == opponentName;
+
+      if (isPlayer1 || isPlayer2) {
+        if (game.isDraw) {
+          draws++;
+        } else if (game.winnerName == playerName) {
+          wins++;
+        } else {
+          losses++;
+        }
+      }
+    }
+
+    final totalGames = wins + losses + draws;
+    final winrate = totalGames > 0 ? (wins / totalGames) * 100 : 0.0;
+
+    return HeadToHeadStatistics(
+      playerName: playerName,
+      opponentName: opponentName,
+      totalGames: totalGames,
+      wins: wins,
+      losses: losses,
+      draws: draws,
+      winrate: winrate,
+    );
+  }
+
+  /// Récupère tous les adversaires d'un joueur
+  List<String> getOpponents(String playerName) {
+    final games = getAllGames();
+    final opponents = <String>{};
+
+    for (final game in games) {
+      if (game.player1Name == playerName) {
+        opponents.add(game.player2Name);
+      } else if (game.player2Name == playerName) {
+        opponents.add(game.player1Name);
+      }
+    }
+
+    return opponents.toList()..sort();
+  }
+
+  /// Récupère les statistiques contre chaque couleur de deck
+  List<ColorStatistics> getColorStatistics(String playerName) {
+    final games = getAllGames();
+    final colorStats = <String, Map<String, int>>{};
+
+    // Initialiser les couleurs Lorcana
+    const lorcanaColors = ['Amber', 'Amethyst', 'Emerald', 'Ruby', 'Sapphire', 'Steel'];
+    for (final color in lorcanaColors) {
+      colorStats[color] = {'wins': 0, 'losses': 0, 'draws': 0};
+    }
+
+    for (final game in games) {
+      List<String> opponentColors = [];
+      bool isInGame = false;
+
+      if (game.player1Name == playerName) {
+        opponentColors = game.player2DeckColors;
+        isInGame = true;
+      } else if (game.player2Name == playerName) {
+        opponentColors = game.player1DeckColors;
+        isInGame = true;
+      }
+
+      if (isInGame && opponentColors.isNotEmpty) {
+        for (final color in opponentColors) {
+          if (colorStats.containsKey(color)) {
+            if (game.isDraw) {
+              colorStats[color]!['draws'] = colorStats[color]!['draws']! + 1;
+            } else if (game.winnerName == playerName) {
+              colorStats[color]!['wins'] = colorStats[color]!['wins']! + 1;
+            } else {
+              colorStats[color]!['losses'] = colorStats[color]!['losses']! + 1;
+            }
+          }
+        }
+      }
+    }
+
+    // Convertir en liste de ColorStatistics
+    return lorcanaColors.map((color) {
+      final stats = colorStats[color]!;
+      final wins = stats['wins']!;
+      final losses = stats['losses']!;
+      final draws = stats['draws']!;
+      final totalGames = wins + losses + draws;
+      final winrate = totalGames > 0 ? (wins / totalGames) * 100 : 0.0;
+
+      return ColorStatistics(
+        colorName: color,
+        totalGames: totalGames,
+        wins: wins,
+        losses: losses,
+        draws: draws,
+        winrate: winrate,
+      );
+    }).where((stats) => stats.totalGames > 0).toList();
+  }
+
+  /// Récupère tous les noms de joueurs uniques
+  List<String> getAllPlayerNames() {
+    final games = getAllGames();
+    final players = <String>{};
+
+    for (final game in games) {
+      players.add(game.player1Name);
+      players.add(game.player2Name);
+    }
+
+    return players.toList()..sort();
+  }
 }
 
 /// Statistiques pour un joueur
@@ -249,6 +373,46 @@ class PlayerStatistics {
     this.winsAsSecondPlayer = 0,
     this.winrateAsFirstPlayer = 0.0,
     this.winrateAsSecondPlayer = 0.0,
+  });
+}
+
+/// Statistiques head-to-head entre deux joueurs
+class HeadToHeadStatistics {
+  final String playerName;
+  final String opponentName;
+  final int totalGames;
+  final int wins;
+  final int losses;
+  final int draws;
+  final double winrate;
+
+  const HeadToHeadStatistics({
+    required this.playerName,
+    required this.opponentName,
+    required this.totalGames,
+    required this.wins,
+    required this.losses,
+    required this.draws,
+    required this.winrate,
+  });
+}
+
+/// Statistiques contre une couleur de deck
+class ColorStatistics {
+  final String colorName;
+  final int totalGames;
+  final int wins;
+  final int losses;
+  final int draws;
+  final double winrate;
+
+  const ColorStatistics({
+    required this.colorName,
+    required this.totalGames,
+    required this.wins,
+    required this.losses,
+    required this.draws,
+    required this.winrate,
   });
 }
 
