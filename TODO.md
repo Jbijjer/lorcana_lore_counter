@@ -74,7 +74,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Bouton "Timer" dans le menu (voir section 10) ✅
 - [x] Bouton "Historique des rounds" dans le menu ✅
 - [x] Animations de transition vers l'écran stats ✅
-- [ ] Feedback haptique supplémentaire sur les actions
+- [x] Feedback haptique supplémentaire sur les actions ✅
 
 ### 1. Auto-save avec Hive ✅ COMPLÉTÉ
 - [x] Créer adaptateur Hive pour GameState
@@ -213,12 +213,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🎨 Basse Priorité
 
-### 11. Statistiques avancées
-- [ ] Graphiques de progression
-- [x] Winrate global par joueur ✅ (déjà implémenté)
-- [ ] Scores moyens
-
-### 12. Animations et polish
+### 11. Animations et polish
 - [x] Animation sur changement de score (scale, bounce)
 - [x] Particules de victoire (confetti, étoiles) ✅ (Commits 61e3bd7, 440411c, 42af3e9, 584b7b3, 8197c08, 50f3ddc, a42a34c, 23b1625 - confettis Mickey)
 - [x] Transitions de page fluides
