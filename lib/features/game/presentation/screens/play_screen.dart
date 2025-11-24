@@ -17,9 +17,9 @@ import '../../domain/player.dart';
 import '../../domain/game_state.dart';
 import '../../data/player_history_service.dart';
 import '../../data/game_persistence_service.dart';
-import 'statistics_screen.dart';
 import 'settings_screen.dart';
 import 'home_screen.dart';
+import '../../../../core/routes/statistics_page_route.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/providers/accessibility_provider.dart';
@@ -503,11 +503,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
   /// Gère l'ouverture de l'écran des statistiques
   void _handleStatisticsTap() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const StatisticsScreen(),
-      ),
-    );
+    Navigator.of(context).push(StatisticsPageRoute());
   }
 
   /// Gère le reset de la partie avec confirmation

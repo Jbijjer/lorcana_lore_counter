@@ -9,9 +9,9 @@ import '../../../../core/providers/accessibility_provider.dart';
 import '../../data/game_persistence_service.dart';
 import '../providers/game_provider.dart';
 import 'play_screen.dart';
-import 'statistics_screen.dart';
 import 'settings_screen.dart';
 import 'manual_entry_screen.dart';
+import '../../../../core/routes/statistics_page_route.dart';
 
 /// Page d'accueil de l'application
 class HomeScreen extends ConsumerStatefulWidget {
@@ -500,11 +500,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   void _handleStatistics() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const StatisticsScreen(),
-      ),
-    );
+    Navigator.of(context).push(StatisticsPageRoute());
   }
 
   void _handleSettings() {
