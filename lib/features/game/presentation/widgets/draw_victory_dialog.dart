@@ -486,7 +486,7 @@ class _ConfettiPainter extends CustomPainter {
       final effectiveAnimation = (animationValue - startDelay).clamp(0.0, 1.0);
       final startY = -30 - (confettiRandom.nextDouble() * 100);
       // Chute modérée pour le draw
-      final speedFactor = 0.99 + (confettiRandom.nextDouble() * 0.33);
+      final speedFactor = 1.04 + (confettiRandom.nextDouble() * 0.35);
       final currentY = startY + (size.height + 300) * effectiveAnimation * speedFactor;
 
       double opacity = 0.8;
