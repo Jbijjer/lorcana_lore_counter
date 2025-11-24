@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/game_statistics_service.dart';
 import '../widgets/statistics_overview_card.dart';
 import '../widgets/game_history_card.dart';
+import '../widgets/players_list_card.dart';
+import '../widgets/player_detail_card.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// Écran des statistiques et de l'historique des parties
@@ -16,17 +18,30 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String? _selectedPlayerName;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _selectPlayer(String playerName) {
+    setState(() {
+      _selectedPlayerName = playerName;
+    });
+  }
+
+  void _clearSelectedPlayer() {
+    setState(() {
+      _selectedPlayerName = null;
+    });
   }
 
   @override
@@ -58,6 +73,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               icon: Icon(Icons.history),
               text: 'Historique',
             ),
+            Tab(
+              icon: Icon(Icons.person),
+              text: 'Joueurs',
+            ),
           ],
         ),
       ),
@@ -69,6 +88,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
           // Onglet Historique
           _buildHistoryTab(allGames, statisticsService),
+
+          // Onglet Joueurs
+          _buildPlayersTab(globalStats, statisticsService),
         ],
       ),
     );
@@ -206,6 +228,35 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         ),
       );
     });
+  }
+
+  Widget _buildPlayersTab(
+    GlobalStatistics globalStats,
+    GameStatisticsService service,
+  ) {
+    // Si un joueur est sélectionné, afficher ses détails
+    if (_selectedPlayerName != null) {
+      final playerStats = service.getPlayerStatistics(_selectedPlayerName!);
+      final opponents = service.getOpponents(_selectedPlayerName!);
+      final headToHeadStats = opponents
+          .map((opponent) =>
+              service.getHeadToHeadStatistics(_selectedPlayerName!, opponent))
+          .toList();
+      final colorStats = service.getColorStatistics(_selectedPlayerName!);
+
+      return PlayerDetailCard(
+        playerStats: playerStats,
+        headToHeadStats: headToHeadStats,
+        colorStats: colorStats,
+        onBack: _clearSelectedPlayer,
+      );
+    }
+
+    // Sinon, afficher la liste des joueurs
+    return PlayersListCard(
+      playerStats: globalStats.playerStats,
+      onPlayerTap: _selectPlayer,
+    );
   }
 }
 
