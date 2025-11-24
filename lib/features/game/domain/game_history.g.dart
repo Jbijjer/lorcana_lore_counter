@@ -28,13 +28,14 @@ class GameHistoryAdapter extends TypeAdapter<GameHistory> {
       player2DeckColors: (fields[8] as List).cast<String>(),
       note: fields[9] as String?,
       firstToPlayName: fields[10] as String?,
+      roundNumber: fields[11] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, GameHistory obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class GameHistoryAdapter extends TypeAdapter<GameHistory> {
       ..writeByte(9)
       ..write(obj.note)
       ..writeByte(10)
-      ..write(obj.firstToPlayName);
+      ..write(obj.firstToPlayName)
+      ..writeByte(11)
+      ..write(obj.roundNumber);
   }
 
   @override
@@ -93,6 +96,7 @@ _$GameHistoryImpl _$$GameHistoryImplFromJson(Map<String, dynamic> json) =>
           const [],
       note: json['note'] as String?,
       firstToPlayName: json['firstToPlayName'] as String?,
+      roundNumber: (json['roundNumber'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$GameHistoryImplToJson(_$GameHistoryImpl instance) =>
@@ -108,4 +112,5 @@ Map<String, dynamic> _$$GameHistoryImplToJson(_$GameHistoryImpl instance) =>
       'player2DeckColors': instance.player2DeckColors,
       'note': instance.note,
       'firstToPlayName': instance.firstToPlayName,
+      'roundNumber': instance.roundNumber,
     };
