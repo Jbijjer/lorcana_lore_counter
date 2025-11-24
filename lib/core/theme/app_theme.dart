@@ -15,11 +15,21 @@ class AppTheme {
   static const Color sapphireColor = Color(0xFF2196F3);
   static const Color steelColor = Color(0xFFB0BEC5);
 
-  // Couleurs du menu radial
-  static const Color menuStatsColor = Color(0xFF2196F3); // Bleu
-  static const Color menuResetColor = Color(0xFFFF9800); // Orange
-  static const Color menuTimerColor = Color(0xFF4CAF50); // Vert
-  static const Color menuHistoryColor = Color(0xFF9C27B0); // Violet
+  // Couleurs du menu radial (basées sur les couleurs Lorcana)
+  static const Color menuStatsColor = sapphireColor; // Bleu Saphir
+  static const Color menuDiceColor = amethystColor; // Violet Améthyste
+  static const Color menuResetColor = rubyColor; // Rouge Rubis
+  static const Color menuTimerColor = amberColor; // Or Ambre
+  static const Color menuQuitColor = Color(0xFF6B4EFF); // Violet Lorcana
+  static const Color menuSettingsColor = emeraldColor; // Vert Émeraude
+
+  // Couleurs du menu radial (version haut contraste)
+  static const Color menuStatsColorHC = Color(0xFF0066FF); // Bleu vif
+  static const Color menuDiceColorHC = Color(0xFFE040FB); // Violet vif
+  static const Color menuResetColorHC = Color(0xFFFF0000); // Rouge vif
+  static const Color menuTimerColorHC = Color(0xFFFFD600); // Or vif
+  static const Color menuQuitColorHC = Color(0xFF9B6BFF); // Violet Lorcana vif
+  static const Color menuSettingsColorHC = Color(0xFF00FF7F); // Vert vif
 
   // Couleurs sémantiques
   static const Color successColor = Color(0xFF4CAF50); // Vert
@@ -31,6 +41,28 @@ class AppTheme {
   static const Color pureWhite = Color(0xFFFFFFFF);
   static const Color pureBlack = Color(0xFF000000);
   static const Color transparentColor = Color(0x00000000);
+
+  /// Obtient les couleurs du menu radial selon le mode
+  static List<Color> getMenuColors({bool highContrast = false}) {
+    if (highContrast) {
+      return [
+        menuStatsColorHC,
+        menuDiceColorHC,
+        menuResetColorHC,
+        menuTimerColorHC,
+        menuQuitColorHC,
+        menuSettingsColorHC,
+      ];
+    }
+    return [
+      menuStatsColor,
+      menuDiceColor,
+      menuResetColor,
+      menuTimerColor,
+      menuQuitColor,
+      menuSettingsColor,
+    ];
+  }
 
   /// Obtient une couleur Lorcana par son nom
   static Color getLorcanaColorByName(String colorName, {bool highContrast = false}) {

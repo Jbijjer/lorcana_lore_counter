@@ -22,6 +22,7 @@ import 'settings_screen.dart';
 import 'home_screen.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/providers/accessibility_provider.dart';
 
 /// Écran principal du jeu
 class PlayScreen extends ConsumerStatefulWidget {
@@ -122,6 +123,8 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
   @override
   Widget build(BuildContext context) {
     final gameState = ref.watch(gameProvider);
+    final accessibilityAsync = ref.watch(accessibilityNotifierProvider);
+    final highContrast = accessibilityAsync.valueOrNull?.highContrastMode ?? false;
 
     if (gameState == null) {
       return const Scaffold(
@@ -228,6 +231,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     onDiceTap: _handleDiceTap,
                     onQuitAndSaveTap: _handleQuitAndSave,
                     hideCenterLogo: gameState.isTimeMode || _showVictoryOverlay,
+                    highContrast: highContrast,
                     onMenuOpenChanged: (isOpen) {
                       setState(() {
                         _isRadialMenuOpen = isOpen;
