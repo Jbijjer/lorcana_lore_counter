@@ -11,6 +11,7 @@ import '../providers/game_provider.dart';
 import 'play_screen.dart';
 import 'statistics_screen.dart';
 import 'settings_screen.dart';
+import 'manual_entry_screen.dart';
 
 /// Page d'accueil de l'application
 class HomeScreen extends ConsumerStatefulWidget {
@@ -279,7 +280,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
         const SizedBox(height: 12),
 
-        // Bouton Statistiques - Saphir
+        // Bouton Saisie Manuelle
+        _buildMenuButton(
+          icon: Icons.edit_note,
+          label: 'Saisie Manuelle',
+          gradient: LinearGradient(
+            colors: [
+              AppTheme.amethystColor,
+              AppTheme.amethystColor.withValues(alpha: 0.7),
+            ],
+          ),
+          onTap: _handleManualEntry,
+        ),
+        const SizedBox(height: 12),
+
+        // Bouton Statistiques
         _buildMenuButton(
           icon: Icons.bar_chart,
           label: 'Statistiques',
@@ -496,6 +511,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const SettingsScreen(),
+      ),
+    );
+  }
+
+  void _handleManualEntry() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ManualEntryScreen(),
       ),
     );
   }
