@@ -45,6 +45,9 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
   late String _victoryImageName;
   late Color _victoryColor;
 
+  // Seed aléatoire pour les confettis (différent à chaque ouverture)
+  late int _confettiSeed;
+
   // Couleurs de deck sélectionnées
   late List<String> _player1DeckColors;
   late List<String> _player2DeckColors;
@@ -78,11 +81,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
     // Sélectionner le gagnant comme premier joueur par défaut
     _firstToPlay = widget.isPlayer1Winner ? 1 : 2;
 
-    // Sélection aléatoire d'une couleur
+    // Sélection aléatoire d'une couleur et seed pour les confettis
     final random = math.Random();
     final colorKeys = _colorMap.keys.toList();
     _victoryImageName = colorKeys[random.nextInt(colorKeys.length)];
     _victoryColor = _colorMap[_victoryImageName]!;
+    _confettiSeed = random.nextInt(10000);
 
     // Animation des confettis (une seule fois)
     _confettiController = AnimationController(
@@ -286,6 +290,7 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
                       painter: _ConfettiPainter(
                         animationValue: _confettiController.value,
                         color: _victoryColor,
+                        seed: _confettiSeed,
                       ),
                     );
                   },
@@ -577,10 +582,12 @@ class _RoundVictoryDialogState extends State<RoundVictoryDialog>
 class _ConfettiPainter extends CustomPainter {
   final double animationValue;
   final Color color;
+  final int seed;
 
   _ConfettiPainter({
     required this.animationValue,
     required this.color,
+    required this.seed,
   });
 
   @override
@@ -591,8 +598,8 @@ class _ConfettiPainter extends CustomPainter {
 
     // Dessiner des têtes de Mickey multicolores
     for (int i = 0; i < 25; i++) {
-      // Seed unique pour chaque confetti
-      final confettiRandom = math.Random(42 + i * 789);
+      // Seed unique pour chaque confetti (basé sur le seed aléatoire du dialog)
+      final confettiRandom = math.Random(seed + i * 789);
 
       final offsetX = size.width * confettiRandom.nextDouble();
 
