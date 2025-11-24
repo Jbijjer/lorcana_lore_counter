@@ -80,7 +80,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     // Animation des confettis (une seule fois pour le draw, lente et sobre)
     _confettiController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 37),
+      duration: const Duration(seconds: 60),
     )..forward();
 
     HapticUtils.medium();
