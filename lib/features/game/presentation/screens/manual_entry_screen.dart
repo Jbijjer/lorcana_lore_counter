@@ -389,6 +389,19 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
               ),
             ),
             const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.palette,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: _buildDeckColorPicker(
                 label: _player2?.name ?? 'Joueur 2',
@@ -583,14 +596,23 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
                 },
               ),
             ),
-            const SizedBox(width: 16),
-            Text(
-              '-',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                '-',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: _buildScoreInput(
                 label: _player2?.name ?? 'Joueur 2',
