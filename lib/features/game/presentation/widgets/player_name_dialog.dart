@@ -452,6 +452,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
           required Color backgroundColorStart,
           required Color backgroundColorEnd,
           required String iconAssetPath,
+          String? customPortraitPath,
         }) {
           // Stocker les valeurs finales
           finalName = name;
@@ -512,6 +513,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
           required Color backgroundColorStart,
           required Color backgroundColorEnd,
           required String iconAssetPath,
+          String? customPortraitPath,
         }) {
           // Mettre à jour les couleurs, l'icône et le nom du joueur actuel si c'est le même
           if (oldName == widget.currentName) {

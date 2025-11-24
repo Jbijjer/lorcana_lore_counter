@@ -50,13 +50,11 @@ class PortraitService {
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
             hideBottomControls: false,
-            cropStyle: CropStyle.circle,
           ),
           IOSUiSettings(
             title: 'Recadrer le portrait',
             aspectRatioLockEnabled: true,
             resetAspectRatioEnabled: false,
-            cropStyle: CropStyle.circle,
           ),
         ],
       );
