@@ -71,8 +71,8 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - ✅ Affichage des couleurs de deck
 
 **⏸️ Améliorations optionnelles (reportées) :**
-- [ ] Bouton "Timer" dans le menu (voir section 10)
-- [ ] Bouton "Historique des rounds" dans le menu (à clarifier si différent des stats)
+- [x] Bouton "Timer" dans le menu (voir section 10) ✅
+- [x] Bouton "Historique des rounds" dans le menu ✅
 - [ ] Animations de transition vers l'écran stats
 - [ ] Feedback haptique supplémentaire sur les actions
 
@@ -194,20 +194,20 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [x] Overlay modal avec boutons "Relancer" et "Fermer"
   - [x] Style Lorcana (dégradés, couleurs du thème, animations pop)
   - [x] Affichage du total des 2 dés
-- [ ] Bouton "Time" : compteur manuel de tours
-  - [ ] Affichage d'un compteur à droite du bouton central
-  - [ ] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
-  - [ ] Boutons +/- pour modifier le compteur
-  - [ ] Alerte visuelle quand le compteur atteint 0
-  - [ ] Fin de partie automatique à 0 (partie nulle)
-  - [ ] Possibilité de réinitialiser le compteur
+- [x] Bouton "Time" : compteur manuel de tours ✅
+  - [x] Affichage d'un compteur à droite du bouton central
+  - [x] Compteur de 5 à 0 (décrémenté manuellement par les joueurs)
+  - [x] Boutons +/- pour modifier le compteur
+  - [x] Alerte visuelle quand le compteur atteint 0
+  - [x] Fin de partie automatique à 0 (partie nulle)
+  - [x] Possibilité de réinitialiser le compteur
 - [x] Bouton "Reset" : remise à zéro rapide
   - [x] Remet les scores à 0 pour les deux joueurs
   - [x] Dialog de confirmation
   - [x] Animation de transition
-- [ ] Autres boutons potentiels :
-  - [ ] Bouton historique des rounds
-  - [ ] Bouton paramètres rapides
+- [x] Autres boutons potentiels : ✅
+  - [x] Bouton historique des rounds
+  - [x] Bouton paramètres rapides
 
 ### 11. Écran de configuration pré-partie
 - [x] Sélection des noms de joueurs ✅ (Commit e0b6458 - transformation magique)
