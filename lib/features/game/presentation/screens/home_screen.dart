@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/providers/accessibility_provider.dart';
 import '../../data/game_persistence_service.dart';
 import '../providers/game_provider.dart';
 import 'play_screen.dart';
@@ -107,6 +108,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final persistenceService = ref.watch(gamePersistenceServiceProvider);
     final hasOngoingGame = persistenceService.hasOngoingGame();
+    final accessibilityAsync = ref.watch(accessibilityNotifierProvider);
+    final highContrast = accessibilityAsync.valueOrNull?.highContrastMode ?? false;
 
     return Scaffold(
       body: Container(
@@ -141,7 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             const SizedBox(height: 40),
 
                             // Boutons principaux
-                            _buildMainButtons(hasOngoingGame),
+                            _buildMainButtons(hasOngoingGame, highContrast),
 
                             const Spacer(),
 
@@ -244,31 +247,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _buildMainButtons(bool hasOngoingGame) {
+  Widget _buildMainButtons(bool hasOngoingGame, bool highContrast) {
+    // Couleurs Lorcana pour les boutons du menu principal
+    final emeraldColor = highContrast ? const Color(0xFF00FF7F) : AppTheme.emeraldColor;
+    final amberColor = highContrast ? const Color(0xFFFFD600) : AppTheme.amberColor;
+    final sapphireColor = highContrast ? const Color(0xFF0066FF) : AppTheme.sapphireColor;
+    final amethystColor = highContrast ? const Color(0xFFE040FB) : AppTheme.amethystColor;
+
     return Column(
       children: [
-        // Bouton Continuer Partie (si partie en cours)
+        // Bouton Continuer Partie (si partie en cours) - Émeraude
         if (hasOngoingGame) ...[
           _buildMenuButton(
             icon: Icons.play_arrow,
             label: 'Continuer Partie',
-            gradient: const LinearGradient(
-              colors: [AppTheme.successColor, Color(0xFF66BB6A)],
+            gradient: LinearGradient(
+              colors: [emeraldColor, emeraldColor.withValues(alpha: 0.7)],
             ),
             onTap: _handleContinueGame,
           ),
           const SizedBox(height: 12),
         ],
 
-        // Bouton Nouveau Round
+        // Bouton Nouveau Round - Ambre
         _buildMenuButton(
           icon: Icons.add_circle_outline,
           label: 'Nouveau Round',
           gradient: LinearGradient(
-            colors: [
-              AppTheme.primaryColor,
-              AppTheme.primaryColor.withValues(alpha: 0.7),
-            ],
+            colors: [amberColor, amberColor.withValues(alpha: 0.7)],
           ),
           onTap: () => _handleNewRound(hasOngoingGame),
         ),
@@ -292,22 +298,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         _buildMenuButton(
           icon: Icons.bar_chart,
           label: 'Statistiques',
-          gradient: const LinearGradient(
-            colors: [AppTheme.infoColor, Color(0xFF42A5F5)],
+          gradient: LinearGradient(
+            colors: [sapphireColor, sapphireColor.withValues(alpha: 0.7)],
           ),
           onTap: _handleStatistics,
         ),
         const SizedBox(height: 12),
 
-        // Bouton Paramètres
+        // Bouton Paramètres - Améthyste
         _buildMenuButton(
           icon: Icons.settings,
           label: 'Paramètres',
           gradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.outline,
-              Theme.of(context).colorScheme.outlineVariant,
-            ],
+            colors: [amethystColor, amethystColor.withValues(alpha: 0.7)],
           ),
           onTap: _handleSettings,
         ),

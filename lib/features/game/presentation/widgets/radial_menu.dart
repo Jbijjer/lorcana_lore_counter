@@ -15,6 +15,7 @@ class RadialMenu extends StatefulWidget {
     this.onQuitAndSaveTap,
     this.hideCenterLogo = false,
     this.onMenuOpenChanged,
+    this.highContrast = false,
   });
 
   final VoidCallback? onStatisticsTap;
@@ -25,6 +26,7 @@ class RadialMenu extends StatefulWidget {
   final VoidCallback? onQuitAndSaveTap;
   final bool hideCenterLogo;
   final ValueChanged<bool>? onMenuOpenChanged;
+  final bool highContrast;
 
   @override
   State<RadialMenu> createState() => RadialMenuState();
@@ -196,69 +198,79 @@ class RadialMenuState extends State<RadialMenu>
           // Boutons du menu radial (distribution égale à 60° d'intervalle)
           // Chaque bouton utilise une couleur officielle de Lorcana
           // Placés après le logo pour être au-dessus de son ombre
-          _buildMenuItem(
-            icon: Icons.bar_chart,
-            angle: -math.pi / 2, // Haut (270°)
-            color: AppTheme.sapphireColor, // Saphir
-            label: 'Stats',
-            index: 0,
-            onTap: widget.onStatisticsTap != null
-                ? () => _handleMenuItemTap(widget.onStatisticsTap)
-                : null,
-          ),
-          _buildMenuItem(
-            icon: Icons.casino,
-            angle: -math.pi / 6, // Haut-droite (300°)
-            color: AppTheme.amethystColor, // Améthyste
-            label: 'Dés',
-            index: 1,
-            onTap: widget.onDiceTap != null
-                ? () => _handleMenuItemTap(widget.onDiceTap)
-                : null,
-          ),
-          _buildMenuItem(
-            icon: Icons.refresh,
-            angle: math.pi / 6, // Bas-droite (30°)
-            color: AppTheme.rubyColor, // Rubis
-            label: 'Reset',
-            index: 2,
-            onTap: widget.onResetTap != null
-                ? () => _handleMenuItemTap(widget.onResetTap)
-                : null,
-          ),
-          _buildMenuItem(
-            icon: Icons.timer,
-            angle: math.pi / 2, // Bas (90°)
-            color: AppTheme.amberColor, // Ambre
-            label: 'Time',
-            index: 3,
-            onTap: widget.onTimerTap != null
-                ? () => _handleMenuItemTap(widget.onTimerTap)
-                : null,
-          ),
-          _buildMenuItem(
-            icon: Icons.exit_to_app,
-            angle: 5 * math.pi / 6, // Bas-gauche (150°)
-            color: AppTheme.steelColor, // Acier
-            label: 'Quitter',
-            index: 4,
-            onTap: widget.onQuitAndSaveTap != null
-                ? () => _handleMenuItemTap(widget.onQuitAndSaveTap)
-                : null,
-          ),
-          _buildMenuItem(
-            icon: Icons.settings,
-            angle: 7 * math.pi / 6, // Haut-gauche (210°)
-            color: AppTheme.emeraldColor, // Émeraude
-            label: 'Paramètres',
-            index: 5,
-            onTap: widget.onSettingsTap != null
-                ? () => _handleMenuItemTap(widget.onSettingsTap)
-                : null,
-          ),
+          ..._buildMenuItems(),
         ],
       ),
     );
+  }
+
+  /// Génère tous les boutons du menu avec les couleurs appropriées
+  List<Widget> _buildMenuItems() {
+    // Récupérer les couleurs selon le mode haut contraste
+    final colors = AppTheme.getMenuColors(highContrast: widget.highContrast);
+
+    return [
+      _buildMenuItem(
+        icon: Icons.bar_chart,
+        angle: -math.pi / 2, // Haut (270°)
+        color: colors[0], // Stats - Saphir
+        label: 'Stats',
+        index: 0,
+        onTap: widget.onStatisticsTap != null
+            ? () => _handleMenuItemTap(widget.onStatisticsTap)
+            : null,
+      ),
+      _buildMenuItem(
+        icon: Icons.casino,
+        angle: -math.pi / 6, // Haut-droite (300°)
+        color: colors[1], // Dés - Améthyste
+        label: 'Dés',
+        index: 1,
+        onTap: widget.onDiceTap != null
+            ? () => _handleMenuItemTap(widget.onDiceTap)
+            : null,
+      ),
+      _buildMenuItem(
+        icon: Icons.refresh,
+        angle: math.pi / 6, // Bas-droite (30°)
+        color: colors[2], // Reset - Rubis
+        label: 'Reset',
+        index: 2,
+        onTap: widget.onResetTap != null
+            ? () => _handleMenuItemTap(widget.onResetTap)
+            : null,
+      ),
+      _buildMenuItem(
+        icon: Icons.timer,
+        angle: math.pi / 2, // Bas (90°)
+        color: colors[3], // Time - Ambre
+        label: 'Time',
+        index: 3,
+        onTap: widget.onTimerTap != null
+            ? () => _handleMenuItemTap(widget.onTimerTap)
+            : null,
+      ),
+      _buildMenuItem(
+        icon: Icons.exit_to_app,
+        angle: 5 * math.pi / 6, // Bas-gauche (150°)
+        color: colors[4], // Quitter - Violet Lorcana
+        label: 'Quitter',
+        index: 4,
+        onTap: widget.onQuitAndSaveTap != null
+            ? () => _handleMenuItemTap(widget.onQuitAndSaveTap)
+            : null,
+      ),
+      _buildMenuItem(
+        icon: Icons.settings,
+        angle: 7 * math.pi / 6, // Haut-gauche (210°)
+        color: colors[5], // Paramètres - Émeraude
+        label: 'Paramètres',
+        index: 5,
+        onTap: widget.onSettingsTap != null
+            ? () => _handleMenuItemTap(widget.onSettingsTap)
+            : null,
+      ),
+    ];
   }
 
   Widget _buildMenuItem({

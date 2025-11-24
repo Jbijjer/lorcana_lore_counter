@@ -167,7 +167,7 @@ class _DiceOverlayState extends State<DiceOverlay>
                     _buildButton(
                       label: 'Fermer',
                       icon: Icons.close,
-                      color: AppTheme.menuHistoryColor,
+                      color: AppTheme.amethystColor,
                       onTap: widget.onClose,
                     ),
                   ],
