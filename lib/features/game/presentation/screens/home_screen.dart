@@ -8,10 +8,7 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/providers/accessibility_provider.dart';
 import '../../data/game_persistence_service.dart';
 import '../providers/game_provider.dart';
-import 'play_screen.dart';
-import 'statistics_screen.dart';
-import 'settings_screen.dart';
-import 'manual_entry_screen.dart';
+import '../../../../core/routes/app_page_routes.dart';
 
 /// Page d'accueil de l'application
 class HomeScreen extends ConsumerStatefulWidget {
@@ -439,11 +436,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     if (confirmed == true && mounted) {
       // Charger la partie et naviguer vers l'écran de jeu
       ref.read(gameProvider.notifier).loadGame(savedGame);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const PlayScreen(),
-        ),
-      );
+      Navigator.of(context).pushReplacement(PlayScreenReplaceRoute());
     }
   }
 
@@ -493,33 +486,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     // Naviguer vers l'écran de jeu (qui affichera le dialog de setup)
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const PlayScreen(shouldCheckForOngoingGame: false),
-      ),
+      PlayScreenReplaceRoute(shouldCheckForOngoingGame: false),
     );
   }
 
   void _handleStatistics() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const StatisticsScreen(),
-      ),
-    );
+    Navigator.of(context).push(StatisticsPageRoute());
   }
 
   void _handleSettings() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const SettingsScreen(),
-      ),
-    );
+    Navigator.of(context).push(SettingsPageRoute());
   }
 
   void _handleManualEntry() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ManualEntryScreen(),
-      ),
-    );
+    Navigator.of(context).push(ManualEntryPageRoute());
   }
 }

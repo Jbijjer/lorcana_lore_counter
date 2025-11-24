@@ -73,7 +73,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 **⏸️ Améliorations optionnelles (reportées) :**
 - [x] Bouton "Timer" dans le menu (voir section 10) ✅
 - [x] Bouton "Historique des rounds" dans le menu ✅
-- [ ] Animations de transition vers l'écran stats
+- [x] Animations de transition vers l'écran stats ✅
 - [ ] Feedback haptique supplémentaire sur les actions
 
 ### 1. Auto-save avec Hive ✅ COMPLÉTÉ
