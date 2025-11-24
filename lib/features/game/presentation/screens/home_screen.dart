@@ -280,14 +280,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
         const SizedBox(height: 12),
 
-        // Bouton Saisie Manuelle
+        // Bouton Saisie Manuelle - Rouge Rubis
         _buildMenuButton(
           icon: Icons.edit_note,
           label: 'Saisie Manuelle',
           gradient: LinearGradient(
             colors: [
-              AppTheme.amethystColor,
-              AppTheme.amethystColor.withValues(alpha: 0.7),
+              AppTheme.rubyColor,
+              AppTheme.rubyColor.withValues(alpha: 0.7),
             ],
           ),
           onTap: _handleManualEntry,
