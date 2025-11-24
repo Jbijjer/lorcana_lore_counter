@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -326,10 +327,7 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
               ),
               child: ClipOval(
                 child: isSelected
-                    ? Image.asset(
-                        player.iconAssetPath,
-                        fit: BoxFit.cover,
-                      )
+                    ? _buildPlayerAvatar(player)
                     : Icon(
                         Icons.person_add,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -364,6 +362,29 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPlayerAvatar(Player player) {
+    // Priorité au portrait personnalisé
+    if (player.customPortraitPath != null && player.customPortraitPath!.isNotEmpty) {
+      return Image.file(
+        File(player.customPortraitPath!),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback vers l'icône si le fichier n'existe plus
+          return Image.asset(
+            player.iconAssetPath,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
+    // Sinon, utiliser l'icône
+    return Image.asset(
+      player.iconAssetPath,
+      fit: BoxFit.cover,
     );
   }
 
