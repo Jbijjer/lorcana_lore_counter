@@ -46,7 +46,8 @@ mixin _$GameHistory {
   String? get note =>
       throw _privateConstructorUsedError; // Note sur la partie (optionnel)
   @HiveField(10)
-  String? get firstToPlayName => throw _privateConstructorUsedError;
+  String? get firstToPlayName =>
+      throw _privateConstructorUsedError; // Nom du joueur qui a commencé la partie
   @HiveField(11)
   int? get roundNumber => throw _privateConstructorUsedError;
 

@@ -820,7 +820,7 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
         _buildSectionTitle('Numéro de partie (optionnel)', Icons.format_list_numbered, AppTheme.steelColor),
         const SizedBox(height: 8),
         Text(
-          'Ex: Partie 1, 2 ou 3 dans un Best of 3',
+          'Ex: Partie 1 ou 2 dans un Best of 3',
           style: TextStyle(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -835,8 +835,6 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
             _buildRoundNumberOption(1, '1'),
             _buildRoundNumberOption(2, '2'),
             _buildRoundNumberOption(3, '3'),
-            _buildRoundNumberOption(4, '4'),
-            _buildRoundNumberOption(5, '5'),
           ],
         ),
       ],
