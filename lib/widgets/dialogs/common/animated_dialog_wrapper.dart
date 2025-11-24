@@ -29,6 +29,7 @@ class AnimatedDialogWrapper extends StatelessWidget {
     this.maxWidth,
     this.maxHeight,
     this.padding = const EdgeInsets.all(20),
+    this.ignoreKeyboardInsets = false,
     super.key,
   });
 
@@ -47,10 +48,14 @@ class AnimatedDialogWrapper extends StatelessWidget {
   /// Padding intérieur du dialogue
   final EdgeInsetsGeometry padding;
 
+  /// Si true, le dialog ne réagit pas au clavier
+  final bool ignoreKeyboardInsets;
+
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    final dialog = Dialog(
       backgroundColor: AppTheme.transparentColor,
+      insetAnimationDuration: Duration.zero,
       child: Container(
         constraints: BoxConstraints(
           maxWidth: maxWidth ?? double.infinity,
@@ -71,6 +76,16 @@ class AnimatedDialogWrapper extends StatelessWidget {
         child: child,
       ),
     );
+
+    if (ignoreKeyboardInsets) {
+      return MediaQuery.removeViewInsets(
+        context: context,
+        removeBottom: true,
+        child: dialog,
+      );
+    }
+
+    return dialog;
   }
 }
 
@@ -84,6 +99,7 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
     this.maxWidth,
     this.maxHeight,
     this.padding = const EdgeInsets.all(20),
+    this.ignoreKeyboardInsets = false,
     super.key,
   });
 
@@ -102,10 +118,14 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
   /// Padding intérieur du dialogue
   final EdgeInsetsGeometry padding;
 
+  /// Si true, le dialog ne réagit pas au clavier
+  final bool ignoreKeyboardInsets;
+
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    final dialog = Dialog(
       backgroundColor: AppTheme.transparentColor,
+      insetAnimationDuration: Duration.zero,
       child: Container(
         constraints: BoxConstraints(
           maxWidth: maxWidth ?? double.infinity,
@@ -128,5 +148,15 @@ class ScrollableAnimatedDialogWrapper extends StatelessWidget {
         ),
       ),
     );
+
+    if (ignoreKeyboardInsets) {
+      return MediaQuery.removeViewInsets(
+        context: context,
+        removeBottom: true,
+        child: dialog,
+      );
+    }
+
+    return dialog;
   }
 }

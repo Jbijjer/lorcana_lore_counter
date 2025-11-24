@@ -8,6 +8,7 @@ import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
 import '../../../../widgets/dialogs/common/shimmer_effect.dart';
 import '../../../../widgets/dialogs/common/sparkles_painter.dart';
 import 'deck_color_picker_dialog.dart';
+import 'game_note_input_dialog.dart';
 
 /// Dialog de match nul (Nulle) sans image de victoire ni portrait
 class DrawVictoryDialog extends StatefulWidget {
@@ -33,7 +34,9 @@ class DrawVictoryDialog extends StatefulWidget {
 class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     with TickerProviderStateMixin, DialogAnimationsMixin {
   late AnimationController _confettiController;
-  late TextEditingController _noteController;
+
+  // Note de la partie
+  String _note = '';
 
   // Couleur aléatoire pour le dialog
   late Color _drawColor;
@@ -64,9 +67,6 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
     super.initState();
     initDialogAnimations();
 
-    // Initialiser le contrôleur de texte pour la note
-    _noteController = TextEditingController();
-
     // Initialiser les couleurs de deck avec les valeurs précédentes
     _player1DeckColors = List.from(widget.previousPlayer1DeckColors);
     _player2DeckColors = List.from(widget.previousPlayer2DeckColors);
@@ -88,7 +88,6 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
 
   @override
   void dispose() {
-    _noteController.dispose();
     _confettiController.dispose();
     disposeDialogAnimations();
     super.dispose();
@@ -100,6 +99,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
       child: AnimatedDialogWrapper(
         accentColor: _drawColor,
         maxWidth: 400,
+        ignoreKeyboardInsets: true,
         child: Stack(
           children: [
             // Contenu principal
@@ -150,25 +150,8 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
 
                   const SizedBox(height: 24),
 
-                  // Champ de note
-                  TextField(
-                    controller: _noteController,
-                    decoration: InputDecoration(
-                      labelText: 'Note de la partie',
-                      hintText: 'Ex: Fin de temps...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                    maxLines: 2,
-                    textCapitalization: TextCapitalization.sentences,
-                  ),
+                  // Zone de note cliquable
+                  _buildNoteInputZone(),
 
                   const SizedBox(height: 16),
 
@@ -190,9 +173,7 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
                             onPressed: () {
                               HapticUtils.light();
                               Navigator.of(context).pop({
-                                'note': _noteController.text.trim().isEmpty
-                                    ? null
-                                    : _noteController.text.trim(),
+                                'note': _note.isEmpty ? null : _note,
                                 'player1DeckColors': _player1DeckColors,
                                 'player2DeckColors': _player2DeckColors,
                                 'firstToPlay': _firstToPlay,
@@ -292,6 +273,81 @@ class _DrawVictoryDialogState extends State<DrawVictoryDialog>
         ),
       ],
     );
+  }
+
+  Widget _buildNoteInputZone() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasNote = _note.isNotEmpty;
+
+    // Aperçu tronqué de la note (max 30 caractères)
+    String displayText;
+    if (hasNote) {
+      displayText = _note.length > 30 ? '${_note.substring(0, 30)}...' : _note;
+    } else {
+      displayText = 'Ajouter une note...';
+    }
+
+    return InkWell(
+      onTap: _showNoteDialog,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: hasNote ? _drawColor.withValues(alpha: 0.5) : colorScheme.outlineVariant,
+            width: hasNote ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              hasNote ? Icons.edit_note : Icons.note_add_outlined,
+              color: hasNote ? _drawColor : colorScheme.onSurfaceVariant,
+              size: 20,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                displayText,
+                style: TextStyle(
+                  color: hasNote ? colorScheme.onSurface : colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                  fontStyle: hasNote ? FontStyle.normal : FontStyle.italic,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: colorScheme.onSurfaceVariant,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showNoteDialog() async {
+    HapticUtils.light();
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => GameNoteInputDialog(
+        initialNote: _note,
+        accentColor: _drawColor,
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _note = result;
+      });
+    }
   }
 
   Widget _buildDeckColorsSelection() {
