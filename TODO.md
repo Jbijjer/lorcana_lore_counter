@@ -161,17 +161,28 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [ ] Utiliser un format accessible et facile à parcourir (accordéons, sections pliables, etc.)
 - [ ] Ajouter des captures d'écran ou des illustrations si pertinent
 
-### 9. Mode de saisie manuelle
-- [ ] Ajouter un bouton dans le menu principal pour accéder à un mode "manuel"
-- [ ] Créer une interface de saisie manuelle permettant d'entrer :
-  - [ ] Les joueurs participants
-  - [ ] Les couleurs de deck de chaque joueur
-  - [ ] Le score de chaque partie
-  - [ ] Qui a commencé chaque partie
-  - [ ] Le nombre de parties dans chaque round
-- [ ] Sauvegarder ces données dans l'historique des parties
-- [ ] Permettre l'ajout de plusieurs parties/rounds en une session
-- [ ] Interface intuitive qui ne nécessite pas de passer par l'interface de jeu complète
+### 9. Mode de saisie manuelle ✅ COMPLÉTÉ
+- [x] Ajouter un bouton dans le menu principal pour accéder à un mode "manuel"
+- [x] Créer une interface de saisie manuelle permettant d'entrer :
+  - [x] Les joueurs participants
+  - [x] Les couleurs de deck de chaque joueur
+  - [x] Le score de chaque partie
+  - [x] Qui a commencé chaque partie
+  - [ ] Le nombre de parties dans chaque round (optionnel - non implémenté)
+- [x] Sauvegarder ces données dans l'historique des parties
+- [x] Permettre l'ajout de plusieurs parties/rounds en une session
+- [x] Interface intuitive qui ne nécessite pas de passer par l'interface de jeu complète
+
+**✅ Fonctionnalités opérationnelles :**
+- ✅ Bouton "Saisie Manuelle" sur l'écran d'accueil (couleur améthyste)
+- ✅ Sélection des deux joueurs via le système existant
+- ✅ Sélection des couleurs de deck (2 couleurs max par joueur)
+- ✅ Saisie des scores avec validation (un joueur doit avoir >= 20 pts)
+- ✅ Option Match nul disponible
+- ✅ Sélection du premier joueur à commencer
+- ✅ Note optionnelle sur la partie
+- ✅ Sauvegarde dans l'historique des statistiques
+- ✅ Possibilité d'enchaîner plusieurs parties
 
 ### 10. Bouton central dynamique et interactif
 - [x] Animation flip (pièce de monnaie) lors d'événements clés ✅ (Commit 293edbf, cd0d27c)
