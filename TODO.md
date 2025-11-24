@@ -223,6 +223,29 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Shake animation quand le score descend
 - [x] Glow effect autour du bouton central
 
+## 🚀 Futures améliorations
+
+### 12. Export des statistiques
+- [ ] Export des stats en CSV
+  - [ ] Exporter l'historique des parties (joueurs, scores, dates, couleurs de deck)
+  - [ ] Exporter les statistiques par joueur (winrate, parties jouées)
+  - [ ] Bouton d'export dans l'écran Statistiques
+  - [ ] Partage du fichier CSV via le système de partage natif
+
+### 13. Portraits personnalisés
+- [ ] Permettre d'ajouter des portraits à partir de photos sur l'appareil
+  - [ ] Accès à la galerie photos de l'appareil
+  - [ ] Recadrage/redimensionnement de l'image
+  - [ ] Stockage local des portraits
+  - [ ] Affichage du portrait dans la sélection de joueur et sur l'écran de jeu
+
+### 14. Sauvegarde Cloud
+- [ ] Synchronisation des données sur le Cloud
+  - [ ] Intégration Google Drive / iCloud
+  - [ ] Backup automatique des statistiques et historique
+  - [ ] Restauration des données sur un nouvel appareil
+  - [ ] Option d'activer/désactiver la sync dans les paramètres
+
 ## 📝 Notes techniques
 
 - Hive déjà initialisé dans main.dart
