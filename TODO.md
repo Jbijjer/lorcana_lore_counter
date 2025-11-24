@@ -146,22 +146,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - [x] Option de supprimer une partie de l'historique
 - [x] Statistiques de base (winrate par joueur, parties jouées, parties nulles)
 
-### 8. Section d'aide
-- [ ] Créer une section d'aide accessible depuis le menu principal ou les paramètres
-- [ ] Expliquer toutes les petites fonctionnalités de l'application :
-  - [ ] Fonctionnement du menu radial central
-  - [ ] Long press pour modifier manuellement un score
-  - [ ] Système de confirmation de victoire
-  - [ ] Modes de jeu (Best of 1/2/3/5)
-  - [ ] Statistiques et historique des parties
-  - [ ] Feedback haptique
-  - [ ] Animations et effets visuels
-  - [ ] Personnalisation des couleurs de deck
-  - [ ] Gestion des parties nulles
-- [ ] Utiliser un format accessible et facile à parcourir (accordéons, sections pliables, etc.)
-- [ ] Ajouter des captures d'écran ou des illustrations si pertinent
-
-### 9. Mode de saisie manuelle ✅ COMPLÉTÉ
+### 8. Mode de saisie manuelle ✅ COMPLÉTÉ
 - [x] Ajouter un bouton dans le menu principal pour accéder à un mode "manuel"
 - [x] Créer une interface de saisie manuelle permettant d'entrer :
   - [x] Les joueurs participants
@@ -184,7 +169,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 - ✅ Sauvegarde dans l'historique des statistiques
 - ✅ Possibilité d'enchaîner plusieurs parties
 
-### 10. Bouton central dynamique et interactif
+### 9. Bouton central dynamique et interactif
 - [x] Animation flip (pièce de monnaie) lors d'événements clés ✅ (Commit 293edbf, cd0d27c)
 - [x] Transformation du bouton selon l'état de la partie : ✅
   - [x] État normal : logo Lorcana (menu radial) ✅
@@ -220,7 +205,7 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [x] Bouton historique des rounds
   - [x] Bouton paramètres rapides
 
-### 11. Écran de configuration pré-partie
+### 10. Écran de configuration pré-partie
 - [x] Sélection des noms de joueurs ✅ (Commit e0b6458 - transformation magique)
 - [x] Sélection des couleurs ✅
 - [x] Choix du mode (Best of X) ✅ (Commit 9d92e7b)
@@ -228,12 +213,12 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
 
 ## 🎨 Basse Priorité
 
-### 13. Statistiques avancées
+### 11. Statistiques avancées
 - [ ] Graphiques de progression
 - [x] Winrate global par joueur ✅ (déjà implémenté)
 - [ ] Scores moyens
 
-### 14. Animations et polish
+### 12. Animations et polish
 - [x] Animation sur changement de score (scale, bounce)
 - [x] Particules de victoire (confetti, étoiles) ✅ (Commits 61e3bd7, 440411c, 42af3e9, 584b7b3, 8197c08, 50f3ddc, a42a34c, 23b1625 - confettis Mickey)
 - [x] Transitions de page fluides
