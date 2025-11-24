@@ -153,7 +153,6 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [x] Les couleurs de deck de chaque joueur
   - [x] Le score de chaque partie
   - [x] Qui a commencé chaque partie
-  - [ ] Le nombre de parties dans chaque round (optionnel - non implémenté)
 - [x] Sauvegarder ces données dans l'historique des parties
 - [x] Permettre l'ajout de plusieurs parties/rounds en une session
 - [x] Interface intuitive qui ne nécessite pas de passer par l'interface de jeu complète
