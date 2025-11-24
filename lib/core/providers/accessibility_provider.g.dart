@@ -7,7 +7,7 @@ part of 'accessibility_provider.dart';
 // **************************************************************************
 
 String _$accessibilityNotifierHash() =>
-    r'00a67763d4a63287c4dcf404a3d3a6c0e851f141';
+    r'83adaf2053b3eb27279f91d4f0f3579fd563f2cf';
 
 /// Provider pour gérer les préférences d'accessibilité
 ///

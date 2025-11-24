@@ -129,7 +129,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             ),
           ],
           // Padding en bas pour éviter que le contenu soit coupé
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -174,7 +174,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 8, bottom: 32),
+      padding: const EdgeInsets.only(top: 8, bottom: 60),
       itemCount: games.length,
       itemBuilder: (context, index) {
         final game = games[index];
@@ -183,7 +183,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
           onDelete: () => _deleteGame(game.id, service),
         );
       },
+    
     );
+
   }
 
   void _deleteGame(String gameId, GameStatisticsService service) {

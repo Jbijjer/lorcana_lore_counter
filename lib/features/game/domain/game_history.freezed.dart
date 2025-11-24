@@ -46,8 +46,7 @@ mixin _$GameHistory {
   String? get note =>
       throw _privateConstructorUsedError; // Note sur la partie (optionnel)
   @HiveField(10)
-  String? get firstToPlayName =>
-      throw _privateConstructorUsedError; // Nom du joueur qui a commencé la partie
+  String? get firstToPlayName => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)

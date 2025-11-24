@@ -27,13 +27,13 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
   Player? _player2;
   List<String> _player1DeckColors = [];
   List<String> _player2DeckColors = [];
-  int _player1Score = 20;
+  int _player1Score = 0;
   int _player2Score = 0;
   String? _firstToPlay;
   String? _note;
   bool _isDraw = false;
 
-  final TextEditingController _player1ScoreController = TextEditingController(text: '20');
+  final TextEditingController _player1ScoreController = TextEditingController(text: '0');
   final TextEditingController _player2ScoreController = TextEditingController(text: '0');
   final TextEditingController _noteController = TextEditingController();
 

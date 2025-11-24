@@ -18,8 +18,8 @@ class AccessibilityPreferencesAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AccessibilityPreferences(
-      highContrastMode: fields[0] as bool? ?? false,
-      themeModeIndex: fields[1] as int? ?? 0,
+      highContrastMode: fields[0] as bool,
+      themeModeIndex: fields[1] as int,
     );
   }
 

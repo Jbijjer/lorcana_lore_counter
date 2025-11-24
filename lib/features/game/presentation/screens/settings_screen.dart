@@ -72,6 +72,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           // Section À propos
           _buildSectionHeader('À propos'),
           _buildAboutSettings(),
+
+          const SizedBox(height: 42),
         ],
       ),
     );

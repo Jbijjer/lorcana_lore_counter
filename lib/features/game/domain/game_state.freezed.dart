@@ -45,8 +45,7 @@ mixin _$GameState {
       throw _privateConstructorUsedError; // Mode Time activé (fin de temps de jeu)
   int get timeCount =>
       throw _privateConstructorUsedError; // Compteur Time (0 à 5)
-  int? get firstToPlay =>
-      throw _privateConstructorUsedError; // 1 pour joueur 1, 2 pour joueur 2, null si non défini
+  int? get firstToPlay => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -505,15 +504,15 @@ class _$GameStateImpl extends _GameState {
     return EqualUnmodifiableListView(_player2DeckColors);
   }
 
-// Mode Time activé (fin de temps de jeu)
+// Les 2 couleurs du deck du joueur 2 pour cette partie
   @override
   @JsonKey()
   final bool isTimeMode;
-// Compteur Time (0 à 5)
+// Mode Time activé (fin de temps de jeu)
   @override
   @JsonKey()
   final int timeCount;
-// 1 pour joueur 1, 2 pour joueur 2, null si non défini
+// Compteur Time (0 à 5)
   @override
   final int? firstToPlay;
 
@@ -678,11 +677,11 @@ abstract class _GameState extends GameState {
   List<String> get player1DeckColors;
   @override // Les 2 couleurs du deck du joueur 1 pour cette partie
   List<String> get player2DeckColors;
-  @override // Mode Time activé (fin de temps de jeu)
+  @override // Les 2 couleurs du deck du joueur 2 pour cette partie
   bool get isTimeMode;
-  @override // Compteur Time (0 à 5)
+  @override // Mode Time activé (fin de temps de jeu)
   int get timeCount;
-  @override // 1 pour joueur 1, 2 pour joueur 2, null si non défini
+  @override // Compteur Time (0 à 5)
   int? get firstToPlay;
   @override
   @JsonKey(ignore: true)
