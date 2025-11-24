@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -150,6 +151,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
   Widget _buildPlayerNameTile(String name) {
     final service = ref.read(playerHistoryServiceProvider);
     final iconAssetPath = service.getPlayerIcon(name);
+    final customPortraitPath = service.getPlayerCustomPortrait(name);
     final isExcluded =
         widget.excludedPlayerName != null && name == widget.excludedPlayerName;
     final colorScheme = Theme.of(context).colorScheme;
@@ -211,29 +213,12 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                         ),
                       ),
                       child: ClipOval(
-                        child: iconAssetPath != null
-                            ? ColorFiltered(
-                                colorFilter: isExcluded
-                                    ? const ColorFilter.mode(
-                                        Colors.grey,
-                                        BlendMode.saturation,
-                                      )
-                                    : const ColorFilter.mode(
-                                        Colors.transparent,
-                                        BlendMode.multiply,
-                                      ),
-                                child: Image.asset(
-                                  iconAssetPath,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Icon(
-                                Icons.person,
-                                color: isExcluded
-                                    ? colorScheme.onSurfaceVariant
-                                    : widget.defaultColor,
-                                size: 24,
-                              ),
+                        child: _buildPlayerAvatar(
+                          customPortraitPath: customPortraitPath,
+                          iconAssetPath: iconAssetPath,
+                          isExcluded: isExcluded,
+                          colorScheme: colorScheme,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -365,15 +350,76 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
     );
   }
 
+  Widget _buildPlayerAvatar({
+    String? customPortraitPath,
+    String? iconAssetPath,
+    required bool isExcluded,
+    required ColorScheme colorScheme,
+  }) {
+    // Priorité au portrait personnalisé
+    if (customPortraitPath != null && customPortraitPath.isNotEmpty) {
+      return ColorFiltered(
+        colorFilter: isExcluded
+            ? const ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              )
+            : const ColorFilter.mode(
+                Colors.transparent,
+                BlendMode.multiply,
+              ),
+        child: Image.file(
+          File(customPortraitPath),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback vers l'icône si le fichier n'existe plus
+            if (iconAssetPath != null) {
+              return Image.asset(iconAssetPath, fit: BoxFit.cover);
+            }
+            return Icon(
+              Icons.person,
+              color: isExcluded ? colorScheme.onSurfaceVariant : widget.defaultColor,
+              size: 24,
+            );
+          },
+        ),
+      );
+    }
+
+    // Sinon, utiliser l'icône
+    if (iconAssetPath != null) {
+      return ColorFiltered(
+        colorFilter: isExcluded
+            ? const ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              )
+            : const ColorFilter.mode(
+                Colors.transparent,
+                BlendMode.multiply,
+              ),
+        child: Image.asset(iconAssetPath, fit: BoxFit.cover),
+      );
+    }
+
+    // Fallback vers une icône par défaut
+    return Icon(
+      Icons.person,
+      color: isExcluded ? colorScheme.onSurfaceVariant : widget.defaultColor,
+      size: 24,
+    );
+  }
+
   Future<void> _handleSelectPlayer(String name) async {
     final service = ref.read(playerHistoryServiceProvider);
 
     // Mettre à jour l'historique et attendre que la sauvegarde soit terminée
     await service.addOrUpdatePlayerName(name);
 
-    // Récupérer les couleurs sauvegardées
+    // Récupérer les couleurs et portrait sauvegardés
     final (savedStartColor, savedEndColor) = service.getPlayerColors(name);
     final iconAssetPath = service.getPlayerIcon(name);
+    final customPortraitPath = service.getPlayerCustomPortrait(name);
 
     // Créer l'objet Player
     final player = Player.create(
@@ -382,6 +428,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
       backgroundColorStart: savedStartColor ?? widget.defaultColor,
       backgroundColorEnd: savedEndColor ?? widget.defaultColor,
       iconAssetPath: iconAssetPath ?? PlayerIcons.defaultIcon,
+      customPortraitPath: customPortraitPath,
     );
 
     // Retourner le joueur
@@ -412,6 +459,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
     Color selectedEndColor = randomColor;
     String selectedIcon = randomIcon;
     String selectedName = randomName;
+    String? selectedCustomPortrait;
     bool playerValidated = false;
 
     await showDialog(
@@ -428,11 +476,13 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
           required Color backgroundColorStart,
           required Color backgroundColorEnd,
           required String iconAssetPath,
+          String? customPortraitPath,
         }) {
           selectedName = name;
           selectedStartColor = backgroundColorStart;
           selectedEndColor = backgroundColorEnd;
           selectedIcon = iconAssetPath;
+          selectedCustomPortrait = customPortraitPath;
           playerValidated = true;
         },
       ),
@@ -446,6 +496,9 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
     await service.updatePlayerColors(
         selectedName, selectedStartColor, selectedEndColor);
     await service.updatePlayerIcon(selectedName, selectedIcon);
+    if (selectedCustomPortrait != null) {
+      await service.updatePlayerCustomPortrait(selectedName, selectedCustomPortrait);
+    }
 
     // Créer l'objet Player avec les valeurs finales
     final player = Player.create(
@@ -454,6 +507,7 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
       backgroundColorStart: selectedStartColor,
       backgroundColorEnd: selectedEndColor,
       iconAssetPath: selectedIcon,
+      customPortraitPath: selectedCustomPortrait,
     );
 
     if (!mounted) return;

@@ -238,6 +238,43 @@ class PlayerHistoryService {
     }
   }
 
+  /// Récupère le portrait personnalisé d'un joueur (retourne null si non défini)
+  String? getPlayerCustomPortrait(String name) {
+    final player = getPlayerByName(name);
+    return player?.customPortraitPath;
+  }
+
+  /// Met à jour le portrait personnalisé d'un joueur
+  Future<void> updatePlayerCustomPortrait(String name, String? customPortraitPath) async {
+    if (_box == null || name.trim().isEmpty) return;
+
+    final trimmedName = name.trim();
+
+    // Vérifier si le nom existe déjà
+    final existingIndex = _box!.values.toList().indexWhere(
+      (p) => p.name.toLowerCase() == trimmedName.toLowerCase(),
+    );
+
+    if (existingIndex != -1) {
+      // Mettre à jour le portrait personnalisé du joueur existant
+      final existing = _box!.getAt(existingIndex);
+      if (existing != null) {
+        final updated = existing.copyWith(
+          customPortraitPath: customPortraitPath,
+        );
+        await _box!.putAt(existingIndex, updated);
+      }
+    } else {
+      // Créer un nouveau joueur avec le portrait personnalisé
+      final newPlayerName = PlayerName(
+        name: trimmedName,
+        lastUsed: DateTime.now(),
+        customPortraitPath: customPortraitPath,
+      );
+      await _box!.add(newPlayerName);
+    }
+  }
+
   /// Met à jour un joueur par son ID
   Future<void> updatePlayerById({
     required String id,
@@ -246,6 +283,8 @@ class PlayerHistoryService {
     Color? backgroundColorStart,
     Color? backgroundColorEnd,
     String? iconAssetPath,
+    String? customPortraitPath,
+    bool clearCustomPortrait = false,
   }) async {
     if (_box == null) return;
 
@@ -267,14 +306,20 @@ class PlayerHistoryService {
         // S'assurer que l'ID est présent
         final finalId = existing.id ?? id;
 
-        final updated = existing.copyWith(
+        // Gérer le portrait personnalisé (peut être null pour le supprimer)
+        final finalCustomPortraitPath = clearCustomPortrait
+            ? null
+            : (customPortraitPath ?? existing.customPortraitPath);
+
+        final updated = PlayerName(
           id: finalId,
-          name: newName,
+          name: newName ?? existing.name,
           lastUsed: DateTime.now(),
           usageCount: existing.usageCount + 1,
-          backgroundColorStartValue: backgroundColorStart?.toARGB32(),
-          backgroundColorEndValue: backgroundColorEnd?.toARGB32(),
-          iconAssetPath: iconAssetPath,
+          backgroundColorStartValue: backgroundColorStart?.toARGB32() ?? existing.backgroundColorStartValue,
+          backgroundColorEndValue: backgroundColorEnd?.toARGB32() ?? existing.backgroundColorEndValue,
+          iconAssetPath: iconAssetPath ?? existing.iconAssetPath,
+          customPortraitPath: finalCustomPortraitPath,
         );
         await _box!.putAt(index, updated);
       }

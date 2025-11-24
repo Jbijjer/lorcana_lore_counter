@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/player.dart';
@@ -36,6 +37,37 @@ class PlayerZone extends StatefulWidget {
 
 class _PlayerZoneState extends State<PlayerZone> {
   final GlobalKey<_AnimatedScoreDisplayState> _scoreKey = GlobalKey();
+
+  Widget _buildPlayerAvatar() {
+    final customPortraitPath = widget.player.customPortraitPath;
+
+    // Priorité au portrait personnalisé
+    if (customPortraitPath != null && customPortraitPath.isNotEmpty) {
+      return Image.file(
+        File(customPortraitPath),
+        width: 63,
+        height: 63,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback vers l'icône si le fichier n'existe plus
+          return Image.asset(
+            widget.player.iconAssetPath,
+            width: 63,
+            height: 63,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
+    // Sinon, utiliser l'icône par défaut
+    return Image.asset(
+      widget.player.iconAssetPath,
+      width: 63,
+      height: 63,
+      fit: BoxFit.cover,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,12 +224,7 @@ class _PlayerZoneState extends State<PlayerZone> {
                           radius: 31.5,
                           backgroundColor: widget.player.color.withValues(alpha: 0.08),
                           child: ClipOval(
-                            child: Image.asset(
-                              widget.player.iconAssetPath,
-                              width: 63,
-                              height: 63,
-                              fit: BoxFit.cover,
-                            ),
+                            child: _buildPlayerAvatar(),
                           ),
                         ),
                       ),

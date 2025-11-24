@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/player_history_service.dart';
+import '../../data/portrait_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/constants/player_icons.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -22,6 +24,7 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
     required this.backgroundColorEnd,
     required this.iconAssetPath,
     required this.onPlayerUpdated,
+    this.customPortraitPath,
     super.key,
   });
 
@@ -31,11 +34,13 @@ class PlayerEditDialog extends ConsumerStatefulWidget {
   final Color backgroundColorStart;
   final Color backgroundColorEnd;
   final String iconAssetPath;
+  final String? customPortraitPath;
   final Function({
     required String name,
     required Color backgroundColorStart,
     required Color backgroundColorEnd,
     required String iconAssetPath,
+    String? customPortraitPath,
   }) onPlayerUpdated;
 
   @override
@@ -48,6 +53,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
   late Color _backgroundColorStart;
   late Color _backgroundColorEnd;
   late String _selectedIconAssetPath;
+  String? _customPortraitPath;
   late AnimationController _portraitChangeController;
 
   @override
@@ -59,6 +65,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
     _backgroundColorStart = widget.backgroundColorStart;
     _backgroundColorEnd = widget.backgroundColorEnd;
     _selectedIconAssetPath = widget.iconAssetPath;
+    _customPortraitPath = widget.customPortraitPath;
 
     // Animation pour le changement de portrait
     _portraitChangeController = AnimationController(
@@ -184,7 +191,12 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
               const SizedBox(height: 12),
               _buildIconSelector(),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+
+              // Bouton pour importer une photo personnalisée
+              _buildCustomPortraitButton(),
+
+              const SizedBox(height: 16),
 
               // Bouton pour changer les couleurs de fond
               _buildColorButton(),
@@ -357,12 +369,27 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
             radius: 29.25,
             backgroundColor: widget.playerColor.withValues(alpha: 0.3),
             child: ClipOval(
-              child: Image.asset(
-                _selectedIconAssetPath,
-                width: 58.5,
-                height: 58.5,
-                fit: BoxFit.cover,
-              ),
+              child: _customPortraitPath != null && _customPortraitPath!.isNotEmpty
+                  ? Image.file(
+                      File(_customPortraitPath!),
+                      width: 58.5,
+                      height: 58.5,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          _selectedIconAssetPath,
+                          width: 58.5,
+                          height: 58.5,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      _selectedIconAssetPath,
+                      width: 58.5,
+                      height: 58.5,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
         ),
@@ -461,6 +488,79 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
       controller: shimmerController,
       color: widget.playerColor,
     );
+  }
+
+  Widget _buildCustomPortraitButton() {
+    final hasCustomPortrait = _customPortraitPath != null && _customPortraitPath!.isNotEmpty;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [
+            widget.playerColor.withValues(alpha: 0.15),
+            widget.playerColor.withValues(alpha: 0.08),
+          ],
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _pickCustomPortrait,
+              icon: Icon(Icons.photo_camera, color: widget.playerColor),
+              label: Text(hasCustomPortrait ? 'Changer ma photo' : 'Importer ma photo'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: widget.playerColor,
+                side: BorderSide(color: widget.playerColor, width: 2),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+          if (hasCustomPortrait) ...[
+            const SizedBox(width: 8),
+            IconButton(
+              onPressed: _removeCustomPortrait,
+              icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+              tooltip: 'Supprimer la photo',
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.3),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickCustomPortrait() async {
+    HapticUtils.light();
+    final portraitService = ref.read(portraitServiceProvider);
+    final newPortraitPath = await portraitService.pickAndCropImage(context);
+
+    if (newPortraitPath != null) {
+      // Supprimer l'ancien portrait s'il existe
+      if (_customPortraitPath != null && _customPortraitPath!.isNotEmpty) {
+        await portraitService.deletePortrait(_customPortraitPath);
+      }
+
+      setState(() {
+        _customPortraitPath = newPortraitPath;
+      });
+      _portraitChangeController.forward(from: 0.0);
+      HapticUtils.medium();
+    }
+  }
+
+  Future<void> _removeCustomPortrait() async {
+    HapticUtils.light();
+    final portraitService = ref.read(portraitServiceProvider);
+    await portraitService.deletePortrait(_customPortraitPath);
+
+    setState(() {
+      _customPortraitPath = null;
+    });
+    _portraitChangeController.forward(from: 0.0);
   }
 
   Widget _buildColorButton() {
@@ -570,6 +670,9 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
 
     final service = ref.read(playerHistoryServiceProvider);
 
+    // Déterminer si le portrait a été supprimé
+    final portraitWasRemoved = widget.customPortraitPath != null && _customPortraitPath == null;
+
     // Si c'est un joueur existant (avec ID), le mettre à jour dans la base
     if (widget.playerId.isNotEmpty) {
       await service.updatePlayerById(
@@ -579,6 +682,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
         backgroundColorStart: _backgroundColorStart,
         backgroundColorEnd: _backgroundColorEnd,
         iconAssetPath: _selectedIconAssetPath,
+        customPortraitPath: _customPortraitPath,
+        clearCustomPortrait: portraitWasRemoved,
       );
       // Invalider le provider pour rafraîchir la liste
       ref.invalidate(playerNamesProvider);
@@ -592,6 +697,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
       backgroundColorStart: _backgroundColorStart,
       backgroundColorEnd: _backgroundColorEnd,
       iconAssetPath: _selectedIconAssetPath,
+      customPortraitPath: _customPortraitPath,
     );
 
     if (mounted) {

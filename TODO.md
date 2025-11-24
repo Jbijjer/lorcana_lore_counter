@@ -232,12 +232,21 @@ Inspiré de **Lore Tracker (Perfect Pixels)** et des meilleures pratiques UX pou
   - [ ] Bouton d'export dans l'écran Statistiques
   - [ ] Partage du fichier CSV via le système de partage natif
 
-### 13. Portraits personnalisés
-- [ ] Permettre d'ajouter des portraits à partir de photos sur l'appareil
-  - [ ] Accès à la galerie photos de l'appareil
-  - [ ] Recadrage/redimensionnement de l'image
-  - [ ] Stockage local des portraits
-  - [ ] Affichage du portrait dans la sélection de joueur et sur l'écran de jeu
+### 13. Portraits personnalisés ✅ COMPLÉTÉ
+- [x] Permettre d'ajouter des portraits à partir de photos sur l'appareil
+  - [x] Accès à la galerie photos de l'appareil (image_picker)
+  - [x] Recadrage/redimensionnement de l'image (image_cropper avec crop circulaire)
+  - [x] Stockage local des portraits (répertoire documents/portraits)
+  - [x] Affichage du portrait dans la sélection de joueur et sur l'écran de jeu
+
+**✅ Fonctionnalités opérationnelles :**
+- ✅ Bouton "Importer ma photo" dans le dialogue d'édition de joueur
+- ✅ Sélection d'image depuis la galerie avec image_picker
+- ✅ Recadrage circulaire avec image_cropper
+- ✅ Stockage persistant des portraits dans le répertoire de l'application
+- ✅ Affichage prioritaire du portrait personnalisé sur l'icône par défaut
+- ✅ Option de supprimer le portrait personnalisé
+- ✅ Fallback vers l'icône par défaut si le fichier portrait n'existe plus
 
 ### 14. Sauvegarde Cloud
 - [ ] Synchronisation des données sur le Cloud

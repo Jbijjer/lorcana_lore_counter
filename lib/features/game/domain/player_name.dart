@@ -34,6 +34,10 @@ class PlayerName {
   @HiveField(7)
   final String? iconAssetPath;
 
+  /// Chemin vers le portrait personnalisé (photo importée depuis la galerie)
+  @HiveField(8)
+  final String? customPortraitPath;
+
   PlayerName({
     required this.name,
     required this.lastUsed,
@@ -43,6 +47,7 @@ class PlayerName {
     this.iconCodePoint,
     String? id,
     this.iconAssetPath,
+    this.customPortraitPath,
   }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   /// Crée une copie avec les modifications spécifiées
@@ -55,6 +60,7 @@ class PlayerName {
     int? iconCodePoint,
     String? id,
     String? iconAssetPath,
+    String? customPortraitPath,
   }) {
     return PlayerName(
       name: name ?? this.name,
@@ -65,6 +71,7 @@ class PlayerName {
       iconCodePoint: iconCodePoint ?? this.iconCodePoint,
       id: id ?? this.id,
       iconAssetPath: iconAssetPath ?? this.iconAssetPath,
+      customPortraitPath: customPortraitPath ?? this.customPortraitPath,
     );
   }
 }

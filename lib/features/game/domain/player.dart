@@ -15,6 +15,8 @@ class Player with _$Player {
     @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorStart,
     @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson) required Color backgroundColorEnd,
     @Default('assets/images/player_icons/mickey_icon.png') String iconAssetPath,
+    /// Chemin vers le portrait personnalisé (photo importée depuis la galerie)
+    String? customPortraitPath,
   }) = _Player;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
@@ -26,6 +28,7 @@ class Player with _$Player {
     Color? backgroundColorStart,
     Color? backgroundColorEnd,
     String? iconAssetPath,
+    String? customPortraitPath,
   }) {
     return Player(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -34,6 +37,7 @@ class Player with _$Player {
       backgroundColorStart: backgroundColorStart ?? color,
       backgroundColorEnd: backgroundColorEnd ?? color,
       iconAssetPath: iconAssetPath ?? PlayerIcons.defaultIcon,
+      customPortraitPath: customPortraitPath,
     );
   }
 }
