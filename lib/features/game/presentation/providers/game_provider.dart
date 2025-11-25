@@ -282,6 +282,28 @@ class Game extends _$Game {
     _saveState();
   }
 
+  /// Change le portrait personnalisé du joueur 1
+  void changePlayer1CustomPortrait(String? customPortraitPath) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player1.copyWith(
+      customPortraitPath: customPortraitPath,
+    );
+    state = state!.copyWith(player1: updatedPlayer);
+    _saveState();
+  }
+
+  /// Change le portrait personnalisé du joueur 2
+  void changePlayer2CustomPortrait(String? customPortraitPath) {
+    if (state == null) return;
+
+    final updatedPlayer = state!.player2.copyWith(
+      customPortraitPath: customPortraitPath,
+    );
+    state = state!.copyWith(player2: updatedPlayer);
+    _saveState();
+  }
+
   /// Ajoute une victoire au joueur 1 et réinitialise les scores pour la manche suivante
   void addPlayer1Win({
     String? note,

@@ -475,7 +475,13 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
 
           if (shouldDelete == true && mounted) {
             final portraitService = ref.read(portraitServiceProvider);
+            final historyService = ref.read(playerHistoryServiceProvider);
+
+            // Supprimer le fichier physique
             await portraitService.deletePortrait(portraitPath);
+
+            // Retirer le portrait de tous les joueurs qui l'utilisent
+            await historyService.removeCustomPortraitFromAllPlayers(portraitPath);
 
             // Si c'était le portrait sélectionné, le désélectionner
             if (_customPortraitPath == portraitPath) {

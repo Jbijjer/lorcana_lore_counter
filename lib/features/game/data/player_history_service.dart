@@ -294,6 +294,21 @@ class PlayerHistoryService {
     return allPortraits;
   }
 
+  /// Retire le portrait personnalisé de tous les joueurs qui l'utilisent
+  Future<void> removeCustomPortraitFromAllPlayers(String portraitPath) async {
+    if (_box == null || portraitPath.isEmpty) return;
+
+    // Parcourir tous les joueurs
+    for (int i = 0; i < _box!.length; i++) {
+      final player = _box!.getAt(i);
+      if (player != null && player.customPortraitPath == portraitPath) {
+        // Mettre à jour le joueur en retirant le portrait personnalisé
+        final updated = player.copyWith(customPortraitPath: null);
+        await _box!.putAt(i, updated);
+      }
+    }
+  }
+
   /// Met à jour un joueur par son ID
   Future<void> updatePlayerById({
     required String id,

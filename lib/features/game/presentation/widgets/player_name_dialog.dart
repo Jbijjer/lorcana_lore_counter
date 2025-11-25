@@ -33,6 +33,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
   final Color backgroundColorEnd;
   final Function(Color start, Color end) onBackgroundColorsChanged;
   final Function(String iconAssetPath)? onIconChanged;
+  final Function(String? customPortraitPath)? onCustomPortraitChanged;
   final Function(String newName)? onNameChanged;
   final String? excludedPlayerName;
 
@@ -444,6 +445,10 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
           finalStartColor = backgroundColorStart;
           finalEndColor = backgroundColorEnd;
           finalIcon = iconAssetPath;
+          // Mettre à jour le portrait personnalisé si c'est le joueur actuel
+          if (name == widget.currentName) {
+            widget.onCustomPortraitChanged?.call(customPortraitPath);
+          }
         },
       ),
     );
@@ -507,6 +512,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
               backgroundColorEnd,
             );
             widget.onIconChanged?.call(iconAssetPath);
+            widget.onCustomPortraitChanged?.call(customPortraitPath);
             // Si le nom a changé, le signaler
             if (name != oldName) {
               widget.onNameChanged?.call(name);

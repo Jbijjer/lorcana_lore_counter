@@ -415,6 +415,15 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
           // Note: Ne PAS appeler updatePlayerIcon ici car updatePlayerById
           // dans PlayerEditDialog a déjà sauvegardé l'icône
         },
+        onCustomPortraitChanged: (customPortraitPath) {
+          if (isPlayer1) {
+            ref.read(gameProvider.notifier).changePlayer1CustomPortrait(customPortraitPath);
+          } else {
+            ref.read(gameProvider.notifier).changePlayer2CustomPortrait(customPortraitPath);
+          }
+          // Note: Ne PAS appeler updatePlayerCustomPortrait ici car updatePlayerById
+          // dans PlayerEditDialog a déjà sauvegardé le portrait
+        },
         onNameChanged: (newPlayerName) {
           // Mettre à jour le nom du joueur actuel dans la partie
           if (isPlayer1) {
@@ -436,6 +445,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
       // Charger l'icône sauvegardée pour ce joueur
       final savedIcon = historyService.getPlayerIcon(newName);
 
+      // Charger le portrait personnalisé sauvegardé pour ce joueur
+      final savedCustomPortrait = historyService.getPlayerCustomPortrait(newName);
+
       if (isPlayer1) {
         ref.read(gameProvider.notifier).changePlayer1Name(newName);
 
@@ -451,6 +463,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         if (savedIcon != null) {
           ref.read(gameProvider.notifier).changePlayer1Icon(savedIcon);
         }
+
+        // Appliquer le portrait personnalisé sauvegardé
+        ref.read(gameProvider.notifier).changePlayer1CustomPortrait(savedCustomPortrait);
       } else {
         ref.read(gameProvider.notifier).changePlayer2Name(newName);
 
@@ -466,6 +481,9 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         if (savedIcon != null) {
           ref.read(gameProvider.notifier).changePlayer2Icon(savedIcon);
         }
+
+        // Appliquer le portrait personnalisé sauvegardé
+        ref.read(gameProvider.notifier).changePlayer2CustomPortrait(savedCustomPortrait);
       }
     }
   }
