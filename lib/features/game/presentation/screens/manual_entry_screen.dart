@@ -7,6 +7,7 @@ import '../../data/game_statistics_service.dart';
 import '../../data/player_history_service.dart';
 import '../../domain/player.dart';
 import '../widgets/player_selection_dialog.dart';
+import '../widgets/player_edit_dialog.dart';
 import '../widgets/deck_color_picker_dialog.dart';
 
 /// Écran de saisie manuelle des parties
@@ -273,95 +274,135 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
     required Color accentColor,
   }) {
     final isSelected = player != null;
+    final playerNumber = label == 'Joueur 1' ? 1 : 2;
 
-    return InkWell(
-      onTap: () {
-        HapticUtils.light();
-        onTap();
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    player.backgroundColorStart,
-                    player.backgroundColorEnd,
-                  ],
-                )
-              : null,
-          color: isSelected ? null : Theme.of(context).colorScheme.surfaceContainerLow,
+    return Stack(
+      children: [
+        InkWell(
+          onTap: () {
+            HapticUtils.light();
+            onTap();
+          },
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? accentColor : Theme.of(context).colorScheme.outline,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: accentColor.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    spreadRadius: 1,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: isSelected
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        player.backgroundColorStart,
+                        player.backgroundColorEnd,
+                      ],
+                    )
+                  : null,
+              color: isSelected ? null : Theme.of(context).colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected ? accentColor : Theme.of(context).colorScheme.outline,
+                width: isSelected ? 2 : 1,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        spreadRadius: 1,
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? AppTheme.pureWhite.withValues(alpha: 0.2)
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    border: Border.all(
+                      color: AppTheme.pureBlack,
+                      width: 2,
+                    ),
                   ),
-                ]
-              : null,
+                  child: ClipOval(
+                    child: isSelected
+                        ? _buildPlayerAvatar(player)
+                        : Icon(
+                            Icons.person_add,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            size: 24,
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isSelected
+                        ? AppTheme.pureWhite.withValues(alpha: 0.8)
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isSelected ? player.name : 'Sélectionner',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected
+                        ? AppTheme.pureWhite
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
         ),
-        child: Column(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? AppTheme.pureWhite.withValues(alpha: 0.2)
-                    : Theme.of(context).colorScheme.surfaceContainerHighest,
-                border: Border.all(
-                  color: AppTheme.pureBlack,
-                  width: 2,
+        // Bouton d'édition (visible uniquement si un joueur est sélectionné)
+        if (isSelected)
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  HapticUtils.light();
+                  _editPlayer(playerNumber);
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.pureWhite.withValues(alpha: 0.9),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.pureBlack.withValues(alpha: 0.2),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.edit,
+                    color: accentColor,
+                    size: 16,
+                  ),
                 ),
               ),
-              child: ClipOval(
-                child: isSelected
-                    ? _buildPlayerAvatar(player)
-                    : Icon(
-                        Icons.person_add,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        size: 24,
-                      ),
-              ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: isSelected
-                    ? AppTheme.pureWhite.withValues(alpha: 0.8)
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              isSelected ? player.name : 'Sélectionner',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: isSelected
-                    ? AppTheme.pureWhite
-                    : Theme.of(context).colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
+          ),
+      ],
     );
   }
 
@@ -1067,6 +1108,83 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
           _player1 = player;
         } else {
           _player2 = player;
+        }
+      });
+    }
+  }
+
+  /// Édite un joueur déjà sélectionné
+  Future<void> _editPlayer(int playerNumber) async {
+    HapticUtils.medium();
+
+    final player = playerNumber == 1 ? _player1 : _player2;
+    if (player == null) return;
+
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Variables pour stocker les nouvelles valeurs
+    String? selectedName;
+    Color? selectedStartColor;
+    Color? selectedEndColor;
+    String? selectedIcon;
+    String? selectedCustomPortrait;
+    bool playerValidated = false;
+
+    // Ouvrir le dialog de personnalisation avec les valeurs actuelles
+    await showDialog(
+      context: context,
+      builder: (context) => PlayerEditDialog(
+        playerId: player.id,
+        playerName: player.name,
+        playerColor: playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor,
+        backgroundColorStart: player.backgroundColorStart,
+        backgroundColorEnd: player.backgroundColorEnd,
+        iconAssetPath: player.iconAssetPath,
+        customPortraitPath: player.customPortraitPath,
+        onPlayerUpdated: ({
+          required String name,
+          required Color backgroundColorStart,
+          required Color backgroundColorEnd,
+          required String iconAssetPath,
+          String? customPortraitPath,
+        }) {
+          selectedName = name;
+          selectedStartColor = backgroundColorStart;
+          selectedEndColor = backgroundColorEnd;
+          selectedIcon = iconAssetPath;
+          selectedCustomPortrait = customPortraitPath;
+          playerValidated = true;
+        },
+      ),
+    );
+
+    // Si l'utilisateur a annulé, on ne fait rien
+    if (!mounted || !playerValidated) return;
+
+    // Mettre à jour le joueur dans la base de données
+    await service.addOrUpdatePlayerName(selectedName!);
+    await service.updatePlayerColors(
+        selectedName!, selectedStartColor!, selectedEndColor!);
+    await service.updatePlayerIcon(selectedName!, selectedIcon!);
+    await service.updatePlayerCustomPortrait(selectedName!, selectedCustomPortrait);
+
+    // Créer l'objet Player mis à jour
+    final updatedPlayer = Player.create(
+      name: selectedName!,
+      color: playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor,
+      backgroundColorStart: selectedStartColor!,
+      backgroundColorEnd: selectedEndColor!,
+      iconAssetPath: selectedIcon!,
+      customPortraitPath: selectedCustomPortrait,
+    );
+
+    // Rafraîchir l'affichage
+    if (mounted) {
+      setState(() {
+        if (playerNumber == 1) {
+          _player1 = updatedPlayer;
+        } else {
+          _player2 = updatedPlayer;
         }
       });
     }

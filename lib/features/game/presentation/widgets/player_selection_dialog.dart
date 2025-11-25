@@ -234,6 +234,20 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                         ),
                       ),
                     ),
+                    // Bouton d'édition
+                    if (!isExcluded)
+                      IconButton(
+                        icon: Icon(
+                          Icons.edit,
+                          color: widget.defaultColor,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          HapticUtils.light();
+                          _handleEditPlayer(name);
+                        },
+                        tooltip: 'Modifier le joueur',
+                      ),
                     if (isExcluded)
                       Container(
                         padding: const EdgeInsets.all(6),
@@ -408,6 +422,70 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
       color: isExcluded ? colorScheme.onSurfaceVariant : widget.defaultColor,
       size: 24,
     );
+  }
+
+  Future<void> _handleEditPlayer(String name) async {
+    HapticUtils.medium();
+
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Récupérer les données actuelles du joueur
+    final (savedStartColor, savedEndColor) = service.getPlayerColors(name);
+    final iconAssetPath = service.getPlayerIcon(name);
+    final customPortraitPath = service.getPlayerCustomPortrait(name);
+
+    if (!mounted) return;
+
+    // Variables pour stocker les nouvelles valeurs
+    String? selectedName;
+    Color? selectedStartColor;
+    Color? selectedEndColor;
+    String? selectedIcon;
+    String? selectedCustomPortrait;
+    bool playerValidated = false;
+
+    // Ouvrir le dialog de personnalisation avec les valeurs actuelles
+    await showDialog(
+      context: context,
+      builder: (context) => PlayerEditDialog(
+        playerId: '', // ID vide car c'est juste pour l'édition
+        playerName: name,
+        playerColor: widget.defaultColor,
+        backgroundColorStart: savedStartColor ?? widget.defaultColor,
+        backgroundColorEnd: savedEndColor ?? widget.defaultColor,
+        iconAssetPath: iconAssetPath ?? PlayerIcons.defaultIcon,
+        customPortraitPath: customPortraitPath,
+        onPlayerUpdated: ({
+          required String name,
+          required Color backgroundColorStart,
+          required Color backgroundColorEnd,
+          required String iconAssetPath,
+          String? customPortraitPath,
+        }) {
+          selectedName = name;
+          selectedStartColor = backgroundColorStart;
+          selectedEndColor = backgroundColorEnd;
+          selectedIcon = iconAssetPath;
+          selectedCustomPortrait = customPortraitPath;
+          playerValidated = true;
+        },
+      ),
+    );
+
+    // Si l'utilisateur a annulé, on ne fait rien
+    if (!mounted || !playerValidated) return;
+
+    // Mettre à jour le joueur dans la base de données
+    await service.addOrUpdatePlayerName(selectedName!);
+    await service.updatePlayerColors(
+        selectedName!, selectedStartColor!, selectedEndColor!);
+    await service.updatePlayerIcon(selectedName!, selectedIcon!);
+    await service.updatePlayerCustomPortrait(selectedName!, selectedCustomPortrait);
+
+    // Rafraîchir l'affichage
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _handleSelectPlayer(String name) async {

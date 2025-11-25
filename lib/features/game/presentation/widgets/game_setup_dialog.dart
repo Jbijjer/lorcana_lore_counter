@@ -6,6 +6,8 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../domain/player.dart';
 import '../../domain/game_state.dart';
 import 'player_selection_dialog.dart';
+import 'player_edit_dialog.dart';
+import '../../data/player_history_service.dart';
 import '../../../../widgets/dialogs/common/dialog_animations_mixin.dart';
 import '../../../../widgets/dialogs/common/dialog_header.dart';
 import '../../../../widgets/dialogs/common/animated_dialog_wrapper.dart';
@@ -361,6 +363,21 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                   ),
                 ),
 
+                // Bouton d'édition (visible uniquement si un joueur est sélectionné)
+                if (isSelected)
+                  IconButton(
+                    icon: Icon(
+                      Icons.edit,
+                      color: AppTheme.pureWhite,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      HapticUtils.light();
+                      _editPlayer(playerNumber);
+                    },
+                    tooltip: 'Modifier le joueur',
+                  ),
+
                 // Icône de sélection
                 Icon(
                   isSelected ? Icons.check_circle : Icons.arrow_forward_ios,
@@ -580,6 +597,83 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
       player.iconAssetPath,
       fit: BoxFit.cover,
     );
+  }
+
+  /// Édite un joueur déjà sélectionné
+  Future<void> _editPlayer(int playerNumber) async {
+    HapticUtils.medium();
+
+    final player = playerNumber == 1 ? _player1 : _player2;
+    if (player == null) return;
+
+    final service = ref.read(playerHistoryServiceProvider);
+
+    // Variables pour stocker les nouvelles valeurs
+    String? selectedName;
+    Color? selectedStartColor;
+    Color? selectedEndColor;
+    String? selectedIcon;
+    String? selectedCustomPortrait;
+    bool playerValidated = false;
+
+    // Ouvrir le dialog de personnalisation avec les valeurs actuelles
+    await showDialog(
+      context: context,
+      builder: (context) => PlayerEditDialog(
+        playerId: player.id,
+        playerName: player.name,
+        playerColor: playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor,
+        backgroundColorStart: player.backgroundColorStart,
+        backgroundColorEnd: player.backgroundColorEnd,
+        iconAssetPath: player.iconAssetPath,
+        customPortraitPath: player.customPortraitPath,
+        onPlayerUpdated: ({
+          required String name,
+          required Color backgroundColorStart,
+          required Color backgroundColorEnd,
+          required String iconAssetPath,
+          String? customPortraitPath,
+        }) {
+          selectedName = name;
+          selectedStartColor = backgroundColorStart;
+          selectedEndColor = backgroundColorEnd;
+          selectedIcon = iconAssetPath;
+          selectedCustomPortrait = customPortraitPath;
+          playerValidated = true;
+        },
+      ),
+    );
+
+    // Si l'utilisateur a annulé, on ne fait rien
+    if (!mounted || !playerValidated) return;
+
+    // Mettre à jour le joueur dans la base de données
+    await service.addOrUpdatePlayerName(selectedName!);
+    await service.updatePlayerColors(
+        selectedName!, selectedStartColor!, selectedEndColor!);
+    await service.updatePlayerIcon(selectedName!, selectedIcon!);
+    await service.updatePlayerCustomPortrait(selectedName!, selectedCustomPortrait);
+
+    // Créer l'objet Player mis à jour
+    final updatedPlayer = Player.create(
+      name: selectedName!,
+      color: playerNumber == 1 ? AppTheme.amberColor : AppTheme.sapphireColor,
+      backgroundColorStart: selectedStartColor!,
+      backgroundColorEnd: selectedEndColor!,
+      iconAssetPath: selectedIcon!,
+      customPortraitPath: selectedCustomPortrait,
+    );
+
+    // Rafraîchir l'affichage
+    if (mounted) {
+      setState(() {
+        if (playerNumber == 1) {
+          _player1 = updatedPlayer;
+        } else {
+          _player2 = updatedPlayer;
+        }
+      });
+    }
   }
 
 }
