@@ -167,6 +167,12 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                   HapticUtils.light();
                   _handleSelectPlayer(name);
                 },
+          onLongPress: isExcluded
+              ? null
+              : () {
+                  HapticUtils.medium();
+                  _handleEditPlayer(name);
+                },
           borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
@@ -234,20 +240,6 @@ class _PlayerSelectionDialogState extends ConsumerState<PlayerSelectionDialog>
                         ),
                       ),
                     ),
-                    // Bouton d'édition
-                    if (!isExcluded)
-                      IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: widget.defaultColor,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          HapticUtils.light();
-                          _handleEditPlayer(name);
-                        },
-                        tooltip: 'Modifier le joueur',
-                      ),
                     if (isExcluded)
                       Container(
                         padding: const EdgeInsets.all(6),

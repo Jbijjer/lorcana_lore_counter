@@ -276,133 +276,100 @@ class _ManualEntryScreenState extends ConsumerState<ManualEntryScreen>
     final isSelected = player != null;
     final playerNumber = label == 'Joueur 1' ? 1 : 2;
 
-    return Stack(
-      children: [
-        InkWell(
-          onTap: () {
-            HapticUtils.light();
-            onTap();
-          },
+    return InkWell(
+      onTap: () {
+        HapticUtils.light();
+        onTap();
+      },
+      onLongPress: isSelected
+          ? () {
+              HapticUtils.medium();
+              _editPlayer(playerNumber);
+            }
+          : null,
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    player.backgroundColorStart,
+                    player.backgroundColorEnd,
+                  ],
+                )
+              : null,
+          color: isSelected ? null : Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(16),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: isSelected
-                  ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        player.backgroundColorStart,
-                        player.backgroundColorEnd,
-                      ],
-                    )
-                  : null,
-              color: isSelected ? null : Theme.of(context).colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isSelected ? accentColor : Theme.of(context).colorScheme.outline,
-                width: isSelected ? 2 : 1,
-              ),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: accentColor.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isSelected
-                        ? AppTheme.pureWhite.withValues(alpha: 0.2)
-                        : Theme.of(context).colorScheme.surfaceContainerHighest,
-                    border: Border.all(
-                      color: AppTheme.pureBlack,
-                      width: 2,
-                    ),
-                  ),
-                  child: ClipOval(
-                    child: isSelected
-                        ? _buildPlayerAvatar(player)
-                        : Icon(
-                            Icons.person_add,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            size: 24,
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isSelected
-                        ? AppTheme.pureWhite.withValues(alpha: 0.8)
-                        : Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  isSelected ? player.name : 'Sélectionner',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected
-                        ? AppTheme.pureWhite
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+          border: Border.all(
+            color: isSelected ? accentColor : Theme.of(context).colorScheme.outline,
+            width: isSelected ? 2 : 1,
           ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
         ),
-        // Bouton d'édition (visible uniquement si un joueur est sélectionné)
-        if (isSelected)
-          Positioned(
-            top: 4,
-            right: 4,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  HapticUtils.light();
-                  _editPlayer(playerNumber);
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.pureWhite.withValues(alpha: 0.9),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.pureBlack.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.edit,
-                    color: accentColor,
-                    size: 16,
-                  ),
+        child: Column(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected
+                    ? AppTheme.pureWhite.withValues(alpha: 0.2)
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
+                border: Border.all(
+                  color: AppTheme.pureBlack,
+                  width: 2,
                 ),
               ),
+              child: ClipOval(
+                child: isSelected
+                    ? _buildPlayerAvatar(player)
+                    : Icon(
+                        Icons.person_add,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        size: 24,
+                      ),
+              ),
             ),
-          ),
-      ],
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: isSelected
+                    ? AppTheme.pureWhite.withValues(alpha: 0.8)
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              isSelected ? player.name : 'Sélectionner',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: isSelected
+                    ? AppTheme.pureWhite
+                    : Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -230,6 +230,12 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
         HapticUtils.light();
         onTap();
       },
+      onLongPress: isSelected
+          ? () {
+              HapticUtils.medium();
+              _editPlayer(playerNumber);
+            }
+          : null,
       borderRadius: BorderRadius.circular(16),
       child: Stack(
         children: [
@@ -362,21 +368,6 @@ class _GameSetupDialogState extends ConsumerState<GameSetupDialog>
                     ],
                   ),
                 ),
-
-                // Bouton d'édition (visible uniquement si un joueur est sélectionné)
-                if (isSelected)
-                  IconButton(
-                    icon: Icon(
-                      Icons.edit,
-                      color: AppTheme.pureWhite,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      HapticUtils.light();
-                      _editPlayer(playerNumber);
-                    },
-                    tooltip: 'Modifier le joueur',
-                  ),
 
                 // Icône de sélection
                 Icon(
