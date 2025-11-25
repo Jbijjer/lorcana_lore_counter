@@ -147,7 +147,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
 
               const SizedBox(height: 19),
 
-              // Sélection de l'icône
+              // Sélection du portrait (icônes + portraits personnalisés)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -189,17 +189,7 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
                 ],
               ),
               const SizedBox(height: 12),
-              _buildIconSelector(),
-
-              const SizedBox(height: 16),
-
-              // Bouton pour importer une photo personnalisée
-              _buildCustomPortraitButton(),
-
-              const SizedBox(height: 16),
-
-              // Galerie des portraits personnalisés existants
-              _buildCustomPortraitsGallery(),
+              _buildPortraitSelector(),
 
               const SizedBox(height: 16),
 
@@ -402,7 +392,13 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
     );
   }
 
-  Widget _buildIconSelector() {
+  Widget _buildPortraitSelector() {
+    final service = ref.read(playerHistoryServiceProvider);
+    final customPortraits = service.getAllCustomPortraits();
+
+    // Total d'items = icônes + portraits personnalisés + bouton "ajouter"
+    final totalItems = PlayerIcons.availableIcons.length + customPortraits.length + 1;
+
     return Container(
       height: 200,
       decoration: BoxDecoration(
@@ -419,18 +415,178 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
-        itemCount: PlayerIcons.availableIcons.length,
+        itemCount: totalItems,
         itemBuilder: (context, index) {
-          final playerIcon = PlayerIcons.availableIcons[index];
-          final isSelected = playerIcon.assetPath == _selectedIconAssetPath;
+          // Les portraits personnalisés en premier
+          if (index < customPortraits.length) {
+            return _buildCustomPortraitItem(customPortraits[index]);
+          }
 
-          return _buildIconItem(playerIcon, isSelected);
+          // Ensuite le bouton "Ajouter une photo"
+          if (index == customPortraits.length) {
+            return _buildAddPhotoButton();
+          }
+
+          // Enfin les icônes prédéfinies
+          final iconIndex = index - customPortraits.length - 1;
+          final playerIcon = PlayerIcons.availableIcons[iconIndex];
+          return _buildIconItem(playerIcon);
         },
       ),
     );
   }
 
-  Widget _buildIconItem(dynamic playerIcon, bool isSelected) {
+  Widget _buildCustomPortraitItem(String portraitPath) {
+    final isSelected = _customPortraitPath == portraitPath;
+
+    return Tooltip(
+      message: 'Ma photo',
+      child: InkWell(
+        onTap: () {
+          HapticUtils.light();
+          setState(() {
+            _customPortraitPath = portraitPath;
+            // Garder l'icône par défaut mais donner priorité au portrait
+          });
+          _portraitChangeController.forward(from: 0.0);
+        },
+        onLongPress: () async {
+          HapticUtils.medium();
+          final shouldDelete = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Supprimer cette photo'),
+              content: const Text('Voulez-vous supprimer définitivement cette photo ?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    'Supprimer',
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
+              ],
+            ),
+          );
+
+          if (shouldDelete == true && mounted) {
+            final portraitService = ref.read(portraitServiceProvider);
+            await portraitService.deletePortrait(portraitPath);
+
+            // Si c'était le portrait sélectionné, le désélectionner
+            if (_customPortraitPath == portraitPath) {
+              setState(() {
+                _customPortraitPath = null;
+              });
+            } else {
+              setState(() {}); // Rafraîchir pour retirer de la liste
+            }
+            _portraitChangeController.forward(from: 0.0);
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? widget.playerColor.withValues(alpha: 0.2)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? widget.playerColor : Theme.of(context).colorScheme.outlineVariant,
+              width: isSelected ? 3 : 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: widget.playerColor.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : [],
+          ),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  File(portraitPath),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Icon(Icons.broken_image, size: 32),
+                    );
+                  },
+                ),
+              ),
+              // Effet scintillant pour le portrait sélectionné
+              if (isSelected)
+                Positioned.fill(
+                  child: _buildSparkles(),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddPhotoButton() {
+    return Tooltip(
+      message: 'Ajouter une photo',
+      child: InkWell(
+        onTap: _pickCustomPortrait,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                widget.playerColor.withValues(alpha: 0.15),
+                widget.playerColor.withValues(alpha: 0.08),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: widget.playerColor.withValues(alpha: 0.4),
+              width: 2,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_photo_alternate,
+                color: widget.playerColor,
+                size: 28,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Ajouter',
+                style: TextStyle(
+                  color: widget.playerColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconItem(dynamic playerIcon) {
+    final isSelected = _customPortraitPath == null && playerIcon.assetPath == _selectedIconAssetPath;
+
     return Tooltip(
       message: playerIcon.label,
       child: InkWell(
@@ -438,8 +594,8 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
           HapticUtils.light();
           setState(() {
             _selectedIconAssetPath = playerIcon.assetPath;
+            _customPortraitPath = null; // Désélectionner le portrait personnalisé
           });
-          // Animation de bounce lors du changement
           _portraitChangeController.forward(from: 0.0);
         },
         borderRadius: BorderRadius.circular(12),
@@ -495,220 +651,18 @@ class _PlayerEditDialogState extends ConsumerState<PlayerEditDialog>
     );
   }
 
-  Widget _buildCustomPortraitButton() {
-    final hasCustomPortrait = _customPortraitPath != null && _customPortraitPath!.isNotEmpty;
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: LinearGradient(
-          colors: [
-            widget.playerColor.withValues(alpha: 0.15),
-            widget.playerColor.withValues(alpha: 0.08),
-          ],
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: _pickCustomPortrait,
-              icon: Icon(Icons.photo_camera, color: widget.playerColor),
-              label: Text(hasCustomPortrait ? 'Changer ma photo' : 'Importer ma photo'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: widget.playerColor,
-                side: BorderSide(color: widget.playerColor, width: 2),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
-          if (hasCustomPortrait) ...[
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: _removeCustomPortrait,
-              icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
-              tooltip: 'Supprimer la photo',
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.3),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
   Future<void> _pickCustomPortrait() async {
     HapticUtils.light();
     final portraitService = ref.read(portraitServiceProvider);
     final newPortraitPath = await portraitService.pickAndCropImage(context);
 
     if (newPortraitPath != null) {
-      // Supprimer l'ancien portrait s'il existe
-      if (_customPortraitPath != null && _customPortraitPath!.isNotEmpty) {
-        await portraitService.deletePortrait(_customPortraitPath);
-      }
-
       setState(() {
         _customPortraitPath = newPortraitPath;
       });
       _portraitChangeController.forward(from: 0.0);
       HapticUtils.medium();
     }
-  }
-
-  Future<void> _removeCustomPortrait() async {
-    HapticUtils.light();
-    final portraitService = ref.read(portraitServiceProvider);
-    await portraitService.deletePortrait(_customPortraitPath);
-
-    setState(() {
-      _customPortraitPath = null;
-    });
-    _portraitChangeController.forward(from: 0.0);
-  }
-
-  Widget _buildCustomPortraitsGallery() {
-    final service = ref.read(playerHistoryServiceProvider);
-    final allPortraits = service.getAllCustomPortraits();
-
-    // Si aucun portrait personnalisé n'est disponible, ne rien afficher
-    if (allPortraits.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.photo_library,
-                  color: widget.playerColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Mes portraits',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                ),
-              ],
-            ),
-            Text(
-              '${allPortraits.length} photo${allPortraits.length > 1 ? 's' : ''}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Container(
-          height: 120,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: widget.playerColor.withValues(alpha: 0.3),
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: allPortraits.length <= 4
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: allPortraits
-                      .map((path) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: _buildPortraitItem(path),
-                          ))
-                      .toList(),
-                )
-              : GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  scrollDirection: Axis.horizontal,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: allPortraits.length,
-                  itemBuilder: (context, index) {
-                    return _buildPortraitItem(allPortraits[index]);
-                  },
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPortraitItem(String portraitPath) {
-    final isSelected = _customPortraitPath == portraitPath;
-
-    return InkWell(
-      onTap: () {
-        HapticUtils.light();
-        setState(() {
-          _customPortraitPath = portraitPath;
-        });
-        _portraitChangeController.forward(from: 0.0);
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? widget.playerColor.withValues(alpha: 0.2)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? widget.playerColor
-                : Theme.of(context).colorScheme.outlineVariant,
-            width: isSelected ? 3 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: widget.playerColor.withValues(alpha: 0.4),
-                    blurRadius: 8,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : [],
-        ),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.file(
-                File(portraitPath),
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Center(
-                    child: Icon(Icons.broken_image, size: 32),
-                  );
-                },
-              ),
-            ),
-            // Effet scintillant pour le portrait sélectionné
-            if (isSelected)
-              Positioned.fill(
-                child: _buildSparkles(),
-              ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildColorButton() {
