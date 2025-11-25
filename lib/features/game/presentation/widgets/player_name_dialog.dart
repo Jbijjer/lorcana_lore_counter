@@ -22,6 +22,7 @@ class PlayerNameDialog extends ConsumerStatefulWidget {
     required this.backgroundColorEnd,
     required this.onBackgroundColorsChanged,
     this.onIconChanged,
+    this.onCustomPortraitChanged,
     this.onNameChanged,
     this.excludedPlayerName,
     super.key,
