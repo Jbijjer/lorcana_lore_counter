@@ -45,6 +45,7 @@ class _PlayerZoneState extends State<PlayerZone> {
     if (customPortraitPath != null && customPortraitPath.isNotEmpty) {
       return Image.file(
         File(customPortraitPath),
+        key: ValueKey('portrait_$customPortraitPath'),
         width: 63,
         height: 63,
         fit: BoxFit.cover,
@@ -52,6 +53,7 @@ class _PlayerZoneState extends State<PlayerZone> {
           // Fallback vers l'icône si le fichier n'existe plus
           return Image.asset(
             widget.player.iconAssetPath,
+            key: ValueKey('icon_${widget.player.iconAssetPath}'),
             width: 63,
             height: 63,
             fit: BoxFit.cover,
@@ -63,6 +65,7 @@ class _PlayerZoneState extends State<PlayerZone> {
     // Sinon, utiliser l'icône par défaut
     return Image.asset(
       widget.player.iconAssetPath,
+      key: ValueKey('icon_${widget.player.iconAssetPath}'),
       width: 63,
       height: 63,
       fit: BoxFit.cover,
