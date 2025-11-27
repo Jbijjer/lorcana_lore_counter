@@ -488,6 +488,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
 
     final (startColor, endColor) = service.getPlayerColors(oldName);
     final iconAssetPath = service.getPlayerIcon(oldName);
+    final customPortraitPath = service.getPlayerCustomPortrait(oldName);
 
     await showDialog(
       context: context,
@@ -499,6 +500,7 @@ class _PlayerNameDialogState extends ConsumerState<PlayerNameDialog>
         backgroundColorEnd: endColor ?? widget.backgroundColorEnd,
         iconAssetPath:
             iconAssetPath ?? 'assets/images/player_icons/mickey_icon.png',
+        customPortraitPath: customPortraitPath,
         onPlayerUpdated: ({
           required String name,
           required Color backgroundColorStart,
